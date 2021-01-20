@@ -1,0 +1,10 @@
+.art {
+  display: flex;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.art div {
+  /* border: 1px #ccc solid; */
+  padding: 20px;
+}

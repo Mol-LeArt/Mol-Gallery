@@ -1,0 +1,5 @@
+.progress-bar {
+  height: 8px;
+  background: var(--primary);
+  margin-top: 10px;
+}
