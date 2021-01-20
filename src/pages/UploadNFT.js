@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import React, { useState } from 'react'
 import UploadingNFT from '../comps/UploadingNFT'
 import ImageUpload from '../comps/ImageUpload'
 import './UploadNFT.css'
@@ -9,8 +8,11 @@ const UploadNFT = () => {
     const [description, setDescription] = useState('')
     const [img, setImg] = useState(null)
     const [compliance, setCompliance] = useState(false)
-    const [gallery, setGallery] = useState('')
     const [metadata, setMetadata] = useState(null)    
+    
+    // gallery is to identify "commons" vs "personal" gallery
+    // currently hard coding gallery to "commons" in onSubmit 
+    // const [gallery, setGallery] = useState('')
 
     const getFileForUpload = (img) => {
         setImg(img);

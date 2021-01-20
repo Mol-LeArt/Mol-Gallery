@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
 import UploadingGallery from '../comps/UploadingGallery';
-
 import './OpenGallery.css'
-import UploadNFT from './UploadNFT';
 
 const OpenGallery = () => {
     const [galleryName, setGalleryName] = useState('')

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { projectFirestore, timeStamp } from  '../firebase/config'
 import './UploadingNFT.css'
 
