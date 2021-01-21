@@ -8,6 +8,8 @@ const useStorage = (metadata, file) => {
     
     useEffect(() => {
       // references
+      console.log(file)
+
       const storageRef = projectStorage.ref(file.name);
       const collectionRef = projectFirestore.collection('nft');
 

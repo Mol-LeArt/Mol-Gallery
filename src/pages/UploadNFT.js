@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 import UploadingNFT from '../comps/UploadingNFT'
 import ImageUpload from '../comps/ImageUpload'
 import './UploadNFT.css'
@@ -64,7 +65,7 @@ const UploadNFT = () => {
                 </div>
                 
                 <div >
-                    <button >Submit</button>
+                    <button>Submit</button>
                 </div>
             </form>
         </div>

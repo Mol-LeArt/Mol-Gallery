@@ -11,7 +11,7 @@ const UploadingNFT = ({ metadata, img, setImg }) => {
         if (url) {
             setImg(null);
         }
-    }, [url, img, setImg]);
+    }, [img, setImg]);
 
     return (
         <div></div>

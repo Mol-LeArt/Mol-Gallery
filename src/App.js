@@ -5,9 +5,8 @@ import Commons from './pages/Commons';
 import About from './pages/About';
 import OpenGallery from './pages/OpenGallery';
 import UploadNFT from './pages/UploadNFT';
-import Art from './pages/Art';
+import NFT from './pages/NFT';
 import Gallery from './pages/Gallery';
-
 
 function App() {
   
@@ -20,7 +19,7 @@ function App() {
           <Route path="/about" component={About} />
           <Route path="/open-gallery" component={OpenGallery} />
           <Route path="/uploadNFT" component={UploadNFT} />
-          <Route path="/art" component={Art} />
+          <Route path="/:id" component={NFT} />
           <Route path="/gallery" component={Gallery} />
         </Switch>
       </div>

@@ -7,6 +7,7 @@ const OpenGallery = () => {
     const [galleryDesc, setGalleryDesc] = useState('')
     const [tokenName, setTokenName] = useState('')
     const [tokenSymbol, setTokenSymbol] = useState('')
+    const [socialToken, setSocialToken] = useState('')
     const [royaltiesType, setRoyaltiesType] = useState(null)
     const [royalties, setRoyalties] = useState(0)
     const [compliance, setCompliance] = useState(false)
@@ -21,6 +22,7 @@ const OpenGallery = () => {
                 galleryDesc: galleryDesc,
                 tokenName: tokenName,
                 tokenSymbol: tokenSymbol,
+                socialToken: socialToken,
                 royaltiesType: royaltiesType,
                 royalties: royalties,
             }
@@ -69,6 +71,12 @@ const OpenGallery = () => {
                     <br/>
                     <input type="text" value={tokenSymbol} onChange={(e) => setTokenSymbol(e.target.value)} placeholder="Enter Token Symbol"/>
                 </div>
+
+                <div>
+                    <label>Social Token</label>
+                    <br/>
+                    <input type="text" value={socialToken} onChange={(e) => setSocialToken(e.target.value)} placeholder="Enter Any Social Token"/>
+                </div>                
 
                 <div>
                     <p>Describe flat royalties vs decaying roayaltie</p>
