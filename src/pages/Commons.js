@@ -4,6 +4,7 @@ import ImageGrid from '../comps/ImageGrid';
 import './Commons.css'
 
 const Commons = () => {
+    const collection = 'nft'
     return (
         <div>
             <h1 className="commons-title">Commons</h1>
@@ -12,7 +13,7 @@ const Commons = () => {
             <Link to='/uploadNFT'>
                 <button>Navigate to UploadNFT.js</button>
             </Link>
-            <ImageGrid />
+            <ImageGrid collection={collection}/>
         </div>
     )
 }

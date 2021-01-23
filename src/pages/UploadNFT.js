@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { useHistory } from "react-router-dom";
 import UploadingNFT from '../comps/UploadingNFT'
 import ImageUpload from '../comps/ImageUpload'
 import './UploadNFT.css'
@@ -10,7 +10,9 @@ const UploadNFT = () => {
     const [img, setImg] = useState(null)
     const [compliance, setCompliance] = useState(false)
     const [metadata, setMetadata] = useState(null)    
-    
+
+    const history = useHistory();
+
     // gallery is to identify "commons" vs "personal" gallery
     // currently hard coding gallery to "commons" in onSubmit 
     // const [gallery, setGallery] = useState('')
@@ -35,8 +37,10 @@ const UploadNFT = () => {
         }
     }
 
+    const handleClick = e => {
+        history.push("/")
+    }
     // console.log(metadata, img)
-
     return (
         <div className="from-in-uploadnft">
             <h1 className="upload-nft-title">Upload NFT</h1>
@@ -46,7 +50,7 @@ const UploadNFT = () => {
                 <div>  
                     <label htmlFor="text">Title</label>
                     <br/>
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Title"/>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.targetd.value)} placeholder="Enter Title"/>
                 </div>
 
                 <div>
@@ -57,7 +61,7 @@ const UploadNFT = () => {
 
                 <ImageUpload getFileForUpload={getFileForUpload}/>
 
-                {metadata && <UploadingNFT metadata={metadata} img={img} setImg={setImg}/>} 
+                {metadata && <UploadingNFT metadata={metadata} img={img} setImg={setImg} />} 
 
                 <div>
                     <input type="Checkbox" checked={compliance} onChange={(e) => setCompliance(e.target.checked)}/>
@@ -65,9 +69,13 @@ const UploadNFT = () => {
                 </div>
                 
                 <div >
-                    <button>Submit</button>
+                    <button >Upload</button>
                 </div>
             </form>
+            <div>
+                <button onClick={handleClick}>Back to Commons</button>
+            </div>
+            
         </div>
     )
 }

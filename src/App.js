@@ -9,18 +9,17 @@ import NFT from './pages/NFT';
 import Gallery from './pages/Gallery';
 
 function App() {
-  
   return (
     <Router> 
       <div className="App">
         <NavBar />
         <Switch>
           <Route path="/" exact component={Commons} />
-          <Route path="/about" component={About} />
-          <Route path="/open-gallery" component={OpenGallery} />
-          <Route path="/uploadNFT" component={UploadNFT} />
-          <Route path="/:id" component={NFT} />
-          <Route path="/gallery" component={Gallery} />
+          <Route path="/about" exact component={About} />
+          <Route path="/open-gallery" exact component={OpenGallery} />
+          <Route path="/uploadNFT" exact component={UploadNFT} />
+          <Route path="/gallery" exact component={Gallery} />
+          <Route path="/nft/:id" exact component={NFT} />
         </Switch>
       </div>
     </Router>

@@ -3,9 +3,9 @@ import useStorage from '../hooks/useStorage';
 import './UploadingNFT.css'
 
 const UploadingNFT = ({ metadata, img, setImg }) => {
-    const { url } = useStorage(metadata, img);
+    const { url, progress } = useStorage(metadata, img);
     // const { url, progress } = useStorage(metadata, img);
-    // console.log("progress - " + progress, "url - " + url);
+    console.log("progress - " + progress, "url - " + url);
 
     useEffect(()=> {
         if (url) {
@@ -13,9 +13,13 @@ const UploadingNFT = ({ metadata, img, setImg }) => {
         }
     }, [img, setImg]);
 
+
     return (
-        <div></div>
-        // <div className="progress-bar" style={{ width: progress + '%'}}></div>
+        <div>
+            <div className="progress-bar" style={{ width: progress + '%'}}>
+            </div>
+        </div>
+        
     )
 }
 

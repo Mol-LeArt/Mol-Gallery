@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import UploadingGallery from '../comps/UploadingGallery';
+import { Link } from "react-router-dom";
 import './OpenGallery.css'
 
 const OpenGallery = () => {
@@ -12,6 +13,8 @@ const OpenGallery = () => {
     const [royalties, setRoyalties] = useState(0)
     const [compliance, setCompliance] = useState(false)
     const [gallery, setGallery] = useState(null)
+
+    // const history = useHistory();
 
     const onSubmit = e => {
         e.preventDefault();
@@ -27,7 +30,6 @@ const OpenGallery = () => {
                 royalties: royalties,
             }
             setGallery(gallery)
-            console.log(gallery)
         } else {
             alert('You must accept!')
         }
@@ -40,7 +42,6 @@ const OpenGallery = () => {
             setRoyaltiesType("decay")
         }
     }
-
 
     return (
         <div className="open-gallery">
@@ -103,6 +104,9 @@ const OpenGallery = () => {
                     <button >Submit</button>
                 </div>
             </form>
+            <div>
+                <Link to="/gallery"><button>Visit Your Gallery</button></Link>
+            </div>
         </div>
     )
 }

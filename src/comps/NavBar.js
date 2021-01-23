@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Connect from './Connect'
 
 import './NavBar.css';
 
@@ -17,6 +18,7 @@ const NavBar = () => {
                     <div>About Us</div>
                 </Link>
                     <div>Connect</div>
+                    <Connect />
             </div>
         </div>
     )
