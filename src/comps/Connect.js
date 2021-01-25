@@ -1,27 +1,34 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { ethers } from 'ethers'
-
-async function connectMetamask() {
-  if (typeof window.ethereum !== undefined) {
-    await window.ethereum.enable()
-  } else {
-    console.log('No injected web3 found')
-  }
-}
 
 const Connect = () => {
   const [account, setAccount] = useState('')
-  const [balance, setBalance] = useState(0)
-  const [connect, toggleConnect] = useState(true)
+  const [connect, toggleConnect] = useState(false)
 
-  // Provided by ethers.js
+  // Detect Metamask and signer/wallet
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+
+  // Detect network change in Metamask and reload ~ provided by ethers.js
   provider.on('network', (newNetwork, oldNetwork) => {
     if (oldNetwork) {
       window.location.reload()
     }
   })
-  const signer = provider.getSigner()
+
+  // Detect account change in Metamask and reload
+  window.ethereum.on('accountsChanged', (accounts) => {
+    setAccount(accounts[0])
+    window.location.reload()
+  })
+
+  async function connectMetamask() {
+    if (typeof window.ethereum !== undefined) {
+      getNetwork()
+      getAccount()
+    } else {
+      console.log('No injected web3 found')
+    }
+  }
 
   const getNetwork = () => {
     provider
@@ -30,10 +37,9 @@ const Connect = () => {
         console.log('current chainId - ' + network.chainId)
         if (network.chainId !== 4) {
           alert('Please switch to Rinkeby Ethereum!')
-          toggleConnect(true)
+          toggleConnect(true) // consider changing button color rather than disabling to signal incorrect network
         } else {
           console.log("You're on Rinkeby now!")
-          toggleConnect(false)
         }
       })
       .catch((err) => {
@@ -42,50 +48,33 @@ const Connect = () => {
   }
 
   // Get Account Address
-  function getAccountAddress() {
-    signer
-      .getAddress()
-      .then((data) => {
-        console.log('address ' + data)
-        setAccount(data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+  function getAccount() {
+    window.ethereum.request({method:'eth_requestAccounts'}).then(result=>{
+          console.log(result[0]);
+          setAccount(result[0])
+    });
   }
 
-  // Get Account Balance
-  function getAccountBalance() {
-    signer
-      .getBalance()
-      .then((data) => {
-        data = ethers.utils.formatEther(data)
-        console.log('balance ' + data)
-        setBalance(data)
-      })
-      .catch((err) => console.log(err))
-  }
-
-  function handleClick() {
-    if (account) {
-      console.log('You address is - ' + account, 'Your balance is - ' + balance)
+  function changeButtonText(account) {
+    if (account){
+      return account.slice(0, 6) + '...' + account.slice(-4)
     } else {
-      alert('Log in Metamask')
+      return "Connect"
     }
   }
 
-  useEffect(() => {
+  function handleClick() {
     connectMetamask()
-    getNetwork()
-    getAccountAddress()
-    getAccountBalance()
-  }, [])
+  }
 
   return (
     <div>
       <button disabled={connect} onClick={handleClick}>
-        Submit
+        {changeButtonText(account)}
       </button>
+
+      {/* {!account && <button disabled={connect} onClick={handleClick}>Connect</button>}
+      {account.slice(0, 6) + '...' + account.slice(-4)}} */}
     </div>
   )
 }

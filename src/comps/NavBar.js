@@ -17,7 +17,6 @@ const NavBar = () => {
                 <Link style={{ textDecoration: 'none' }} to='/about'>
                     <div>About Us</div>
                 </Link>
-                    <div>Connect</div>
                     <Connect />
             </div>
         </div>
