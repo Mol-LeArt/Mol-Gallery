@@ -3,7 +3,9 @@ import { projectFirestore, timeStamp } from  '../firebase/config'
 import './UploadingNFT.css'
 
 const UploadingGallery = ({ gallery }) => {
-    
+    // Get token name and symbol from contract
+
+    // Get gallery name and description from firebase
     const collectionRef = projectFirestore.collection('gallery');
     const createdAt = timeStamp();
     const dict = { ...gallery, createdAt: createdAt }
@@ -11,7 +13,6 @@ const UploadingGallery = ({ gallery }) => {
 
     return (
         <div></div>
-        // <div className="progress-bar" style={{ width: progress + '%'}}></div>
     )
 }
 

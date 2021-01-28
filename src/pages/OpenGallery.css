@@ -15,3 +15,7 @@
 .royalties {
   border: 1px #ccc solid;
 }
+
+.error {
+  color: var(--error);
+}

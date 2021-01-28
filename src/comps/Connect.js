@@ -55,7 +55,7 @@ const Connect = () => {
     });
   }
 
-  function changeButtonText(account) {
+  function changeButtonText(account) {   
     if (account){
       return account.slice(0, 6) + '...' + account.slice(-4)
     } else {
@@ -63,18 +63,11 @@ const Connect = () => {
     }
   }
 
-  function handleClick() {
-    connectMetamask()
-  }
-
   return (
     <div>
-      <button disabled={connect} onClick={handleClick}>
+      <button disabled={connect} onClick={connectMetamask}>
         {changeButtonText(account)}
       </button>
-
-      {/* {!account && <button disabled={connect} onClick={handleClick}>Connect</button>}
-      {account.slice(0, 6) + '...' + account.slice(-4)}} */}
     </div>
   )
 }
