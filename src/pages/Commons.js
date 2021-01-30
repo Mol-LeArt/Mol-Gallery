@@ -4,12 +4,12 @@ import ImageGrid from '../comps/ImageGrid';
 import './Commons.css'
 
 const Commons = () => {
-    const source = "nft"
+    // const source = "nft"
     const gallery = "commons"
     return (
       <div>
         <h1 className='commons-title'>Commons</h1>
-        <p className='commons-desc'>Description for Commons goes here!</p>
+        <p className='commons-desc'>Description for Commons goes here! Add ERC721 token name and token symbol here</p>
 
         <Link
           to={{
@@ -19,7 +19,7 @@ const Commons = () => {
         >
           <button>Upload Image</button>
         </Link>
-        <ImageGrid source={source} />
+        <ImageGrid gallery={gallery} />
       </div>
     )
 }

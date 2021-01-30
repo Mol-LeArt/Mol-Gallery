@@ -7,7 +7,11 @@ import './NavBar.css';
 const NavBar = ({ galleryExists }) => {
   return (
     <div className='nav-bar'>
-      <Link style={{ textDecoration: 'none' }} to='/'>
+      <Link
+        style={{ textDecoration: 'none' }}
+        onClick={() => window.location.href="/"}
+        to='/'
+      >
         <div style={{ textDecoration: 'none' }} className='nav-bar-logo'>
           Mol LeArt
         </div>

@@ -6,7 +6,7 @@ import ImageGrid from '../comps/ImageGrid';
 import './Gallery.css'
 
 const Gallery = ({ account }) => {
-  const source = "gallery"
+  // const source = "gallery"
   const gallery = "personal"
 
   const [galleryName, setGalleryName] = useState('')
@@ -26,7 +26,6 @@ const Gallery = ({ account }) => {
       .get()
     if (query) {
       query.forEach((doc) => {
-        console.log(doc.data())
         setGalleryName(doc.data().galleryName)
         setGalleryDesc(doc.data().galleryDesc)
         setTokenName(doc.data().tokenName)
@@ -49,12 +48,13 @@ const Gallery = ({ account }) => {
     <div>
       <h1 className='gallery-title'>{galleryName}</h1>
       <p className='gallery-desc'>{galleryDesc}</p>
-      <p className='gallery-desc'>{tokenName}</p>
-      <p className='gallery-desc'>{tokenSymbol}</p>
-      <p className='gallery-desc'>{socialToken}</p>
-      <p className='gallery-desc'>{royaltiesType}</p>
-      <p className='gallery-desc'>{royalties}</p>
-      <p className='gallery-desc'>{compliance?"Complied":""}</p>
+      <br/>
+      <p className='gallery-desc'>Token Name: {tokenName}</p>
+      <p className='gallery-desc'>Token Symbol: {tokenSymbol}</p>
+      <p className='gallery-desc'>Social Token: {socialToken}</p>
+      <p className='gallery-desc'>Type of Royalty: {royaltiesType}</p>
+      <p className='gallery-desc'>Royalties %: {royalties}</p>
+      <p className='gallery-desc'>License: {compliance?"Complied":""}</p>
 
       <Link
         to={{
@@ -64,7 +64,7 @@ const Gallery = ({ account }) => {
       >
         <button>Upload Image</button>
       </Link>
-      <ImageGrid source={source} />
+      <ImageGrid gallery={gallery}/>
     </div>
   )
 }

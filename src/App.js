@@ -34,7 +34,7 @@ function App() {
       .get()
 
     query.forEach((doc) => {
-      console.log(account)
+      // console.log(account)
       console.log(doc.data())
       setGalleryExists(true)
     })
