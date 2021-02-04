@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import React from 'react'
+// import { useLocation } from 'react-router-dom'
 import useFirestore from '../hooks/useFirestore';
 import ABI from '../comps/MOLGAMMA_ABI'
 import { ethers } from 'ethers'
@@ -7,20 +7,18 @@ import { ethers } from 'ethers'
 import './NFT.css' 
 
 const NFT = ({ match }) => {
-  const [account, setAccount] = useState(null)
+  // const [account, setAccount] = useState(null)
   const { docs } = useFirestore('nft')
   const img = docs
     .filter((nft) => nft.id === match.params.id)
     .map((nft) => nft.url)
-
-  console.log(img[0])
 
   // Toggle buy button to collaborate for owner of NFT via contract interaction than via firestore.. more efficient
 
   // ----- Smart Contract Interaction Configuration
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-  const address = '0x6F0C686171008fEDF2a193200424d47c673F0762'
+  const address = '0xe05AD5059dB36C23f08004Dfb535e36b8359DF3E'
   const molGammaContract = new ethers.Contract(address, ABI, signer)
   const num = 1000000000000000000
   const num2 = num.toString()
@@ -48,20 +46,20 @@ const NFT = ({ match }) => {
       // console.log("tokenId._hex - " +tokenId._hex);
     })
 
-    const allURI = await molGammaContract.getAllTokenURI()
-    console.log('this is allURI - ' + allURI)
+    // const allURI = await molGammaContract.getAllTokenURI()
+    // console.log('this is allURI - ' + allURI)
   }
 
-  async function getAccount() {
-    window.ethereum
-      .request({ method: 'eth_requestAccounts' })
-      .then((result) => {
-        console.log(result[0])
-        setAccount(result[0])
-      })
-  }
+  // async function getAccount() {
+  //   window.ethereum
+  //     .request({ method: 'eth_requestAccounts' })
+  //     .then((result) => {
+  //       console.log(result[0])
+  //       setAccount(result[0])
+  //     })
+  // }
 
-  getAccount()
+  // getAccount()
 
   function handleClick() {
     molGamma(molGammaContract, num2, img[0])

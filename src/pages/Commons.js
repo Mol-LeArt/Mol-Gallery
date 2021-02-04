@@ -9,11 +9,14 @@ const Commons = () => {
     return (
       <div>
         <h1 className='commons-title'>Commons</h1>
-        <p className='commons-desc'>Description for Commons goes here! Add ERC721 token name and token symbol here</p>
+        <p className='commons-desc'>
+          Description for Commons goes here! Add ERC721 token name and token
+          symbol here
+        </p>
 
         <Link
           to={{
-            pathname: '/uploadNFT',
+            pathname: '/mintNft',
             state: { gallery: gallery },
           }}
         >

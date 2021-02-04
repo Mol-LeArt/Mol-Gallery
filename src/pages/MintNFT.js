@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { useHistory, useLocation } from "react-router-dom";
-import UploadingNFT from '../comps/UploadingNFT'
+import Mint from '../comps/Mint'
 import ImageUpload from '../comps/ImageUpload'
-import './UploadNFT.css'
+import './MintNFT.css'
 
-const UploadNFT = ({ account }) => {
+const MintNFT = ({ account }) => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [img, setImg] = useState(null)
@@ -15,7 +15,6 @@ const UploadNFT = ({ account }) => {
   const history = useHistory()
   const location = useLocation()
   const gallery = location.state.gallery
-  console.log("UploadNFT gallery variable " + gallery)
 
   const getFileForUpload = (img) => {
     setImg(img)
@@ -27,7 +26,7 @@ const UploadNFT = ({ account }) => {
     if (compliance) {
       const nft = {
         account: account,
-        title: title,
+        name: title,
         description: description,
         compliance: compliance,
         gallery: gallery,
@@ -42,14 +41,15 @@ const UploadNFT = ({ account }) => {
     history.push('/')
   }
 
-  // ***** Console Tests ***** //
+  // ----- Console Tests 
   // console.log(metadata, img)
   // console.log('account from App.js - ' + account)
   // console.log('collection from Commons.js - ' + gallery)
+  // console.log("UploadNFT gallery variable " + gallery)
 
   return (
     <div className='from-in-uploadnft'>
-      <h1 className='upload-nft-title'>Upload NFT</h1>
+      <h1 className='upload-nft-title'>Mint NFT</h1>
       <p>Describe the steps to uploading an NFT!</p>
 
       <form onSubmit={onSubmit}>
@@ -78,7 +78,7 @@ const UploadNFT = ({ account }) => {
         <ImageUpload getFileForUpload={getFileForUpload} />
 
         {metadata && (
-          <UploadingNFT metadata={metadata} img={img} setImg={setImg} />
+          <Mint metadata={metadata} img={img} account={account}/>
         )}
 
         <div>
@@ -91,7 +91,7 @@ const UploadNFT = ({ account }) => {
         </div>
 
         <div>
-          <button>Upload</button>
+          <button>Mint</button>
         </div>
       </form>
       <div>
@@ -101,4 +101,4 @@ const UploadNFT = ({ account }) => {
   )
 }
 
-export default UploadNFT
+export default MintNFT

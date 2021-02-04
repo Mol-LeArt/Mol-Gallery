@@ -43,6 +43,7 @@ const ImageGrid = ({ gallery }) => {
   useEffect(() => {
     getAccount()
     checkGallery(account)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
   // console.log(docs)

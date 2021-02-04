@@ -4,10 +4,10 @@ import NavBar from './comps/NavBar';
 import Commons from './pages/Commons';
 import About from './pages/About';
 import OpenGallery from './pages/OpenGallery';
-import UploadNFT from './pages/UploadNFT';
+import MintNFT from './pages/MintNFT'
 import NFT from './pages/NFT';
 import Gallery from './pages/Gallery';
-import { ethers } from 'ethers'
+// import { ethers } from 'ethers'
 import { projectFirestore } from './firebase/config'
 
 
@@ -20,7 +20,7 @@ function App() {
     window.ethereum
       .request({ method: 'eth_requestAccounts' })
       .then((result) => {
-        console.log(result[0])
+        console.log("Account connected - " + result[0])
         setAccount(result[0])
     })
   }
@@ -34,8 +34,7 @@ function App() {
       .get()
 
     query.forEach((doc) => {
-      // console.log(account)
-      console.log(doc.data())
+      // console.log(doc.data())
       setGalleryExists(true)
     })
   }
@@ -58,9 +57,9 @@ function App() {
             component={() => <OpenGallery account={account} />}
           />
           <Route
-            path='/uploadNFT'
+            path='/MintNFT'
             exact
-            component={() => <UploadNFT account={account} />}
+            component={() => <MintNFT account={account} />}
           />
           <Route
             path='/gallery'

@@ -1,6 +1,6 @@
 import React from 'react';
 import { projectFirestore, timeStamp } from  '../firebase/config'
-import './UploadingNFT.css'
+import './Mint.css'
 
 const UploadingGallery = ({ gallery }) => {
     // Get token name and symbol from contract

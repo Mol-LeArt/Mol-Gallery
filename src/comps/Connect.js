@@ -35,11 +35,11 @@ const Connect = () => {
       .getNetwork()
       .then((network) => {
         console.log('current chainId - ' + network.chainId)
-        if (network.chainId !== 4) {
-          alert('Please switch to Rinkeby Ethereum!')
+        if (network.chainId !== 100) {
+          alert('Please switch to xDAI Ethereum!')
           toggleConnect(true) // consider changing button color rather than disabling to signal incorrect network
         } else {
-          console.log("You're on Rinkeby now!")
+          console.log("You're on xDAI now!")
         }
       })
       .catch((err) => {

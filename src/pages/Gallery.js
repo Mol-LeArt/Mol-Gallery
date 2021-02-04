@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import useFirestore from '../hooks/useFirestore'
+// import useFirestore from '../hooks/useFirestore'
 import { projectFirestore } from '../firebase/config'
 import { Link } from 'react-router-dom';
 import ImageGrid from '../comps/ImageGrid';
@@ -41,6 +41,7 @@ const Gallery = ({ account }) => {
 
   useEffect(() => {
     checkAccount()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
 
@@ -58,7 +59,7 @@ const Gallery = ({ account }) => {
 
       <Link
         to={{
-          pathname: '/uploadNFT',
+          pathname: '/mintNft',
           state: { gallery: gallery },
         }}
       >
