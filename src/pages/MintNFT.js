@@ -7,6 +7,8 @@ import './MintNFT.css'
 const MintNFT = ({ account }) => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [sale, setSale] = useState('')
+  const [price, setPrice] = useState('')
   const [img, setImg] = useState(null)
   const [compliance, setCompliance] = useState(false)
   const [metadata, setMetadata] = useState(null)
@@ -26,8 +28,10 @@ const MintNFT = ({ account }) => {
     if (compliance) {
       const nft = {
         account: account,
-        name: title,
+        title: title,
         description: description,
+        sale: sale,
+        price: price,
         compliance: compliance,
         gallery: gallery,
       }
@@ -75,11 +79,31 @@ const MintNFT = ({ account }) => {
           />
         </div>
 
+        <div>
+          <label htmlFor='sale'>Put on sale?</label>
+          <br />
+          <input
+            type='text'
+            value={sale}
+            onChange={(e) => setSale(e.target.value)}
+            placeholder='Yes = 1, no = 0'
+          />
+        </div>
+
+        <div>
+          <label htmlFor='price'>Price in Ξ</label>
+          <br />
+          <input
+            type='text'
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder='Enter amount in Ξ'
+          />
+        </div>
+
         <ImageUpload getFileForUpload={getFileForUpload} />
 
-        {metadata && (
-          <Mint metadata={metadata} img={img} account={account}/>
-        )}
+        {metadata && <Mint metadata={metadata} img={img} account={account} />}
 
         <div>
           <input

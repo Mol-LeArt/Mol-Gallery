@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ethers } from 'ethers'
 
 const Connect = () => {
@@ -36,7 +37,7 @@ const Connect = () => {
       .then((network) => {
         console.log('current chainId - ' + network.chainId)
         if (network.chainId !== 100) {
-          alert('Please switch to xDAI Ethereum!')
+          console.log('Please switch to xDAI Ethereum!')
           toggleConnect(true) // consider changing button color rather than disabling to signal incorrect network
         } else {
           console.log("You're on xDAI now!")
@@ -55,19 +56,32 @@ const Connect = () => {
     });
   }
 
-  function changeButtonText(account) {   
-    if (account){
-      return account.slice(0, 6) + '...' + account.slice(-4)
-    } else {
-      return "Connect"
-    }
+  // function changeButtonText(account) {   
+  //   if (account){
+  //     return account.slice(0, 6) + '...' + account.slice(-4)
+  //   } else {
+  //     return "Connect"
+  //   }
+  // }
+
+  function toProfile() {
+    console.log("go to profile page")
   }
 
   return (
     <div>
-      <button disabled={connect} onClick={connectMetamask}>
-        {changeButtonText(account)}
-      </button>
+      {!connect && (
+        <button disabled={connect} onClick={connectMetamask}>
+          Connect
+        </button>
+      )}
+      {connect && (
+        <Link to='/profile'>
+          <button onClick={toProfile}>
+            {account.slice(0, 6) + ' ... ' + account.slice(-4)}
+          </button>
+        </Link>
+      )}
     </div>
   )
 }

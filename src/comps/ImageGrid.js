@@ -53,14 +53,16 @@ const ImageGrid = ({ gallery }) => {
       {docs &&
         docs.map((doc) => (
           <div className='img-wrap' key={doc.id}>
-            <Link to={`/nft/${doc.id}`}>
+            <Link to={{
+                pathname: `/nft/${doc.id}`
+                }}>
               <img
-                src={doc.url}
+                src={doc.image}
                 onMouseOver={(e) =>
                   (e.currentTarget.src =
                     'https://www.justonecookbook.com/wp-content/uploads/2019/12/Oden-2187-I-1-500x500.jpg')
                 }
-                onMouseOut={(e) => (e.currentTarget.src = doc.url)}
+                onMouseOut={(e) => (e.currentTarget.src = doc.image)}
                 alt='uploaded pic'
               />
             </Link>
