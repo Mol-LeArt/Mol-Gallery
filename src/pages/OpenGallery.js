@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import { projectFirestore } from '../firebase/config';
 import UploadingGallery from '../comps/UploadingGallery';
 import { Link } from "react-router-dom";
@@ -18,7 +19,10 @@ const OpenGallery = ({ account }) => {
   const [royaltiesUri, setRoyaltiesUri] = useState('')
   const [compliance, setCompliance] = useState(false)
   const [gallery, setGallery] = useState(null)
-  const [error, setError] = useState(null)  
+  const [error, setError] = useState(null)
+
+  // ----- Reaect Router Config
+  const history = useHistory()
 
   // ----- Smart Contract Interaction Configuration
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
@@ -44,6 +48,9 @@ const OpenGallery = ({ account }) => {
     }
     setGallery(gallery)
     console.log(gallery)
+
+    history.push('/gallery')
+    // Must also update NavBar.js to change hide "Open a Gallery" and show "Gallery"
   }
 
   async function checkAccount() {
@@ -60,14 +67,14 @@ const OpenGallery = ({ account }) => {
       })
     } else {
       setError(null)
-      console.log("no error")
+      console.log('no error')
     }
     // console.log(account, query)
   }
 
   const onSubmit = (e) => {
     e.preventDefault()
-    
+
     if (compliance) {
       deployContract()
     } else {

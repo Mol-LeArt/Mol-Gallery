@@ -25,14 +25,14 @@ const ImageGrid = ({ gallery }) => {
 
     if (gallery === 'commons') {
       query.forEach((doc) => {
-        let data = { ...doc.data(), id: doc.id }
+        let data = { ...doc.data() }
         docArray.push(data)
         setDocs(docArray)
       })
     } else {
       query.forEach((doc) => {
         if (doc.data().account === account) {
-          let data = { ...doc.data(), id: doc.id }
+          let data = { ...doc.data() }
           docArray.push(data)
           setDocs(docArray)
         }
@@ -52,10 +52,19 @@ const ImageGrid = ({ gallery }) => {
       {!docs && <label>Wow, such empty!</label>}
       {docs &&
         docs.map((doc) => (
-          <div className='img-wrap' key={doc.id}>
-            <Link to={{
-                pathname: `/nft/${doc.id}`
-                }}>
+          <div className='img-wrap' key={doc.tokenId}>
+            <Link
+              to={{
+                pathname: `/nft/${doc.account}:${doc.tokenId}`,
+                state: {
+                  title: doc.title,
+                  description: doc.description,
+                  image: doc.image,
+                  sale: doc.sale,
+                  price: doc.price,
+                },
+              }}
+            >
               <img
                 src={doc.image}
                 onMouseOver={(e) =>

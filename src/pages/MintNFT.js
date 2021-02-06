@@ -13,7 +13,7 @@ const MintNFT = ({ account }) => {
   const [compliance, setCompliance] = useState(false)
   const [metadata, setMetadata] = useState(null)
 
-  // ***** React Router ***** //
+  // ----- Reaect Router Config
   const history = useHistory()
   const location = useLocation()
   const gallery = location.state.gallery
@@ -45,7 +45,7 @@ const MintNFT = ({ account }) => {
     history.push('/')
   }
 
-  // ----- Console Tests 
+  // ----- Console Tests
   // console.log(metadata, img)
   // console.log('account from App.js - ' + account)
   // console.log('collection from Commons.js - ' + gallery)
@@ -103,7 +103,14 @@ const MintNFT = ({ account }) => {
 
         <ImageUpload getFileForUpload={getFileForUpload} />
 
-        {metadata && <Mint metadata={metadata} img={img} account={account} />}
+        {metadata && (
+          <Mint
+            metadata={metadata}
+            img={img}
+            setImg={setImg}
+            account={account}
+          />
+        )}
 
         <div>
           <input

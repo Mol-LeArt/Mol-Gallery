@@ -9,7 +9,7 @@ const NavBar = ({ galleryExists }) => {
     <div className='nav-bar'>
       <Link
         style={{ textDecoration: 'none' }}
-        onClick={() => window.location.href="/"}
+        onClick={() => (window.location.href = '/')}
         to='/'
       >
         <div style={{ textDecoration: 'none' }} className='nav-bar-logo'>
@@ -27,9 +27,14 @@ const NavBar = ({ galleryExists }) => {
           </Link>
         )}
 
+        <Link style={{ textDecoration: 'none' }} to='/galleries'>
+          <div>Galleries</div>
+        </Link>
+
         <Link style={{ textDecoration: 'none' }} to='/about'>
           <div>About Us</div>
         </Link>
+
         <Connect />
       </div>
     </div>

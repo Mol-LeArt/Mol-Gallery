@@ -7,7 +7,8 @@ import OpenGallery from './pages/OpenGallery';
 import MintNFT from './pages/MintNFT'
 import NFT from './pages/NFT';
 import Profile from './pages/Profile'
-import Gallery from './pages/Gallery';
+import Gallery from './pages/Gallery'
+import Galleries from './pages/Galleries'
 // import { ethers } from 'ethers'
 import { projectFirestore } from './firebase/config'
 
@@ -52,6 +53,7 @@ function App() {
         <Switch>
           <Route path='/' exact component={Commons} />
           <Route path='/about' exact component={About} />
+          <Route path='/galleries' exact component={Galleries} />
           <Route path='/profile' exact component={Profile} />
           <Route
             path='/open-gallery'
@@ -68,7 +70,11 @@ function App() {
             exact
             component={() => <Gallery account={account} />}
           />
-          <Route path='/nft/:id' exact component={() => <NFT account={account} />} />
+          <Route
+            path='/nft/:id'
+            exact
+            component={() => <NFT account={account} />}
+          />
         </Switch>
       </div>
     </Router>

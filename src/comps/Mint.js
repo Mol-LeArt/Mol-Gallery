@@ -1,12 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom'
 import fleek from '@fleekhq/fleek-storage-js'
 import ABI from './MOLGAMMA_ABI'
 import { ethers } from 'ethers'
 import { projectFirestore } from '../firebase/config'
 import './Mint.css'
 
-const Mint = ({ metadata, img, account }) => {
-  // ----- Smart Contract Interaction Configuration
+const Mint = ({ metadata, img, setImg, account }) => {
+  const [dict, setDict] = useState({})
+  const [id, setId] = useState(null)
+  const [royaltiesToken, setRoyaltiesToken] = useState(null)
+
+  // ----- Reaect Router Config
+  const history = useHistory()
+
+  // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
 
@@ -54,9 +62,10 @@ const Mint = ({ metadata, img, account }) => {
     const timestamp = date.getTime()
     // const createdAt = timeStamp()
     const dict = { ...metadata, image: baseUrl + hash, createdAt: timestamp }
-    const data = JSON.stringify(dict)
+    setDict(dict)
     console.log('tokenURI is - ', dict)
 
+    const data = JSON.stringify(dict)
     const i = {
       apiKey: 'Vs8ZbWOrhEbCxXtPwkllwg==',
       apiSecret: 'f9RwSgTy/2ccYEKTdImm+E6crqkuyeAIZ8mpBzCmYiI=',
@@ -81,26 +90,15 @@ const Mint = ({ metadata, img, account }) => {
   }
 
   // ----- Smart Contract Interaction & Upload to Firestore
-  async function molGamma(contract, ethPrice, tokenURI, dict) {
+  async function molGamma(contract, ethPrice, tokenURI) {
     try {
       const tx = await contract.mint(metadata.sale, ethPrice, tokenURI)
       console.log('this is tx.hash - ' + tx.hash)
-      await tx.wait()
 
-      contract.on('Transfer', (from, to, tokenId) => {
-        console.log('Token minted - ', from, to)
-        console.log('nft tokenId - ' + tokenId)
-        dict = { ...dict, tokenId: tokenId }
-      })
-
-      contract.on('gRoyaltiesMinted', (contractAddress) => {
-        console.log('gRoyalties contract address - ', contractAddress)
-
-        // Store metadata on Firestore
-        const collectionRef = projectFirestore.collection('nft')
-        dict = { ...dict, gRoyalties: [contractAddress] }
-        collectionRef.add(dict)
-      })
+      const receipt = await tx.wait()
+      console.log('mint receipt is - ', receipt)
+      // console.log('mint receipet statis - ', receipt.status)
+      contractListener(contract)
     } catch (e) {
       console.log(e)
       if (e.code === 4001) {
@@ -109,10 +107,55 @@ const Mint = ({ metadata, img, account }) => {
     }
   }
 
+  // Listen to contract events 
+  function contractListener(contract) {
+    contract.on('Transfer', (from, to, tokenId) => {
+      console.log('Token minted - ', from, to)
+      console.log('NFT tokenId minted - ' + tokenId)
+
+      setId(tokenId.toString())
+    })
+
+    contract.on('gRoyaltiesMinted', (contractAddress) => {
+      console.log('gRoyalties minted at contract address  - ', contractAddress)
+
+      setRoyaltiesToken(contractAddress)
+    })
+  }
+
+  // Store metadata on Firestore
+  function storeMetadata(dict, id, royaltiesToken) {
+    const collectionRef = projectFirestore.collection('nft')
+    dict = { ...dict, tokenId: id, gRoyalties: [royaltiesToken] }
+    collectionRef.add(dict)
+
+    setImg(null)
+    console.log('Success storing metadata to firestore!')
+
+    history.push('/gallery')
+  }
+
   useEffect(() => {
-    checkAccount(account)
+    // if (id === '' && royaltiesToken === '') {
+    //   checkAccount(account)
+    // } else {
+    //   storeMetadata(dict, id, royaltiesToken)
+    // }
+
+    if (!id && !royaltiesToken) {
+      checkAccount(account)
+    } else if (id && royaltiesToken) {
+      storeMetadata(dict, id, royaltiesToken)
+    } else {
+      console.log("Cracks in useEffect of Mint.js")
+    }
+
+    console.log('id in useEffect - ', id)
+    console.log('gRoyalties in useEffect - ', royaltiesToken)
+    console.log('dict in useEffect - ', dict)
+    // console.log('contractEvent in useEffect - ', contractEvent)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [id, royaltiesToken])
 
   // useEffect(() => {
   //   if (url) {

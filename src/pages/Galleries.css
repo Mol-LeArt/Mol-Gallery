@@ -1,9 +1,20 @@
+.galleries-title {
+  margin-top: 60px;
+  font-size: 2.6rem;
+  text-align: center;
+}
+
+.galleries-desc {
+  text-align: center;
+}
+
 .img-grid {
   margin: 20px auto;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 20px;
 }
+
 .img-wrap {
   overflow: hidden;
   height: 0;
@@ -12,6 +23,7 @@
   position: relative;
   opacity: 1;
 }
+
 .img-wrap img {
   min-width: 100%;
   min-height: 100%;
@@ -20,3 +32,4 @@
   top: 0;
   left: 0;
 }
+
