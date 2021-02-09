@@ -28,8 +28,8 @@ const Gallery = ({ account }) => {
       query.forEach((doc) => {
         setGalleryName(doc.data().galleryName)
         setGalleryDesc(doc.data().galleryDesc)
-        setTokenName(doc.data().tokenName)
-        setTokenSymbol(doc.data().tokenSymbol)
+        setTokenName(doc.data().tokenName) // from preview
+        setTokenSymbol(doc.data().tokenSymbol) // from preview
         setSocialToken(doc.data().socialToken)
         setRoyaltiesType(doc.data().royaltiesType)
         setRoyalties(doc.data().royalties)
