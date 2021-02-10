@@ -17,9 +17,10 @@ const Commons = () => {
   const getUri = async () => {
     const _contract = new ethers.Contract(contract, ABI, signer)
 
-    _contract.getAllTokenURI().then((uri) => {
-      setUris(uri)
-    })
+    _contract.getAllTokenURI().then((uris) => {
+      setUris(uris)
+      console.log(uris)
+    }).catch(e => console.log(e))
   }
 
   useEffect(() => {

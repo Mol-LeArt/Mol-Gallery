@@ -8,7 +8,7 @@ import ABI from '../comps/MOLGAMMA_ABI'
 import './Gallery.css'
 
 const Gallery = ({ account }) => {
-  const [uris, setUris] = useState([])
+  const [uris, setUris] = useState({})
   const gallery = 'personal'
 
   // React Router Config
@@ -23,7 +23,7 @@ const Gallery = ({ account }) => {
   const getUri = async () => {
       _contract.getAllTokenURI().then((uri) => {
         setUris(uri)
-      })
+      }).catch(e => console.log(e))
   }
 
   const [galleryName, setGalleryName] = useState('')
@@ -80,7 +80,7 @@ const Gallery = ({ account }) => {
       >
         <button>Upload Image</button>
       </Link>
-      <ImageGrid uris={uris}/>
+      <ImageGrid contract={contract} uris={uris}/>
     </div>
   )
 }

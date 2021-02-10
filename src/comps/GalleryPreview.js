@@ -29,7 +29,7 @@ const GalleryPreview = ({ contract }) => {
                 setName(n)
                 setSymbol(s)
 
-                for (var i = 2; i >= 0; i--) {
+                for (var i = 0; i < uri.length; i++) {
                   fetch(uri[i])
                     .then((res) => res.json())
                     .then((data) => {
@@ -37,7 +37,6 @@ const GalleryPreview = ({ contract }) => {
                       let image = { id: data.title + contract.slice(-4), image: data.image}
                       imageArray.push(image)
                       setImages([...imageArray])
-                      
                     }).catch(e => console.log(e))
                 }
               })

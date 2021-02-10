@@ -97,7 +97,6 @@ const Mint = ({ metadata, img, setImg, account }) => {
 
       const receipt = await tx.wait()
       console.log('mint receipt is - ', receipt)
-      // console.log('mint receipet statis - ', receipt.status)
       contractListener(contract)
     } catch (e) {
       console.log(e)
