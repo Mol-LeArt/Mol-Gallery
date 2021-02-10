@@ -66,12 +66,12 @@ function App() {
             component={() => <MintNFT account={account} />}
           />
           <Route
-            path='/gallery'
+            path='/gallery/:contract'
             exact
             component={() => <Gallery account={account} />}
           />
           <Route
-            path='/nft/:id'
+            path='/nft/:image'
             exact
             component={() => <NFT account={account} />}
           />

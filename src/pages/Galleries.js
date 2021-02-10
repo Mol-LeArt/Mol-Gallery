@@ -1,30 +1,25 @@
 import React, { useState, useEffect } from 'react'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { projectFirestore } from '../firebase/config'
 // import ImageGrid from '../comps/ImageGrid'
-import { ethers } from 'ethers'
-import ABI from '../comps/MOLGAMMA_ABI'
 import GalleryPreview from '../comps/GalleryPreview'
 
 import './Galleries.css'
 
 const Galleries = () => {
   const [contracts, setContracts] = useState([])
-//   const [name, setName] = useState('')
-// const [symbol, setSymbol] = useState('')
-// const [uri, setUri] = useState([])
 
-const importGalleries = async () => {
-  const contracts = []
-  const query = await projectFirestore.collection('gallery').get()
+  const importGalleries = async () => {
+    const contracts = []
+    const query = await projectFirestore.collection('gallery').get()
 
-  query.forEach((doc) => {
-    let data = doc.data().contract
-    contracts.push(data)
-  })
+    query.forEach((doc) => {
+      let data = doc.data().contract
+      contracts.push(data)
+    })
 
-  setContracts(contracts)
-}
+    setContracts(contracts)
+  }
 
   useEffect(() => {
     importGalleries()
@@ -38,7 +33,14 @@ const importGalleries = async () => {
       {contracts &&
         contracts.map((contract) => (
           <div key={contract}>
-            <GalleryPreview contract={contract} />
+            <Link
+              to={{
+                pathname: `/gallery/${contract}`,
+                state: { contract: contract },
+              }}
+            >
+              <GalleryPreview contract={contract} />
+            </Link>
           </div>
         ))}
     </div>

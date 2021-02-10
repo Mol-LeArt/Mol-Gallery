@@ -1,79 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
-import { projectFirestore } from '../firebase/config'
 import './ImageGrid.css'
 
-const ImageGrid = ({ gallery }) => {
-  const [account, setAccount] = useState(null)
-  const [docs, setDocs] = useState(null)
+const ImageGrid = ({ gallery, uris }) => {
+  const [nfts, setNfts] = useState(null)
 
-  async function getAccount() {
-    window.ethereum
-      .request({ method: 'eth_requestAccounts' })
-      .then((result) => {
-        // console.log(result[0])
-        setAccount(result[0])
-      })
-  }
-
-  async function checkGallery(account) {
-    const docArray = []
-    const query = await projectFirestore
-      .collection('nft')
-      .where('gallery', '==', gallery)
-      .get()
-
-    if (gallery === 'commons') {
-      query.forEach((doc) => {
-        let data = { ...doc.data() }
-        docArray.push(data)
-        setDocs(docArray)
-      })
-    } else {
-      query.forEach((doc) => {
-        if (doc.data().account === account) {
-          let data = { ...doc.data() }
-          docArray.push(data)
-          setDocs(docArray)
-        }
-      })
+  const getNft = async () => {
+    const nftArray = []
+    
+    for (var i = 0; i < uris.length; i++) {
+      fetch(uris[i])
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data.title)
+          const nft = {
+            id: makeid(5),
+            title: data.title,
+            description: data.description,
+            image: data.image,
+            sale: data.sale,
+            price: data.price
+          }
+          nftArray.push(nft)
+          setNfts([...nftArray])
+        })
     }
   }
 
-  useEffect(() => {
-    getAccount()
-    checkGallery(account)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  function makeid(length) {
+   var result           = '';
+   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
 
-  // console.log(docs)
+  useEffect(() => {
+    getNft()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uris])
+
   return (
     <div className='img-grid'>
-      {!docs && <label>Wow, such empty!</label>}
-      {docs &&
-        docs.map((doc) => (
-          <div className='img-wrap' key={doc.tokenId}>
+      {!nfts && <label>Wow, such empty!</label>}
+      {nfts &&
+        nfts.map((nfts) => (
+          <div className='img-wrap' key={nfts.id}>
             <Link
               to={{
-                pathname: `/nft/${doc.account}:${doc.tokenId}`,
+                pathname: `/nft/${nfts.id}`,
                 state: {
-                  title: doc.title,
-                  description: doc.description,
-                  image: doc.image,
-                  sale: doc.sale,
-                  price: doc.price,
+                  title: nfts.title,
+                  description: nfts.description,
+                  image: nfts.image,
+                  sale: nfts.sale,
+                  price: nfts.price,
                 },
               }}
             >
-              <img
-                src={doc.image}
-                onMouseOver={(e) =>
-                  (e.currentTarget.src =
-                    'https://www.justonecookbook.com/wp-content/uploads/2019/12/Oden-2187-I-1-500x500.jpg')
-                }
-                onMouseOut={(e) => (e.currentTarget.src = doc.image)}
-                alt='uploaded pic'
-              />
+              <img src={nfts.image} alt='' />
             </Link>
           </div>
         ))}
