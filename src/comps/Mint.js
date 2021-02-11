@@ -89,7 +89,7 @@ const Mint = ({ metadata, img, setImg, account }) => {
     }
   }
 
-  // ----- Smart Contract Interaction & Upload to Firestore
+  // ----- Smart Contract Interaction
   async function molGamma(contract, ethPrice, tokenURI) {
     try {
       const tx = await contract.mint(metadata.sale, ethPrice, tokenURI)

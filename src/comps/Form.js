@@ -1,43 +1,74 @@
-import React, { useState } from 'react';
-import './Form.css';
-import ImageUpload from './ImageUpload';
+import React, { useState } from 'react'
+import { ethers } from 'ethers'
 
-const Form = ({ toggleUploadStatus, uploadImgStatus, setUploadFile }) => {
-    const [img, setImg] = useState(null);
+import './Form.css'
 
-    const getFileForUpload = (file) => {
-        console.log("child data - " + file);
-        setImg(file);
+const Form = ({ toggleForm, contract, tokenId }) => {
+  const [sale, setSale] = useState('')
+  const [price, setPrice] = useState('')
+
+  const clickBackdrop = (e) => {
+    // classList is used to identify className
+    if (e.target.classList.contains('backdrop')) {
+      toggleForm(false)
     }
+  }
 
-    const handleClick = (e) => {
-        console.log("upload image");
-        e.preventDefault();
-        console.log(img);
-        
-        // Upload image in Portfolio.js
-        if (img) {
-            setUploadFile(img);
-            
-            // Dismiss form modal
-            toggleUploadStatus(false);
-        } else {
-            alert("Cannot upload this file. Please select another file.");
-        }
+  const handleClick = (e) => {
+    e.preventDefault()
+    console.log('is token id #', tokenId, ' on sale?', sale, 'your price is ', price, )
+
+    updateSale(tokenId)
+  }
+
+  const updateSale = async (tokenId) => {
+    try {
+      const p = ethers.utils.parseEther(price)
+      const tx = await contract.updateSale(p, tokenId, sale)
+      console.log('this is tx.hash for updating sale', tx.hash)
+
+      const receipt = await tx.wait()
+      console.log('update sale receipt is - ', receipt)
+
+      window.location.reload()
+    } catch (e) {
+      console.log(e.message)
     }
+  }
 
-    return (
-        <form className="generic-form">
-            <h1 className="generic-form-title">Form Title</h1>
-            
-            <label className="generic-form-label">Label 1</label>
-            <input className="generic-form-input" type="text" placeholder="Placeholder 1"/>
+  return (
+    <div className='backdrop' onClick={clickBackdrop}>
+      <form className='form'>
+        <h1 className='form-title'>Update Sale</h1>
 
-            { uploadImgStatus && <ImageUpload getFileForUpload={getFileForUpload}/>}
+        <div>
+          <label htmlFor='sale'>Put on sale?</label>
+          <br />
+          <input
+            type='text'
+            value={sale}
+            onChange={(e) => setSale(e.target.value)}
+            placeholder='Yes = 1, no = 0'
+          />
+        </div>
 
-            <button className="generic-form-button" type="submit" onClick={handleClick}>Submit</button>
-        </form>
-    )
+        <div>
+          <label htmlFor='price'>Price in Ξ</label>
+          <br />
+          <input
+            type='text'
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder='Enter amount in Ξ'
+          />
+        </div>
+
+        <button className='form-button' type='submit' onClick={handleClick}>
+          Confirm
+        </button>
+      </form>
+    </div>
+  )
 }
 
-export default Form;
+export default Form

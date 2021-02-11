@@ -17,8 +17,6 @@ const ImageGrid = ({ contract, uris }) => {
             title: data.title,
             description: data.description,
             image: data.image,
-            sale: data.sale,
-            price: data.price
           }
           nftArray.push(nft)
           setNfts([...nftArray])
@@ -56,8 +54,6 @@ const ImageGrid = ({ contract, uris }) => {
                   title: nfts.title,
                   description: nfts.description,
                   image: nfts.image,
-                  sale: nfts.sale,
-                  price: nfts.price,
                 },
               }}
             >

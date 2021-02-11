@@ -28,8 +28,6 @@ const Gallery = ({ account }) => {
 
   const [galleryName, setGalleryName] = useState('')
   const [galleryDesc, setGalleryDesc] = useState('')
-  const [tokenName, setTokenName] = useState('')
-  const [tokenSymbol, setTokenSymbol] = useState('')
   const [socialToken, setSocialToken] = useState('')
   const [royaltiesType, setRoyaltiesType] = useState(null)
   const [royalties, setRoyalties] = useState(0)
@@ -45,8 +43,6 @@ const Gallery = ({ account }) => {
       query.forEach((doc) => {
         setGalleryName(doc.data().galleryName)
         setGalleryDesc(doc.data().galleryDesc)
-        setTokenName(doc.data().tokenName) // from preview
-        setTokenSymbol(doc.data().tokenSymbol) // from preview
         setSocialToken(doc.data().socialToken)
         setRoyaltiesType(doc.data().royaltiesType)
         setRoyalties(doc.data().royalties)

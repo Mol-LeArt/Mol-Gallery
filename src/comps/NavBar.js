@@ -21,11 +21,7 @@ const NavBar = ({ galleryExists }) => {
           <Link style={{ textDecoration: 'none' }} to='/open-gallery'>
             <div>Open a Gallery</div>
           </Link>
-        ) : (
-          <Link style={{ textDecoration: 'none' }} to='/gallery'>
-            {galleryExists && <div>Gallery</div>}
-          </Link>
-        )}
+        ) : ('')}
 
         <Link style={{ textDecoration: 'none' }} to='/galleries'>
           <div>Galleries</div>
