@@ -6,7 +6,7 @@ import { ethers } from 'ethers'
 import { projectFirestore } from '../firebase/config'
 import './Mint.css'
 
-const Mint = ({ metadata, img, setImg, account }) => {
+const Mint = ({ contract, metadata, sale, price, img, setImg, account }) => {
   const [dict, setDict] = useState({})
   const [id, setId] = useState(null)
   const [royaltiesToken, setRoyaltiesToken] = useState(null)
@@ -14,29 +14,15 @@ const Mint = ({ metadata, img, setImg, account }) => {
   // ----- Reaect Router Config
   const history = useHistory()
 
-  // ----- Smart Contract Interaction Config
+  // ----- Smart Contract Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-
-  // ----- Retrieve Contract Address from Firestore
-  async function checkAccount(account) {
-    const query = await projectFirestore
-      .collection('gallery')
-      .where('account', '==', account)
-      .get()
-
-    query.forEach((doc) => {
-      console.log('contract to mint from - ', doc.data().contract)
-      const contract = new ethers.Contract(doc.data().contract, ABI, signer)
-      upload(img, contract)
-    })
-  }
 
   // ----- Upload image to Fleek Storage
   const upload = async (data, contract) => {
     const input = {
-      apiKey: 'Vs8ZbWOrhEbCxXtPwkllwg==',
-      apiSecret: 'f9RwSgTy/2ccYEKTdImm+E6crqkuyeAIZ8mpBzCmYiI=',
+      apiKey: process.env.REACT_APP_FLEEK_API_KEY,
+      apiSecret: process.env.REACT_APP_FLEEK_API_SECRET,
       bucket: 'audsssy-team-bucket',
       key: metadata.title,
       data,
@@ -46,29 +32,28 @@ const Mint = ({ metadata, img, setImg, account }) => {
       const result = await fleek.upload(input)
       console.log('this is image hash from fleek - ' + result.hash)
 
-      // Mint NFT
-      mint(result.hash, contract)
+      // Prepare to mint NFT
+      uploadAndMint(result.hash, contract)
     } catch (e) {
       console.log('error is - ' + e)
     }
   }
 
-  // ----- Mint NFT
-  const mint = async (hash, contract) => {
+  // ----- Upload tokenURI and Mint NFT
+  const uploadAndMint = async (hash, contract) => {
     const baseUrl = 'https://ipfs.io/ipfs/'
 
     // Add timestamp to metadata
     const date = new Date()
     const timestamp = date.getTime()
-    // const createdAt = timeStamp()
     const dict = { ...metadata, image: baseUrl + hash, createdAt: timestamp }
     setDict(dict)
-    console.log('tokenURI is - ', dict)
+    console.log('tokenURI at mint is - ', dict)
 
     const data = JSON.stringify(dict)
     const i = {
-      apiKey: 'Vs8ZbWOrhEbCxXtPwkllwg==',
-      apiSecret: 'f9RwSgTy/2ccYEKTdImm+E6crqkuyeAIZ8mpBzCmYiI=',
+      apiKey: process.env.REACT_APP_FLEEK_API_KEY,
+      apiSecret: process.env.REACT_APP_FLEEK_API_SECRET,
       bucket: 'audsssy-team-bucket',
       key: hash,
       data,
@@ -82,22 +67,28 @@ const Mint = ({ metadata, img, setImg, account }) => {
       // Mint NFT
       const tokenUri = baseUrl + result.hash
       console.log(tokenUri)
-      const price = ethers.utils.parseEther(metadata.price)
-      molGamma(contract, price, tokenUri, dict)
+      const p = ethers.utils.parseEther(price)
+      molGamma(contract, p, tokenUri, dict)
     } catch (e) {
       console.log('error is - ' + e, i)
     }
   }
 
-  // ----- Smart Contract Interaction
+  // ----- Mint NFT
   async function molGamma(contract, ethPrice, tokenURI) {
+    const _contract = new ethers.Contract(contract, ABI, signer)
     try {
-      const tx = await contract.mint(metadata.sale, ethPrice, tokenURI)
-      console.log('this is tx.hash - ' + tx.hash)
+      const tx = await _contract.mint(sale, ethPrice, tokenURI)
+      console.log('tx.hash for minting - ' + tx.hash)
 
-      const receipt = await tx.wait()
-      console.log('mint receipt is - ', receipt)
-      contractListener(contract)
+      tx.wait().then((receipt) => {
+        if (receipt.confirmations === 1) {
+          console.log('mint receipt is - ', receipt)
+          history.push('/galleries')
+        }
+      })
+      
+      contractListener(_contract)
     } catch (e) {
       console.log(e)
       if (e.code === 4001) {
@@ -106,8 +97,10 @@ const Mint = ({ metadata, img, setImg, account }) => {
     }
   }
 
-  // Listen to contract events 
+  // ----- Listen to contract events 
   function contractListener(contract) {
+    console.log('listening ')
+
     contract.on('Transfer', (from, to, tokenId) => {
       console.log('Token minted - ', from, to)
       console.log('NFT tokenId minted - ' + tokenId)
@@ -131,30 +124,14 @@ const Mint = ({ metadata, img, setImg, account }) => {
     setImg(null)
     console.log('Success storing metadata to firestore!')
 
-    history.push('/gallery')
+    history.push('/galleries')
   }
 
   useEffect(() => {
-    // if (id === '' && royaltiesToken === '') {
-    //   checkAccount(account)
-    // } else {
-    //   storeMetadata(dict, id, royaltiesToken)
-    // }
+    upload(img, contract)
 
-    if (!id && !royaltiesToken) {
-      checkAccount(account)
-    } else if (id && royaltiesToken) {
-      storeMetadata(dict, id, royaltiesToken)
-    } else {
-      console.log("Cracks in useEffect of Mint.js")
-    }
-
-    console.log('id in useEffect - ', id)
-    console.log('gRoyalties in useEffect - ', royaltiesToken)
-    console.log('dict in useEffect - ', dict)
-    // console.log('contractEvent in useEffect - ', contractEvent)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, royaltiesToken])
+  }, [])
 
   // useEffect(() => {
   //   if (url) {

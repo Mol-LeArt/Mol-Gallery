@@ -9,7 +9,6 @@ const ImageGrid = ({ contract, uris }) => {
     const nftArray = []
     
     for (var i = 0; i < uris.length; i++) {
-      console.log(i)
       fetch(uris[i])
         .then((res) => res.json())
         .then((data) => {
@@ -24,16 +23,6 @@ const ImageGrid = ({ contract, uris }) => {
     }
   }
 
-  // function makeid(length) {
-  //   var result           = '';
-  //   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  //   var charactersLength = characters.length;
-  //   for ( var i = 0; i < length; i++ ) {
-  //       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  //   }
-  //   return result;
-  // }
-
   useEffect(() => {
     getNft()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,7 +36,7 @@ const ImageGrid = ({ contract, uris }) => {
           <div className='img-wrap' key={index+1}>
             <Link
               to={{
-                pathname: `/nft/${index+1}`,
+                pathname: `/nft/${contract}:${index+1}`,
                 state: {
                   tokenId: index+1,
                   contract: contract,

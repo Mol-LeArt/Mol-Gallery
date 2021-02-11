@@ -14,6 +14,7 @@ const NFT = ({ account }) => {
   const [price, setPrice] = useState(0.0)
   const [match, toggleMatch] = useState(null)
   const [form, toggleForm] = useState(false)
+  const [buttonTitle, setButtonTitle] = useState('Buy')
 
   // ----- Reaect Router Config
   const location = useLocation()
@@ -54,6 +55,10 @@ const NFT = ({ account }) => {
         setSale(data[0])
         const p = ethers.utils.formatEther(data[1].toString())
         setPrice(p)
+
+        if (data[0] === 0) {
+          setButtonTitle('Not for sale!')
+        }
       })
       .catch((e) => console.log(e))
   }
@@ -133,9 +138,8 @@ const NFT = ({ account }) => {
         <div>Royalties: {royalties}%</div>
         <div>Owner: {owner} </div>
         <button onClick={handleBuy} disabled={sale === 0 || match}>
-          Buy
+          {buttonTitle}
         </button>
-        {/* {match && <Form></Form>} */}
         {form && (
           <Form
             toggleForm={toggleForm}

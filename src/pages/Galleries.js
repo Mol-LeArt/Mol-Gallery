@@ -9,6 +9,7 @@ import './Galleries.css'
 const Galleries = () => {
   const [contracts, setContracts] = useState([])
 
+  // ----- Get Contract from Firestore
   const importGalleries = async () => {
     const contracts = []
     const query = await projectFirestore.collection('gallery').get()
@@ -38,6 +39,7 @@ const Galleries = () => {
                 pathname: `/gallery/${contract}`,
                 state: { contract: contract },
               }}
+              style={{ textDecoration: 'none' }}
             >
               <GalleryPreview contract={contract} />
             </Link>

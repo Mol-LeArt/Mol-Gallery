@@ -49,28 +49,30 @@ const OpenGallery = ({ account }) => {
     setGallery(gallery)
     console.log(gallery)
 
-    history.push('/gallery')
-    // Must also update NavBar.js to change hide "Open a Gallery" and show "Gallery"
+    contract.deployTransaction.wait().then((receipt) => {
+      if (receipt.confirmations === 1) {
+        history.push('/galleries')
+      } 
+    }).catch(e => console.log(e))
   }
 
-  async function checkAccount() {
-    const query = await projectFirestore
-      .collection('gallery')
-      .where('account', '==', account)
-      .get()
-    console.log(error)
-    if (query) {
-      query.forEach((doc) => {
-        console.log(account)
-        console.log(doc.data())
-        setError('Only one gallery per wallet, for now')
-      })
-    } else {
-      setError(null)
-      console.log('no error')
-    }
-    // console.log(account, query)
-  }
+  // async function checkAccount() {
+  //   const query = await projectFirestore
+  //     .collection('gallery')
+  //     .where('account', '==', account)
+  //     .get()
+  //   if (query) {
+  //     query.forEach((doc) => {
+  //       console.log(account)
+  //       console.log(doc.data())
+  //       setError('Only one gallery per wallet, for now')
+  //     })
+  //   } else {
+  //     setError(null)
+  //     console.log('no error')
+  //   }
+  //   console.log(account, query)
+  // }
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -91,7 +93,7 @@ const OpenGallery = ({ account }) => {
   }
 
   useEffect(() => {
-    checkAccount()
+    // checkAccount()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

@@ -9,6 +9,7 @@ import './Gallery.css'
 
 const Gallery = ({ account }) => {
   const [uris, setUris] = useState({})
+  const [isOwner, toggleIsOwner] = useState(false)
   const gallery = 'personal'
 
   // React Router Config
@@ -26,6 +27,17 @@ const Gallery = ({ account }) => {
       }).catch(e => console.log(e))
   }
 
+  const getOwner = async () => {
+    _contract.creator().then((creator) => {
+        const c = creator.toLowerCase()
+        if (c === account) {
+          toggleIsOwner(true)
+        } else {
+          toggleIsOwner(false)
+        }
+      }).catch((e) => console.log(e))
+  }
+
   const [galleryName, setGalleryName] = useState('')
   const [galleryDesc, setGalleryDesc] = useState('')
   const [socialToken, setSocialToken] = useState('')
@@ -34,10 +46,10 @@ const Gallery = ({ account }) => {
   const [compliance, setCompliance] = useState(false)
   // console.log(account)
 
-  async function checkAccount() {
+  async function getGallery() {
     const query = await projectFirestore
       .collection('gallery')
-      .where('account', '==', account)
+      .where('contract', '==', contract)
       .get()
     if (query) {
       query.forEach((doc) => {
@@ -49,13 +61,13 @@ const Gallery = ({ account }) => {
         setCompliance(doc.data().compliance)
       })
     }
-    // console.log(account, query)
   }
 
   useEffect(() => {
-    checkAccount()
+    getGallery()
     getUri()
-    // console.log(contract)
+    getOwner()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -71,10 +83,10 @@ const Gallery = ({ account }) => {
       <Link
         to={{
           pathname: '/mintNft',
-          state: { gallery: gallery },
+          state: { gallery: gallery, contract: contract },
         }}
       >
-        <button>Upload Image</button>
+        { (isOwner) && <button>Upload Image</button>}
       </Link>
       <ImageGrid contract={contract} uris={uris}/>
     </div>

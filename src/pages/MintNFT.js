@@ -17,6 +17,7 @@ const MintNFT = ({ account }) => {
   const history = useHistory()
   const location = useLocation()
   const gallery = location.state.gallery
+  const contract = location.state.contract
 
   const getFileForUpload = (img) => {
     setImg(img)
@@ -30,10 +31,8 @@ const MintNFT = ({ account }) => {
         account: account,
         title: title,
         description: description,
-        sale: sale,
-        price: price,
         compliance: compliance,
-        gallery: gallery,
+        // gallery: gallery,
       }
       setMetadata(nft)
     } else {
@@ -105,7 +104,10 @@ const MintNFT = ({ account }) => {
 
         {metadata && (
           <Mint
+            contract={contract}
             metadata={metadata}
+            sale={sale}
+            price={price}
             img={img}
             setImg={setImg}
             account={account}

@@ -70,6 +70,7 @@ const GalleryPreview = ({ contract }) => {
                 <img src={image.image} alt='preview' />
               </div>
             ))}
+          {!images && <div>This gallery is empty!</div>}
         </div>
     </div>
   )
