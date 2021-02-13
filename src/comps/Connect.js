@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ethers } from 'ethers'
+import ABI from '../comps/MOLGAMMA_ABI'
+import { projectFirestore } from '../firebase/config'
 
 const Connect = () => {
   const [account, setAccount] = useState('')
   const [connect, toggleConnect] = useState(false)
+  const [contract, setContract] = useState({})
 
-  // Detect Metamask and signer/wallet
+  // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+  const signer = provider.getSigner()
 
   // Detect network change in Metamask and reload ~ provided by ethers.js
   provider.on('network', (newNetwork, oldNetwork) => {
@@ -38,7 +42,7 @@ const Connect = () => {
         console.log('current chainId - ' + network.chainId)
         if (network.chainId !== 100) {
           console.log('Please switch to xDAI Ethereum!')
-          toggleConnect(true) // consider changing button color rather than disabling to signal incorrect network
+          toggleConnect(true)
         } else {
           console.log("You're on xDAI now!")
         }
@@ -49,37 +53,39 @@ const Connect = () => {
   }
 
   // Get Account Address
-  function getAccount() {
-    window.ethereum.request({method:'eth_requestAccounts'}).then(result=>{
-          console.log(result[0]);
-          setAccount(result[0])
-    });
+  const getAccount = async () => {
+    window.ethereum
+      .request({ method: 'eth_requestAccounts' })
+      .then((result) => {
+        setAccount(result[0])
+        getContract(result[0])
+      })
   }
 
-  // function changeButtonText(account) {   
-  //   if (account){
-  //     return account.slice(0, 6) + '...' + account.slice(-4)
-  //   } else {
-  //     return "Connect"
-  //   }
-  // }
+  const getContract = async (account) => {
+    const query = await projectFirestore
+      .collection('gallery')
+      .where('account', '==', account)
+      .get()
 
-  function toProfile() {
-    console.log("go to profile page")
+    query.forEach((doc) => {
+      // const c = new ethers.Contract(doc.data().contract, ABI, signer)
+      setContract(doc.data().contract)
+    })
   }
 
   return (
     <div>
-      {!connect && (
-        <button disabled={connect} onClick={connectMetamask}>
-          Connect
-        </button>
-      )}
+      {!connect && <button onClick={connectMetamask}>Connect</button>}
       {connect && (
-        <Link to='/profile'>
-          <button onClick={toProfile}>
-            {account.slice(0, 6) + ' ... ' + account.slice(-4)}
-          </button>
+        <Link
+          to={{
+            pathname: `/profile/${account}`,
+            state: { account: account, contract: contract },
+          }}
+          style={{ textDecoration: 'none' }}
+        >
+          <button>{account.slice(0, 6) + ' ... ' + account.slice(-4)}</button>
         </Link>
       )}
     </div>

@@ -54,7 +54,7 @@ function App() {
           <Route path='/' exact component={Commons} />
           <Route path='/about' exact component={About} />
           <Route path='/galleries' exact component={Galleries} />
-          <Route path='/profile' exact component={Profile} />
+          <Route path='/profile/:account' exact component={Profile} />
           <Route
             path='/open-gallery'
             exact

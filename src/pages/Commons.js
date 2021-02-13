@@ -45,7 +45,7 @@ const Commons = () => {
       >
         <button>Upload Image</button>
       </Link>
-      <ImageGrid uris={uris} />
+      <ImageGrid contract={contract} uris={uris} />
     </div>
   )
 }
