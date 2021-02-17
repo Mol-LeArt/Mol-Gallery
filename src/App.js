@@ -9,49 +9,62 @@ import NFT from './pages/NFT';
 import Profile from './pages/Profile'
 import Gallery from './pages/Gallery'
 import Galleries from './pages/Galleries'
+import ManageVault from './pages/ManageVault'
 // import { ethers } from 'ethers'
 import { projectFirestore } from './firebase/config'
 
 
 function App() {
   const [account, setAccount] = useState(null)
-  const [galleryExists, setGalleryExists] = useState(false)
+  const [hasGallery, toggleHasGallery] = useState(false)
+  const [vault, setVault] = useState(null)
 
-  // Get Account Address
-  async function getAccount() {
+  const getAccount = async () => {
     window.ethereum
       .request({ method: 'eth_requestAccounts' })
       .then((result) => {
         console.log("Account connected - " + result[0])
         setAccount(result[0])
+        getGallery(result[0])
+        getVault(result[0])
     })
   }
 
-  // Check if Account has a gallery to toggle
-  // "Gallery" button in NavBar.js
-  async function checkAccount(account) {
+  const getGallery = async (account) => {
     const query = await projectFirestore
       .collection('gallery')
       .where('account', '==', account)
       .get()
 
+    if (!query.empty) {
+      toggleHasGallery(true)
+    }
+  }
+
+  const getVault = async (account) => {
+    const query = await projectFirestore.collection('vault').where('owners', 'array-contains', account).get()
+    // console.log(query.empty)
+
+
     query.forEach((doc) => {
-      // console.log(doc.data())
-      setGalleryExists(true)
+      setVault(doc.data().contract)
     })
   }
 
   useEffect(() => {
     getAccount()
-    checkAccount(account)
-  }, [account])
+  }, [])
   
   return (
     <Router>
       <div className='App'>
-        <NavBar galleryExists={galleryExists} />
+        <NavBar hasGallery={hasGallery} />
         <Switch>
-          <Route path='/' exact component={Commons} />
+          <Route
+            path='/'
+            exact
+            component={() => <Commons />}
+          />
           <Route path='/about' exact component={About} />
           <Route path='/galleries' exact component={Galleries} />
           <Route path='/profile/:account' exact component={Profile} />
@@ -61,7 +74,12 @@ function App() {
             component={() => <OpenGallery account={account} />}
           />
           <Route
-            path='/MintNFT'
+            path='/manage'
+            exact
+            component={() => <ManageVault vault={vault}/>}
+          />
+          <Route
+            path='/mint'
             exact
             component={() => <MintNFT account={account} />}
           />

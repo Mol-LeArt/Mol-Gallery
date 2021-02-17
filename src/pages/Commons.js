@@ -6,13 +6,13 @@ import ABI from '../comps/MOLGAMMA_ABI'
 
 import './Commons.css'
 
-const Commons = () => {
+const Commons = ({ hasVault }) => {
   const [uris, setUris] = useState([])
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-  const contract = '0xada994f71399579c921fc13c16613b6a30280ab3'
+  const contract = '0xeC280B88EafBe70fA63669bf106DE0e46aF5E0EB'
 
   const getUri = async () => {
     const _contract = new ethers.Contract(contract, ABI, signer)
@@ -25,7 +25,6 @@ const Commons = () => {
 
   useEffect(() => {
     getUri()
-    // console.log(contract)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -33,17 +32,36 @@ const Commons = () => {
     <div>
       <h1 className='commons-title'>Commons</h1>
       <p className='commons-desc'>
-        Description for Commons goes here! Add ERC721 token name and token
-        symbol here
+        Mol's Commons is open to the public <br />
+        Anyone can mint here <br />
+        You can also navigate over to Galleries to see works by Mol's member
       </p>
+      <div>
+        <Link
+          to={{
+            pathname: '/manage',
+            state: { hasVault: hasVault },
+          }}
+        >
+          <button>Vault</button>
+        </Link>
+      </div>
+
+      <div>
+        <button>Bid on Vault</button>
+      </div>
+
+      <div>
+        <button>Deposit</button>
+      </div>
 
       <Link
         to={{
-          pathname: '/mintNft',
-          state: { },
+          pathname: '/mint',
+          state: { commons: 'commons', contract: contract },
         }}
       >
-        <button>Upload Image</button>
+        <button>Mint</button>
       </Link>
       <ImageGrid contract={contract} uris={uris} />
     </div>

@@ -29,22 +29,31 @@ const Galleries = () => {
 
   return (
     <div>
-      <h1 className='galleries-title'>Galleries</h1>
-      <p className='galleries-desc'>Here are the galleries on Mol! </p>
-      {contracts &&
-        contracts.map((contract) => (
-          <div key={contract}>
-            <Link
-              to={{
-                pathname: `/gallery/${contract}`,
-                state: { contract: contract },
-              }}
-              style={{ textDecoration: 'none' }}
-            >
-              <GalleryPreview contract={contract} />
-            </Link>
-          </div>
-        ))}
+      <h1 className='galleries-title'>Mol Galleries</h1>
+      <p className='galleries-desc'>
+        Each member of the Mol LeArt DAO gets her own gallery for minting ERC721
+        NFTs
+         <br />
+        Through the gallery smart contract, memebers can (1) airdrop social currencies, (2) mint royalties token,
+        and (3) pick a royalties scheme.
+      </p>
+      <br />
+      <div>
+        {contracts &&
+          contracts.map((contract) => (
+            <div key={contract}>
+              <Link
+                to={{
+                  pathname: `/gallery/${contract}`,
+                  state: { contract: contract },
+                }}
+                style={{ textDecoration: 'none' }}
+              >
+                <GalleryPreview contract={contract} />
+              </Link>
+            </div>
+          ))}
+      </div>
     </div>
   )
 }

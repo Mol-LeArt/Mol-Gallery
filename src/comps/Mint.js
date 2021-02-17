@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom'
 import fleek from '@fleekhq/fleek-storage-js'
 import ABI from './MOLGAMMA_ABI'
 import { ethers } from 'ethers'
-import { projectFirestore } from '../firebase/config'
+// import { projectFirestore } from '../firebase/config'
 import './Mint.css'
 
-const Mint = ({ contract, metadata, sale, price, img, setImg, account }) => {
-  const [dict, setDict] = useState({})
-  const [id, setId] = useState(null)
-  const [royaltiesToken, setRoyaltiesToken] = useState(null)
+const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }) => {
+  // const [dict, setDict] = useState({})
+  // const [id, setId] = useState(null)
+  // const [royaltiesToken, setRoyaltiesToken] = useState(null)
 
   // ----- Reaect Router Config
   const history = useHistory()
@@ -47,7 +47,7 @@ const Mint = ({ contract, metadata, sale, price, img, setImg, account }) => {
     const date = new Date()
     const timestamp = date.getTime()
     const dict = { ...metadata, image: baseUrl + hash, createdAt: timestamp }
-    setDict(dict)
+    // setDict(dict)
     console.log('tokenURI at mint is - ', dict)
 
     const data = JSON.stringify(dict)
@@ -77,6 +77,7 @@ const Mint = ({ contract, metadata, sale, price, img, setImg, account }) => {
   // ----- Mint NFT
   async function molGamma(contract, ethPrice, tokenURI) {
     const _contract = new ethers.Contract(contract, ABI, signer)
+    console.log(contract)
     try {
       const tx = await _contract.mint(sale, ethPrice, tokenURI)
       console.log('tx.hash for minting - ' + tx.hash)
@@ -84,7 +85,12 @@ const Mint = ({ contract, metadata, sale, price, img, setImg, account }) => {
       tx.wait().then((receipt) => {
         if (receipt.confirmations === 1) {
           console.log('mint receipt is - ', receipt)
-          history.push('/galleries')
+
+          if (commons === 'commons') {
+            history.push('/')
+          } else {
+            history.push('/galleries')
+          }
         }
       })
       
@@ -99,33 +105,31 @@ const Mint = ({ contract, metadata, sale, price, img, setImg, account }) => {
 
   // ----- Listen to contract events 
   function contractListener(contract) {
-    console.log('listening ')
-
     contract.on('Transfer', (from, to, tokenId) => {
       console.log('Token minted - ', from, to)
       console.log('NFT tokenId minted - ' + tokenId)
 
-      setId(tokenId.toString())
+      // setId(tokenId.toString())
     })
 
     contract.on('gRoyaltiesMinted', (contractAddress) => {
       console.log('gRoyalties minted at contract address  - ', contractAddress)
 
-      setRoyaltiesToken(contractAddress)
+      // setRoyaltiesToken(contractAddress)
     })
   }
 
   // Store metadata on Firestore
-  function storeMetadata(dict, id, royaltiesToken) {
-    const collectionRef = projectFirestore.collection('nft')
-    dict = { ...dict, tokenId: id, gRoyalties: [royaltiesToken] }
-    collectionRef.add(dict)
+  // function storeMetadata(dict, id, royaltiesToken) {
+  //   const collectionRef = projectFirestore.collection('nft')
+  //   dict = { ...dict, tokenId: id, gRoyalties: [royaltiesToken] }
+  //   collectionRef.add(dict)
 
-    setImg(null)
-    console.log('Success storing metadata to firestore!')
+  //   setImg(null)
+  //   console.log('Success storing metadata to firestore!')
 
-    history.push('/galleries')
-  }
+  //   history.push('/galleries')
+  // }
 
   useEffect(() => {
     upload(img, contract)

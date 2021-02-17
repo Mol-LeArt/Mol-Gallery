@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { projectFirestore } from '../firebase/config';
-import UploadingGallery from '../comps/UploadingGallery';
+// import { projectFirestore } from '../firebase/config';
+import UploadGallery from '../comps/UploadGallery';
 import { Link } from "react-router-dom";
 import ABI from '../comps/MOLGAMMA_ABI'
 import bytecode from '../comps/MOLGAMMA_BYTECODE'
@@ -19,12 +19,12 @@ const OpenGallery = ({ account }) => {
   const [royaltiesUri, setRoyaltiesUri] = useState('')
   const [compliance, setCompliance] = useState(false)
   const [gallery, setGallery] = useState(null)
-  const [error, setError] = useState(null)
+  // const [error, setError] = useState(null)
 
   // ----- Reaect Router Config
   const history = useHistory()
 
-  // ----- Smart Contract Interaction Configuration
+  // ----- Smart Contract Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
   const factory = new ContractFactory(ABI, bytecode, signer)
@@ -198,11 +198,10 @@ const OpenGallery = ({ account }) => {
           <label>I agree to XYZ.</label>
         </div>
 
-        {gallery && <UploadingGallery gallery={gallery} />}
+        {gallery && <UploadGallery gallery={gallery} />}
 
         <div>
-          <button disabled={error}>Submit</button>
-          {error && <div>{error}</div>}
+          <button >Submit</button>
         </div>
       </form>
       <div>

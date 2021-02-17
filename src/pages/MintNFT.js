@@ -16,7 +16,7 @@ const MintNFT = ({ account }) => {
   // ----- Reaect Router Config
   const history = useHistory()
   const location = useLocation()
-  const gallery = location.state.gallery
+  const commons = location.state.commons
   const contract = location.state.contract
 
   const getFileForUpload = (img) => {
@@ -104,6 +104,7 @@ const MintNFT = ({ account }) => {
 
         {metadata && (
           <Mint
+            commons={commons}
             contract={contract}
             metadata={metadata}
             sale={sale}

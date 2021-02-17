@@ -4,7 +4,7 @@ import Connect from './Connect'
 
 import './NavBar.css';
 
-const NavBar = ({ galleryExists }) => {
+const NavBar = ({ hasGallery }) => {
   return (
     <div className='nav-bar'>
       <Link
@@ -17,11 +17,13 @@ const NavBar = ({ galleryExists }) => {
         </div>
       </Link>
       <div className='nav-bar-navigation'>
-        {!galleryExists ? (
+        {!hasGallery ? (
           <Link style={{ textDecoration: 'none' }} to='/open-gallery'>
             <div>Open a Gallery</div>
           </Link>
-        ) : ('')}
+        ) : (
+          ''
+        )}
 
         <Link style={{ textDecoration: 'none' }} to='/galleries'>
           <div>Galleries</div>

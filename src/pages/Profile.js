@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import ImageGrid from '../comps/ImageGrid'
+// import ImageGrid from '../comps/ImageGrid'
 import { ethers } from 'ethers'
 import ABI from '../comps/MOLGAMMA_ABI'
-import { projectFirestore } from '../firebase/config'
 import './Commons.css'
 
 const Profile = () => {
@@ -13,7 +12,7 @@ const Profile = () => {
 
   // ----- React Router Config
   const location = useLocation()
-  const account = location.state.account
+  // const account = location.state.account
     const contract = location.state.contract
 
 
@@ -78,15 +77,19 @@ const Profile = () => {
 
   useEffect(() => {
     getTotalSupply(_contract)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div>
       <h1 className='commons-title'>Profile</h1>
       <p className='commons-desc'>
-        This is your personal page! Below are your royalties NFTs that you may
-        gift or sell!
+        This is your personal page. 
       </p>
+      <h2>Royalties Tokens</h2>
+      <p>Royalties payments from buying and selling your NFTs will automatically flow to these royalties tokens. Payments will sit in these royalties tokens until owners withdraw from the token contract. Owners may also gift or sell these tokens!</p>
+      <br />
       {gRoyalties && gRoyalties.map((r, index) => <div key={index}>{r}</div>)}
 
       <br />

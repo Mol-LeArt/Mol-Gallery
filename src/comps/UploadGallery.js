@@ -2,10 +2,7 @@ import React from 'react';
 import { projectFirestore, timeStamp } from  '../firebase/config'
 import './Mint.css'
 
-const UploadingGallery = ({ gallery }) => {
-    // Get token name and symbol from contract
-
-    // Get gallery name and description from firebase
+const UploadGallery = ({ gallery }) => {
     const collectionRef = projectFirestore.collection('gallery');
     const createdAt = timeStamp();
     const dict = { ...gallery, createdAt: createdAt }
@@ -16,4 +13,4 @@ const UploadingGallery = ({ gallery }) => {
     )
 }
 
-export default UploadingGallery;  
+export default UploadGallery;  

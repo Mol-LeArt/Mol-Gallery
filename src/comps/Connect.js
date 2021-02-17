@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ethers } from 'ethers'
-import ABI from '../comps/MOLGAMMA_ABI'
+// import ABI from '../comps/MOLGAMMA_ABI'
 import { projectFirestore } from '../firebase/config'
+import './Connect.css'
 
 const Connect = () => {
   const [account, setAccount] = useState('')
   const [connect, toggleConnect] = useState(false)
   const [contract, setContract] = useState({})
+  const [chain, setChain] = useState(null)
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-  const signer = provider.getSigner()
+  // const signer = provider.getSigner()
 
   // Detect network change in Metamask and reload ~ provided by ethers.js
   provider.on('network', (newNetwork, oldNetwork) => {
@@ -39,12 +41,25 @@ const Connect = () => {
     provider
       .getNetwork()
       .then((network) => {
+        setChain(network.chainId)
         console.log('current chainId - ' + network.chainId)
-        if (network.chainId !== 100) {
-          console.log('Please switch to xDAI Ethereum!')
+        if (network.chainId === 100) {
+          setChain('xDAI')
+          toggleConnect(true)
+        } else if (network.chainId === 4) {
+          setChain('Rinkeby')
+          toggleConnect(true)
+        } else if (network.chainId === 1) {
+          setChain('Mainnet')
+          toggleConnect(true)
+        } else if (network.chainId === 3) {
+          setChain('Ropsten')
+          toggleConnect(true)
+        } else if (network.chainId === 42) {
+          setChain('Kovan')
           toggleConnect(true)
         } else {
-          console.log("You're on xDAI now!")
+          console.log('Pick a supported blockchain!')
         }
       })
       .catch((err) => {
@@ -85,7 +100,7 @@ const Connect = () => {
           }}
           style={{ textDecoration: 'none' }}
         >
-          <button>{account.slice(0, 6) + ' ... ' + account.slice(-4)}</button>
+          <button className='connect-button'>{account.slice(0, 6) + ' ... ' + account.slice(-4)} on {chain}</button>
         </Link>
       )}
     </div>
