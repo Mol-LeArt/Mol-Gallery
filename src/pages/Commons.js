@@ -6,7 +6,7 @@ import ABI from '../comps/MOLGAMMA_ABI'
 
 import './Commons.css'
 
-const Commons = ({ hasVault }) => {
+const Commons = ({ vault }) => {
   const [uris, setUris] = useState([])
 
   // ----- Smart Contract Interaction Config
@@ -40,7 +40,7 @@ const Commons = ({ hasVault }) => {
         <Link
           to={{
             pathname: '/manage',
-            state: { hasVault: hasVault },
+            state: { vault: vault },
           }}
         >
           <button>Vault</button>

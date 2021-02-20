@@ -53,6 +53,8 @@ function App() {
 
   useEffect(() => {
     getAccount()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
   return (
@@ -60,11 +62,7 @@ function App() {
       <div className='App'>
         <NavBar hasGallery={hasGallery} />
         <Switch>
-          <Route
-            path='/'
-            exact
-            component={() => <Commons />}
-          />
+          <Route path='/' exact component={() => <Commons vault={vault} />} />
           <Route path='/about' exact component={About} />
           <Route path='/galleries' exact component={Galleries} />
           <Route path='/profile/:account' exact component={Profile} />
@@ -73,11 +71,7 @@ function App() {
             exact
             component={() => <OpenGallery account={account} />}
           />
-          <Route
-            path='/manage'
-            exact
-            component={() => <ManageVault vault={vault}/>}
-          />
+          <Route path='/manage' exact component={() => <ManageVault />} />
           <Route
             path='/mint'
             exact

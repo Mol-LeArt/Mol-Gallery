@@ -82,7 +82,7 @@ const Gallery = ({ account }) => {
       <p className='gallery-desc'>License: {compliance ? 'Complied' : ''}</p>
       <Link
         to={{
-          pathname: '/mintNft',
+          pathname: '/mint',
           state: { gallery: gallery, contract: contract },
         }}
       >
