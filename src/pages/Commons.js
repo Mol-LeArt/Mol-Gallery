@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ImageGrid from '../comps/ImageGrid';
 import { ethers } from 'ethers'
-import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
+// import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
 import GAMMA_ABI from '../comps/GAMMA_ABI'
 import './Commons.css'
@@ -10,7 +10,7 @@ import './Commons.css'
 const Commons = () => {
   const [gamma, setGamma] = useState('')
   const [gammaUris, setGammaUris] = useState([])
-  const [depositTokenUris, setDepositTokenUris] = useState([])
+  // const [depositTokenUris, setDepositTokenUris] = useState([])
   const [bid, setBid] = useState('')
   const [proposedOwners, setProposedOwners] = useState('')
   const [isArtist, toggleIsArtist] = useState(false)
@@ -52,34 +52,34 @@ const Commons = () => {
   }
 
   // ----- Get deposited tokens 
-  const getDepositTokens = async () => {
-    const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
-    try {
-      _contract.getDepositTokens().then((data) => {
-        for (var i = 0; i < data.length; i++) {
-          const tokenAddress = data[i].slice(0, 42)
-          const tokenId = parseInt(data[i].slice(-10), 16)
-          getDepositTokenUri(tokenAddress, tokenId)
-        }
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  // const getDepositTokens = async () => {
+  //   const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
+  //   try {
+  //     _contract.getDepositTokens().then((data) => {
+  //       for (var i = 0; i < data.length; i++) {
+  //         const tokenAddress = data[i].slice(0, 42)
+  //         const tokenId = parseInt(data[i].slice(-10), 16)
+  //         getDepositTokenUri(tokenAddress, tokenId)
+  //       }
+  //     })
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
 
-  const getDepositTokenUri = async (tokenAddress, tokenId) => {
-    const baseUrl = 'https://rinkeby-api.opensea.io/api/v1/'
-    try {
-      fetch(`${baseUrl}/${tokenAddress}/${tokenId}`)
-       .then((res) => res.json())
-       .then((data) => {
-         console.log(data)
-         setDepositTokenUris(data)
-       }) 
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  // const getDepositTokenUri = async (tokenAddress, tokenId) => {
+  //   const baseUrl = 'https://rinkeby-api.opensea.io/api/v1/'
+  //   try {
+  //     fetch(`${baseUrl}/${tokenAddress}/${tokenId}`)
+  //      .then((res) => res.json())
+  //      .then((data) => {
+  //        console.log(data)
+  //        setDepositTokenUris(data)
+  //      }) 
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
 
   // ----- Bid
   const bidVault = async () => {
