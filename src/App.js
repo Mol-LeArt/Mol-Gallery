@@ -53,8 +53,6 @@ function App() {
 
   useEffect(() => {
     getAccount()
-
-    console.log(process.env)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
