@@ -17,6 +17,11 @@ const NavBar = ({ hasGallery }) => {
         </div>
       </Link>
       <div className='nav-bar-navigation'>
+        <Link style={{ textDecoration: 'none' }} to='/arcade'>
+          <div>Arcade</div>
+        </Link>
+
+        {/* use whitelist from vault to toggle  */}
         {!hasGallery ? (
           <Link style={{ textDecoration: 'none' }} to='/open-gallery'>
             <div>Open a Gallery</div>
@@ -28,7 +33,6 @@ const NavBar = ({ hasGallery }) => {
         <Link style={{ textDecoration: 'none' }} to='/galleries'>
           <div>Galleries</div>
         </Link>
-
         <Link style={{ textDecoration: 'none' }} to='/about'>
           <div>About Us</div>
         </Link>

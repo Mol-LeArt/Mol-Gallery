@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import NavBar from './comps/NavBar';
 import Commons from './pages/Commons';
 import About from './pages/About';
+import Arcade from './pages/Arcade'
 import OpenGallery from './pages/OpenGallery';
 import MintNFT from './pages/MintNFT'
 import NFT from './pages/NFT';
@@ -12,6 +13,7 @@ import Galleries from './pages/Galleries'
 import ManageVault from './pages/ManageVault'
 // import { ethers } from 'ethers'
 import { projectFirestore } from './firebase/config'
+require('dotenv').config()
 
 
 function App() {
@@ -43,8 +45,6 @@ function App() {
 
   const getVault = async (account) => {
     const query = await projectFirestore.collection('vault').where('owners', 'array-contains', account).get()
-    // console.log(query.empty)
-
 
     query.forEach((doc) => {
       setVault(doc.data().contract)
@@ -54,6 +54,7 @@ function App() {
   useEffect(() => {
     getAccount()
 
+    console.log(process.env)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
@@ -64,6 +65,7 @@ function App() {
         <Switch>
           <Route path='/' exact component={() => <Commons vault={vault} />} />
           <Route path='/about' exact component={About} />
+          <Route path='/arcade' exact component={Arcade} />
           <Route path='/galleries' exact component={Galleries} />
           <Route path='/profile/:account' exact component={Profile} />
           <Route

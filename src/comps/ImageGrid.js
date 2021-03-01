@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import './ImageGrid.css'
 
-const ImageGrid = ({ contract, uris }) => {
+const ImageGrid = ({ origin, contract, uris, gamma }) => {
   const [nfts, setNfts] = useState(null)
 
   const getNft = async () => {
@@ -38,8 +38,10 @@ const ImageGrid = ({ contract, uris }) => {
               to={{
                 pathname: `/nft/${contract}:${index+1}`,
                 state: {
+                  origin: origin,
                   tokenId: index+1,
                   contract: contract,
+                  gamma: gamma, 
                   title: nfts.title,
                   description: nfts.description,
                   image: nfts.image,

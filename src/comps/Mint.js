@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom'
 import fleek from '@fleekhq/fleek-storage-js'
-import ABI from './MOLGAMMA_ABI'
+import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
+import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
 import { ethers } from 'ethers'
 // import { projectFirestore } from '../firebase/config'
 import './Mint.css'
 
 const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }) => {
-  // const [dict, setDict] = useState({})
-  // const [id, setId] = useState(null)
-  // const [royaltiesToken, setRoyaltiesToken] = useState(null)
-
+  console.log(process.env)
   // ----- Reaect Router Config
   const history = useHistory()
 
@@ -68,16 +66,22 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
       const tokenUri = baseUrl + result.hash
       console.log(tokenUri)
       const p = ethers.utils.parseEther(price)
-      molGamma(contract, p, tokenUri, dict)
+
+      if (commons === 'commons') {
+        molVault(p, tokenUri)
+      } else {
+        molGamma(p, tokenUri)
+      }
+      
     } catch (e) {
       console.log('error is - ' + e, i)
     }
   }
 
-  // ----- Mint NFT
+  // ----- Mint MolGamma
   async function molGamma(contract, ethPrice, tokenURI) {
-    const _contract = new ethers.Contract(contract, ABI, signer)
-    console.log(contract)
+    console.log('MolGamma contract is - ', contract)
+    const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
     try {
       const tx = await _contract.mint(sale, ethPrice, tokenURI)
       console.log('tx.hash for minting - ' + tx.hash)
@@ -103,6 +107,29 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
     }
   }
 
+  const molVault = async (ethPrice, tokenURI) => {
+    console.log('MolVault contract is - ', contract)
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    try {
+      const tx = await _contract.mint(ethPrice, 0, tokenURI, sale)
+      console.log('tx.hash for minting - ' + tx.hash)
+      
+      tx.wait().then((receipt) => {
+        if (receipt.confirmations === 1) {
+          console.log('mint receipt is - ', receipt)
+
+          if (commons === 'commons') {
+            history.push('/')
+          } else {
+            history.push('/galleries')
+          }
+        }
+      })
+    } catch (e) {
+
+    }
+  }
+
   // ----- Listen to contract events 
   function contractListener(contract) {
     contract.on('Transfer', (from, to, tokenId) => {
@@ -118,18 +145,6 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
       // setRoyaltiesToken(contractAddress)
     })
   }
-
-  // Store metadata on Firestore
-  // function storeMetadata(dict, id, royaltiesToken) {
-  //   const collectionRef = projectFirestore.collection('nft')
-  //   dict = { ...dict, tokenId: id, gRoyalties: [royaltiesToken] }
-  //   collectionRef.add(dict)
-
-  //   setImg(null)
-  //   console.log('Success storing metadata to firestore!')
-
-  //   history.push('/galleries')
-  // }
 
   useEffect(() => {
     upload(img, contract)

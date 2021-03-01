@@ -32,7 +32,6 @@ const MintNFT = ({ account }) => {
         title: title,
         description: description,
         compliance: compliance,
-        // gallery: gallery,
       }
       setMetadata(nft)
     } else {

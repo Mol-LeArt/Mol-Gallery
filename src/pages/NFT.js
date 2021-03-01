@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 // import { projectFirestore } from '../firebase/config'
 import { ethers } from 'ethers'
-import ABI from '../comps/MOLGAMMA_ABI'
+import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
+import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
+import GAMMA_ABI from '../comps/GAMMA_ABI'
 import Form from '../comps/Form'
 
 import './NFT.css'
@@ -10,26 +12,33 @@ import './NFT.css'
 const NFT = ({ account }) => {
   const [royalties, setRoyalties] = useState(null)
   const [owner, setOwner] = useState(null)
+  const [artist, setArtist] = useState(null)
   const [sale, setSale] = useState(0)
   const [price, setPrice] = useState(0.0)
   const [match, toggleMatch] = useState(null)
   const [form, toggleForm] = useState(false)
-  const [buttonTitle, setButtonTitle] = useState('Buy')
+  const [buttonTitle, setButtonTitle] = useState('Buy (Ξ)')
+  const [vaultGammaAddress, setVaultGammaAddress] = useState(null)
+  const [contractToUpdateSale, setContractToUpdateSale] = useState(null)
 
   // ----- Reaect Router Config
   const location = useLocation()
+  const origin = location.state.origin
   const contract = location.state.contract
   const tokenId = location.state.tokenId
   const title = location.state.title
   const desc = location.state.description
   const img = location.state.image
+  const gamma = location.state.gamma
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-  const _contract = new ethers.Contract(contract, ABI, signer)
+  // const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
 
+  // ----- MolGamma Functions
   const getRoyalties = async (tokenId) => {
+    const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
     _contract
       .getRoyalties(tokenId)
       .then((data) => {
@@ -39,16 +48,29 @@ const NFT = ({ account }) => {
       .catch((e) => console.log(e))
   }
 
-  const getOwner = async (tokenId) => {
+  const getArtist = async () => {
+    const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
     _contract
-      .ownerOf(tokenId)
+      .creator()
       .then((data) => {
-        setOwner(data)
+        setArtist(data)
       })
       .catch((e) => console.log(e))
   }
 
-  const getSale = async (tokenId) => {
+  const getMolGammaOwner = async (tokenId) => {
+    const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
+    _contract
+      .ownerOf(tokenId)
+      .then((data) => {
+        setOwner(data)
+        isOwner(data)
+      })
+      .catch((e) => console.log(e))
+  }
+
+  const getMolGammaSale = async (tokenId) => {
+    const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
     _contract
       .sale(tokenId)
       .then((data) => {
@@ -63,9 +85,10 @@ const NFT = ({ account }) => {
       .catch((e) => console.log(e))
   }
 
-  const isOwner = () => {
-    if (owner) {
-      if (owner.toLowerCase() === account) {
+  const isOwner = (address) => {
+    console.log(address)
+    if (address) {
+      if (address.toLowerCase() === account) {
         toggleMatch(true)
       } else {
         console.log('Not owner of NFT')
@@ -74,26 +97,96 @@ const NFT = ({ account }) => {
   }
 
   const buyNft = async (tokenId) => {
-    const overrides = {
-      value: ethers.utils.parseEther(price),
-    }
+    if (origin !== 'vault') {
+      const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
+      const overrides = {
+        value: ethers.utils.parseEther(price),
+      }
 
-    try {
-      console.log('tokenId to buy', tokenId)
-      const tx = await _contract.purchase(tokenId, overrides)
-      console.log('this is tx.hash for purchase', tx.hash)
+      try {
+        const tx = await _contract.purchase(tokenId, overrides)
+        console.log('this is tx.hash for purchase', tx.hash)
 
-      const receipt = await tx.wait()
-      console.log('mint receipt is - ', receipt)
-      contractListener()
-    } catch (e) {
-      console.log(e.message)
-    }
+        const receipt = await tx.wait()
+        console.log('mint receipt is - ', receipt)
+        window.location.reload()
+        contractListener(_contract)
+      } catch (e) {
+        console.log(e.message)
+      }
+    } else {
+      const ethPrice = ethers.utils.parseEther(price)
+      const p = parseInt(ethPrice, 10)
+      const priceWithFee = p + p * 0.003
+
+      console.log('Buyer pays a total of - ', priceWithFee)
+      const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+      const overrides = {
+        value: priceWithFee.toString(),
+      }
+
+      try {
+        const tx = await _contract.purchase(vaultGammaAddress, tokenId, overrides)
+        console.log('this is tx.hash for purchase', tx.hash)
+
+        const receipt = await tx.wait()
+        console.log('mint receipt is - ', receipt)
+        window.location.reload()
+        contractListener(_contract)
+      } catch (e) {
+        console.log(e.message)
+      }
+    }    
   }
 
-  // Listen to contract events
-  function contractListener() {
-    _contract.on('Transfer', (from, to, tokenId) => {
+  // ----- MolVault Functions
+  const getTokenKey = async () => {
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    _contract.gamma().then((gAddress) => {
+      setVaultGammaAddress(gAddress)
+      getGammaOwner(gAddress, tokenId)
+
+      _contract
+        .getTokenKey(gAddress, tokenId)
+        .then((tokenKey) => {
+          getVaultSale(tokenKey)
+        })
+        .catch((e) => console.log(e))
+    }).catch(e => console.log(e))
+  }
+
+  const getVaultSale = async (tokenKey) => {
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    _contract
+      .sale(tokenKey)
+      .then((data) => {
+        // toggle update sale status button 
+        isOwner(data[0])
+
+        setArtist(data[0])
+        setSale(data[1])
+        const p = ethers.utils.formatEther(data[2].toString())
+        setPrice(p)
+        if (data[1] === 0) {
+          setButtonTitle('Not for sale!')
+        }
+      })
+      .catch((e) => console.log(e))
+  }
+
+  const getGammaOwner = async (tokenAddress, tokenId) => {
+    const _contract = new ethers.Contract(tokenAddress, GAMMA_ABI, signer)
+    _contract
+      .ownerOf(tokenId)
+      .then((data) => {
+        setOwner(data)
+      })
+      .catch((e) => console.log(e))
+  }
+
+  // ----- Contract Listener
+  function contractListener(contract) {
+    contract.on('Transfer', (from, to, tokenId) => {
       console.log('Token transferred - ', from, to)
       console.log('NFT tokenId transferred - ' + tokenId)
       to = to.toLowerCase()
@@ -102,7 +195,7 @@ const NFT = ({ account }) => {
       window.location.reload()
     })
 
-    _contract.on('gRoyaltiesMinted', (contractAddress) => {
+    contract.on('gRoyaltiesMinted', (contractAddress) => {
       console.log('gRoyalties minted at contract address  - ', contractAddress)
 
       // UPDATE ABI AND BYTECODE FIRST
@@ -114,15 +207,29 @@ const NFT = ({ account }) => {
     buyNft(tokenId)
   }
 
-  function handleOnSale() {
+  function updateSale() {
     toggleForm(true)
+
+    if (origin !== 'vault') {
+      const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
+      setContractToUpdateSale(_contract)
+    } else {
+      const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+      setContractToUpdateSale(_contract)
+    }
   }
 
   useEffect(() => {
-    getRoyalties(tokenId)
-    getOwner(tokenId)
-    getSale(tokenId)
-    isOwner()
+    isOwner(owner)
+
+    if (origin !== 'vault') {
+      getRoyalties(tokenId)
+      getMolGammaOwner(tokenId)
+      getMolGammaSale(tokenId)
+      getArtist()
+    } else {
+      getTokenKey()
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [owner])
@@ -136,18 +243,20 @@ const NFT = ({ account }) => {
         <div>Description: {desc}</div>
         <div>Price: {price} Ξ</div>
         <div>Royalties: {royalties}%</div>
-        <div>Owner: {owner} </div>
+        <div>Artist: {artist}</div>
+        <div>Owner: {owner}</div>
         <button onClick={handleBuy} disabled={sale === 0 || match}>
           {buttonTitle}
         </button>
         {form && (
           <Form
             toggleForm={toggleForm}
-            contract={_contract}
+            contract={contractToUpdateSale}
             tokenId={tokenId}
+            gamma={gamma}
           ></Form>
         )}
-        {match && <button onClick={handleOnSale}>Update sale status</button>}
+        {match && <button onClick={updateSale}>Update sale status</button>}
       </div>
     </div>
   )

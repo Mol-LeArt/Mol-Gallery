@@ -10,29 +10,50 @@ const ManageVault = () => {
   const [owners1, setOwners1] = useState('')
   const [owners2, setOwners2] = useState('')
   const [confirmationsRequired, setConfirmationsRequired] = useState('')
+  const [tokenName, setTokenName] = useState('')
+  const [tokenSymbol, setTokenSymbol] = useState('')
+  const [fundingGoal, setFundingGoal] = useState('')
+  const [totalShares, setTotalShares] = useState('')
+  const [lockPeriod, setLockPeriod] = useState('')
+
   const [deployError, setDeployError] = useState(null)
   const [contract, setContract] = useState(null)
 
   // ----- Sell & Withdrawal from Vault
   const [numConfirmationsRequired, setNumConfirmationsRequired] = useState('')
   const [numSaleConfirmations, setNumSaleConfirmations] = useState('')
-  const [numWithdrawalConfirmations, setNumWithdrawalConfirmations] = useState('')
+  const [numWithdrawalConfirmations, setNumWithdrawalConfirmations] = useState(
+    ''
+  )
   const [confirmSaleError, setConfirmSaleError] = useState(null)
   const [confirmWithdrawalError, setConfirmWithdrawalError] = useState(null)
   const [revokeSaleError, setRevokeSaleError] = useState(null)
   const [revokeWithdrawalError, setRevokeWithdrawalError] = useState(null)
 
+  // ----- Funding Goal
+  const [vaultBalance, setVaultBalance] = useState('')
+  const [onChainfundingGoal, setOnChainfundingGoal] = useState('')
+  const [fundingPerc, setFundingPerc] = useState('')
+  const [fundingCollectors, setFundingCollectors] = useState([])
+  const [fundingCollectorsPerc, setFundingCollectorsPerc] = useState([])
+
+  // ----- Bid
+  const [bid, setBid] = useState('')
+  const [bidder, setBidder] = useState('')
+  const [proposedOwners, setProposedOwners] = useState([])
+
+  // ----- Airdrop
+  const [airdrop, setAirdrop] = useState(0)
+  const [updatedAirdrop, setUpdatedAirdrop] = useState('')
+
+  // ----- Artist Roster
+  const [artists, setArtists] = useState([])
+  const [artistToAdd, setArtistToAdd] = useState('')
+  const [artistToRemove, setArtistToRemove] = useState('')
+
   // ----- Remove GAMMA
   const [tokenAddress, setTokenAddress] = useState('')
   const [tokenId, setTokenId] = useState('')
-
-  // ----- Update owners (need to make this dynamic)
-  const [newOwner1, setNewOwner1] = useState('')
-  const [newOwner2, setNewOwner2] = useState('')
-
-  // ----- Artist Roster
-  const [artistToAdd, setArtistToAdd] = useState('')
-  const [artistToRemove, setArtistToRemove] = useState('')
 
   // ----- Reacter Router Config
   const location = useLocation()
@@ -50,13 +71,23 @@ const ManageVault = () => {
 
     if (owners.length > 0 && confirmationsRequired > 0) {
       try {
-        const contract = await factory.deploy(owners, confirmationsRequired)
+        const contract = await factory.deploy(
+          owners,
+          confirmationsRequired,
+          tokenName,
+          tokenSymbol,
+          fundingGoal,
+          totalShares,
+          lockPeriod
+        )
 
         contract.deployTransaction
           .wait()
           .then((receipt) => {
             setContract(contract.address)
             console.log('Receipt for deploying MolVault', receipt)
+
+            window.location.reload()
           })
           .catch((e) => console.log(e))
       } catch (e) {
@@ -67,6 +98,7 @@ const ManageVault = () => {
     }
   }
 
+  // ----- Get number of confirmations required
   const getNumConfirmationsRequired = async () => {
     try {
       const _contract = new ethers.Contract(vault, ABI, signer)
@@ -78,6 +110,111 @@ const ManageVault = () => {
     }
   }
 
+  // ----- Get bid and bidder
+  const getBid = async () => {
+    try {
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      _contract.bid().then((data) => {
+        const b = ethers.utils.formatEther(data)
+        setBid(b)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getBidder = async () => {
+    try {
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      _contract.bidder().then((data) => {
+        setBidder(data)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  // Add function to get newOwners to MolVault.sol
+  const getProposedOwners = async () => {
+    try {
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      _contract.getNewOwners().then((data) => {
+        setProposedOwners(data)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  // ----- Get funding data
+  const getVaultBalance = async (contract) => {
+    try {
+      provider.getBalance(contract).then((data) => {
+        const b = ethers.utils.formatEther(data)
+        setVaultBalance(b)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getFundingGoal = async () => {
+    try {
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      _contract.fundingGoal().then((data) => {
+        const b = ethers.utils.formatEther(data)
+        setOnChainfundingGoal(b)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getFundingPerc = async () => {
+    try {
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      _contract.fundingGoalPerc().then((data) => {
+        const b = ethers.utils.formatUnits(data, "wei")
+        // console.log(data, b, 100 - parseInt(b, 10))
+        setFundingPerc(100 - parseInt(b, 10))
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getFundingCollectors = async () => {
+    try {
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      _contract.getFundingColectors().then((data) => {
+        setFundingCollectors(data)
+        getFundingCollectorsPerc(data)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getFundingCollectorsPerc = async (collectors) => {
+    const percArray = []
+    try {
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      if (collectors) { 
+        for (var i = 0; i < collectors.length; i++) {
+          _contract.fundingCollectorPerc(collectors[i]).then((data) => {
+            const b = ethers.utils.formatUnits(data, 'wei')
+            console.log(b)
+            percArray.push(b)
+            setFundingCollectorsPerc([...percArray])
+          })
+        }
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  // ----- Sell vault
   const confirmSale = async () => {
     try {
       const _contract = new ethers.Contract(vault, ABI, signer)
@@ -92,7 +229,9 @@ const ManageVault = () => {
       if (e.code === 4001) {
         console.log(e.message)
       } else {
-      setConfirmSaleError('You have already confirmed to withdraw funds from the vault!')
+        setConfirmSaleError(
+          'You have already confirmed to withdraw funds from the vault!'
+        )
       }
     }
   }
@@ -126,7 +265,7 @@ const ManageVault = () => {
       if (e.code === 4001) {
         console.log(e.message)
       } else {
-      console.log(e)
+        console.log(e)
       }
     }
   }
@@ -142,6 +281,7 @@ const ManageVault = () => {
     }
   }
 
+  // ----- Withdraw funds from vault
   const confirmWithdrawal = async () => {
     try {
       const _contract = new ethers.Contract(vault, ABI, signer)
@@ -208,11 +348,39 @@ const ManageVault = () => {
     }
   }
 
-  // will need to update MolVault ABI
+  // ----- Manage airdrop
+  const getAirdrop = async () => {
+    try {
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      _contract.airdrop().then((data) => {
+        const a = ethers.utils.formatEther(data)
+        setAirdrop(a)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const updateAirdrop = async () => {
+    try {
+      const a = ethers.utils.parseEther(updatedAirdrop)
+      const _contract = new ethers.Contract(vault, ABI, signer)
+      const tx = await _contract.updateAirdrop(a)
+      tx.wait().then(() => {
+        window.location.reload()
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  // ----- Artist roster
   const getWhitelist = async () => {
     try {
       const _contract = new ethers.Contract(vault, ABI, signer)
-      _contract.whitelist(0).then((data) => console.log(data))
+      _contract.getWhitelist().then((data) => {
+        setArtists(data)
+      })
     } catch (e) {
       console.log(e)
     }
@@ -222,7 +390,10 @@ const ManageVault = () => {
     try {
       const artist = [artistToAdd]
       const _contract = new ethers.Contract(vault, ABI, signer)
-      _contract.addToWhitelist(artist).then((data) => console.log(data))
+      const tx = await _contract.addToWhitelist(artist)
+      tx.wait().then(() => {
+        window.location.reload()
+      })
     } catch (e) {
       console.log(e)
     }
@@ -238,21 +409,11 @@ const ManageVault = () => {
     }
   }
 
+  // ----- Remove Gamma from vault
   const removeGamma = async () => {
     try {
-      const nft = [tokenAddress, tokenId]
       const _contract = new ethers.Contract(vault, ABI, signer)
-      _contract.retrieveGamma(nft).then((data) => console.log(data))
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  const updateOwners = async () => {
-    try {
-      const owners = [newOwner1, newOwner2]
-      const _contract = new ethers.Contract(vault, ABI, signer)
-      _contract.updateOwners(owners).then((data) => console.log(data))
+      _contract.removeGamma(tokenAddress, tokenId).then((data) => console.log(data))
     } catch (e) {
       console.log(e)
     }
@@ -260,11 +421,22 @@ const ManageVault = () => {
 
   useEffect(() => {
     // vault variable does not arrive so these glitch out on refresh
-    getNumConfirmationsRequired()
-    getConfirmSale()
-    getConfirmWithdrawal()
-    getWhitelist()
-    
+    if (vault) {
+      getNumConfirmationsRequired()
+      getConfirmSale()
+      getConfirmWithdrawal()
+      getWhitelist()
+      getAirdrop()
+      getBid()
+      getBidder()
+      getProposedOwners()
+      getVaultBalance(vault)
+      getFundingGoal()
+      getFundingPerc()
+      getFundingCollectors()
+      getFundingCollectorsPerc()
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vault])
 
@@ -273,41 +445,101 @@ const ManageVault = () => {
       <div>
         <h1>Owner Functions</h1>
         <div>
-          {!vault && (
-            <input
-              type='text'
-              value={owners1}
-              onChange={(e) => setOwners1(e.target.value)}
-              placeholder='owners array'
-            />
-          )}
-          {!vault && (
-            <input
-              type='text'
-              value={owners2}
-              onChange={(e) => setOwners2(e.target.value)}
-              placeholder='owners array'
-            />
-          )}
-          {!vault && (
-            <input
-              type='text'
-              value={confirmationsRequired}
-              onChange={(e) => setConfirmationsRequired(e.target.value)}
-              placeholder='Number of confirmations'
-            />
-          )}
+          <div>
+            {!vault && (
+              <input
+                type='text'
+                value={owners1}
+                onChange={(e) => setOwners1(e.target.value)}
+                placeholder='owners array'
+              />
+            )}
+          </div>
+          <div>
+            {!vault && (
+              <input
+                type='text'
+                value={owners2}
+                onChange={(e) => setOwners2(e.target.value)}
+                placeholder='owners array'
+              />
+            )}
+          </div>
+          <div>
+            {!vault && (
+              <input
+                type='text'
+                value={confirmationsRequired}
+                onChange={(e) => setConfirmationsRequired(e.target.value)}
+                placeholder='Number of confirmations'
+              />
+            )}
+          </div>
+          <div>
+            {!vault && (
+              <input
+                type='text'
+                value={tokenName}
+                onChange={(e) => setTokenName(e.target.value)}
+                placeholder='Name for vault shares'
+              />
+            )}
+          </div>
+          <div>
+            {!vault && (
+              <input
+                type='text'
+                value={tokenSymbol}
+                onChange={(e) => setTokenSymbol(e.target.value)}
+                placeholder='Symbol for vault shares'
+              />
+            )}
+          </div>
+          <div>
+            {!vault && (
+              <input
+                type='text'
+                value={fundingGoal}
+                onChange={(e) => setFundingGoal(e.target.value)}
+                placeholder='Enter funding goal'
+              />
+            )}
+          </div>
+          <div>
+            {!vault && (
+              <input
+                type='text'
+                value={totalShares}
+                onChange={(e) => setTotalShares(e.target.value)}
+                placeholder='Enter total vault shares'
+              />
+            )}
+          </div>
+          <div>
+            {!vault && (
+              <input
+                type='text'
+                value={lockPeriod}
+                onChange={(e) => setLockPeriod(e.target.value)}
+                placeholder='Enter lock period for withdrawal'
+              />
+            )}
+          </div>
           {!vault && (
             <button onClick={deployVault}>
               Deploy Vault - deploy MolVault.sol
             </button>
           )}
           {deployError && <p>{deployError}</p>}
-          Vault Contract: {vault}
-          <br />
-          <br />
-          No. Confirmations Required for Sale and Withdrawal:{' '}
-          {numConfirmationsRequired}
+          {(contract || vault) && <div> Vault Contract: {vault} </div>}
+          {(contract || vault) && (
+            <div>
+              {' '}
+              No. Confirmations Required for Sale and Withdrawal:{' '}
+              {numConfirmationsRequired}{' '}
+            </div>
+          )}
+          {(contract || vault) && <div> Vault Balance: {vaultBalance} Ξ</div>}
         </div>
       </div>
 
@@ -320,7 +552,34 @@ const ManageVault = () => {
 
       {(contract || vault) && (
         <div>
+          <h2>Funding Goal</h2>
+          <div>Funding goal: {onChainfundingGoal} Ξ</div>
+          <div>Percentage funded: {fundingPerc} %</div>
+          <div>
+            Funding Collectors:
+            <div>
+              {fundingCollectors.map((collector, index) => (
+                <p key={index}>{collector}</p>
+              ))}
+            </div>
+          </div>
+          <div>
+            % per Funding Collectors:
+            <div>
+              {fundingCollectorsPerc.map((collector, index) => (
+                <p key={index}>{collector}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {(contract || vault) && (
+        <div>
           <h2>Sell Vault</h2>
+          <div>Highest bid: {bid} Ξ</div>
+          <div>Highest bidder: {bidder}</div>
+          <div>Proposed owners: {proposedOwners}</div>
           <div>No. Sell Confirmations: {numSaleConfirmations}</div>
           {confirmSaleError && <p>{confirmSaleError}</p>}
           {revokeSaleError && <p>{revokeSaleError}</p>}
@@ -344,7 +603,29 @@ const ManageVault = () => {
 
       {(contract || vault) && (
         <div>
+          <h2>Airdrop Vault Coins</h2>
+          <div>Current airdrop amount: {airdrop}</div>
+
+          <input
+            type='text'
+            value={updatedAirdrop}
+            onChange={(e) => setUpdatedAirdrop(e.target.value)}
+            placeholder='Enter new amount to airdrop'
+          />
+          <button onClick={updateAirdrop}>updateAirdrop</button>
+        </div>
+      )}
+
+      {(contract || vault) && (
+        <div>
           <h2>Artist Roster</h2>
+          {artists && (
+            <div>
+              {artists.map((artist, index) => (
+                <p key={index}>{artist}</p>
+              ))}
+            </div>
+          )}
           <div>
             <input
               type='text'
@@ -382,25 +663,6 @@ const ManageVault = () => {
             placeholder='Enter token id'
           />
           <button onClick={removeGamma}>removeGamma</button>
-        </div>
-      )}
-
-      {(contract || vault) && (
-        <div>
-          <h2>Owners</h2>
-          <input
-            type='text'
-            value={newOwner1}
-            onChange={(e) => setNewOwner1(e.target.value)}
-            placeholder='Enter new owner'
-          />
-          <input
-            type='text'
-            value={newOwner2}
-            onChange={(e) => setNewOwner2(e.target.value)}
-            placeholder='Enter another new owner'
-          />
-          <button onClick={updateOwners}>updateOwners</button>
         </div>
       )}
     </div>

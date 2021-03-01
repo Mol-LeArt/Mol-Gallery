@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 
 import './Form.css'
 
-const Form = ({ toggleForm, contract, tokenId }) => {
+const Form = ({ toggleForm, contract, tokenId, gamma }) => {
   const [sale, setSale] = useState('')
   const [price, setPrice] = useState('')
 
@@ -18,10 +18,16 @@ const Form = ({ toggleForm, contract, tokenId }) => {
     e.preventDefault()
     console.log('is token id #', tokenId, ' on sale?', sale, 'your price is ', price, )
 
-    updateSale(tokenId)
+    if (gamma) {
+      console.log('update vault')
+      updateVaultGammaSale()
+    } else {
+      console.log('update gamma')
+      updateGammaSale(tokenId)
+    }
   }
 
-  const updateSale = async (tokenId) => {
+  const updateGammaSale = async (tokenId) => {
     try {
       const p = ethers.utils.parseEther(price)
       const tx = await contract.updateSale(p, tokenId, sale)
@@ -33,6 +39,25 @@ const Form = ({ toggleForm, contract, tokenId }) => {
       window.location.reload()
     } catch (e) {
       console.log(e.message)
+    }
+  }
+
+  const updateVaultGammaSale = async () => {
+    try {
+      const p = ethers.utils.parseEther(price)
+      const tx = await contract.updateSale(gamma, tokenId, p, 0, sale)
+
+      console.log('this is tx.hash for updating sale', tx.hash)
+
+      const receipt = await tx.wait().then(() => {
+        window.location.reload()
+        console.log('update sale receipt is - ', receipt)
+      })
+      
+
+      
+    } catch (e) {
+      console.log(e)
     }
   }
 
