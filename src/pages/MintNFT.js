@@ -39,10 +39,6 @@ const MintNFT = ({ account }) => {
     }
   }
 
-  const handleClick = (e) => {
-    history.push('/')
-  }
-
   // ----- Console Tests
   // console.log(metadata, img)
   // console.log('account from App.js - ' + account)
@@ -127,9 +123,6 @@ const MintNFT = ({ account }) => {
           <button>Mint</button>
         </div>
       </form>
-      <div>
-        <button onClick={handleClick}>Back to Commons</button>
-      </div>
     </div>
   )
 }

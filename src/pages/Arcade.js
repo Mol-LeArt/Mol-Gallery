@@ -26,6 +26,50 @@ const Arcade = () => {
           <button>removeFromWhitelist</button>
         </div>
       </div>
+
+      <div>
+        <h2>Artist to add to whitelist?</h2>
+        <div>
+          <input
+            type='text'
+            // value={artistToAdd}
+            // onChange={(e) => setArtistToAdd(e.target.value)}
+            placeholder='Enter artist address'
+          />
+          <button>addToWhitelist</button>
+        </div>
+        <div>
+          <input
+            type='text'
+            // value={artistToRemove}
+            // onChange={(e) => setArtistToRemove(e.target.value)}
+            placeholder='Enter artist address'
+          />
+          <button>removeFromWhitelist</button>
+        </div>
+      </div>
+
+      <div>
+        <h2>Artist to remove from whitelist?</h2>
+        <div>
+          <input
+            type='text'
+            // value={artistToAdd}
+            // onChange={(e) => setArtistToAdd(e.target.value)}
+            placeholder='Enter artist address'
+          />
+          <button>addToWhitelist</button>
+        </div>
+        <div>
+          <input
+            type='text'
+            // value={artistToRemove}
+            // onChange={(e) => setArtistToRemove(e.target.value)}
+            placeholder='Enter artist address'
+          />
+          <button>removeFromWhitelist</button>
+        </div>
+      </div>
     </div>
   )
 }

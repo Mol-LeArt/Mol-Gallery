@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import NavBar from './comps/NavBar';
 import Commons from './pages/Commons';
 import About from './pages/About';
@@ -11,15 +11,15 @@ import Profile from './pages/Profile'
 import Gallery from './pages/Gallery'
 import Galleries from './pages/Galleries'
 import ManageVault from './pages/ManageVault'
-// import { ethers } from 'ethers'
+import SelectCommons from './pages/SelectCommons'
 import { projectFirestore } from './firebase/config'
 require('dotenv').config()
 
 
 function App() {
   const [account, setAccount] = useState(null)
-  const [hasGallery, toggleHasGallery] = useState(false)
-  const [vault, setVault] = useState(null)
+  const [hasGallery, setHasGallery] = useState(false)
+  const [vaultArry, setVaultArry] = useState([])
 
   const getAccount = async () => {
     window.ethereum
@@ -28,7 +28,6 @@ function App() {
         console.log("Account connected - " + result[0])
         setAccount(result[0])
         getGallery(result[0])
-        getVault(result[0])
     })
   }
 
@@ -39,20 +38,26 @@ function App() {
       .get()
 
     if (!query.empty) {
-      toggleHasGallery(true)
+      setHasGallery(true)
     }
   }
 
-  const getVault = async (account) => {
-    const query = await projectFirestore.collection('vault').where('owners', 'array-contains', account).get()
-
+  const getAllVaults = async () => {
+    const vaultArray = []
+    const query = await projectFirestore.collection('vault').get()
     query.forEach((doc) => {
-      setVault(doc.data().contract)
+      const vault = {
+        contract: doc.data().contract,
+        name: doc.data().name,
+      }
+      vaultArray.push(vault)
+      setVaultArry([...vaultArray])
     })
   }
 
   useEffect(() => {
     getAccount()
+    getAllVaults()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
@@ -61,7 +66,12 @@ function App() {
       <div className='App'>
         <NavBar hasGallery={hasGallery} />
         <Switch>
-          <Route path='/' exact component={() => <Commons vault={vault} />} />
+          <Route path='/commons:contract' exact component={() => <Commons />} />
+          <Route
+            path='/'
+            exact
+            component={() => <SelectCommons vaultArry={vaultArry} />}
+          />
           <Route path='/about' exact component={About} />
           <Route path='/arcade' exact component={Arcade} />
           <Route path='/galleries' exact component={Galleries} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ImageGrid from '../comps/ImageGrid';
 import { ethers } from 'ethers'
 // import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
@@ -19,7 +19,11 @@ const Commons = () => {
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-  const vault = '0x85c72bAd2B9Bc6bECF6BF81b7efccA04cC137426'
+  // const vault = '0x85c72bAd2B9Bc6bECF6BF81b7efccA04cC137426'
+
+  // ----- Reaect Router Config
+  const location = useLocation()
+  const vault = location.state.vault
 
   // ----- Get Gamma tokens
   const getGamma = async () => {
@@ -51,7 +55,7 @@ const Commons = () => {
     }
   }
 
-  // ----- Get deposited tokens 
+  // ----- Get deposited tokens
   // const getDepositTokens = async () => {
   //   const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
   //   try {
@@ -75,7 +79,7 @@ const Commons = () => {
   //      .then((data) => {
   //        console.log(data)
   //        setDepositTokenUris(data)
-  //      }) 
+  //      })
   //   } catch (e) {
   //     console.log(e)
   //   }
@@ -167,7 +171,7 @@ const Commons = () => {
           type='text'
           value={proposedOwners}
           onChange={(e) => setProposedOwners(e.target.value)}
-          placeholder='Enter prosposed owners'
+          placeholder='Enter proposed owners'
         />
         <button onClick={bidVault}>Bid on Vault</button>
       </div>
@@ -180,7 +184,12 @@ const Commons = () => {
       >
         {isArtist && <button>Mint</button>}
       </Link>
-      <ImageGrid origin={'vault'} contract={vault} uris={gammaUris} gamma={gamma} />
+      <ImageGrid
+        origin={'vault'}
+        contract={vault}
+        uris={gammaUris}
+        gamma={gamma}
+      />
     </div>
   )
 }

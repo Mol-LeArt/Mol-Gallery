@@ -86,7 +86,6 @@ const NFT = ({ account }) => {
   }
 
   const isOwner = (address) => {
-    console.log(address)
     if (address) {
       if (address.toLowerCase() === account) {
         toggleMatch(true)
