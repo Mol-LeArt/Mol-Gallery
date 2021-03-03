@@ -26,12 +26,13 @@ const DeployVault = ({ setCommunities }) => {
   const deploy = async () => {
     if (organizer.length > 0 && confirmationsRequired > 0) {
       try {
+        const p = ethers.utils.parseEther(fundingGoal)
         const contract = await factory.deploy(
           [organizer],
           confirmationsRequired,
           tokenName,
           tokenSymbol,
-          fundingGoal,
+          p,
           lockPeriod
         )
 
