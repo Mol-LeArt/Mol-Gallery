@@ -66,7 +66,7 @@ function App() {
       <div className='App'>
         <NavBar hasGallery={hasGallery} />
         <Switch>
-          <Route path='/commons:contract' exact component={() => <Commons />} />
+          <Route path='/commons/:contract' exact component={() => <Commons />} />
           <Route
             path='/'
             exact
