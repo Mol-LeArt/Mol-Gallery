@@ -31,13 +31,12 @@ const ImageUpload = ({ getFileForUpload }) => {
 
     return (
         <div>
-            <div className="upload">
+            <div class='space-y-4'>
                 <label>
                     <input type="file" onChange={changeHandler}/>
-                    <span>+</span>
                 </label>
                 
-                <div className="output">
+                <div>
                     { error && <div className="error">{ error }</div> }
                     { img && <img src={img} alt="preview img" />}
                 </div>

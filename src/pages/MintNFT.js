@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Mint from '../comps/Mint'
 import ImageUpload from '../comps/ImageUpload'
-import './MintNFT.css'
 
 const MintNFT = ({ account }) => {
   const [title, setTitle] = useState('')
@@ -14,7 +13,6 @@ const MintNFT = ({ account }) => {
   const [metadata, setMetadata] = useState(null)
 
   // ----- Reaect Router Config
-  const history = useHistory()
   const location = useLocation()
   const commons = location.state.commons
   const contract = location.state.contract
@@ -46,15 +44,14 @@ const MintNFT = ({ account }) => {
   // console.log("UploadNFT gallery variable " + gallery)
 
   return (
-    <div className='from-in-uploadnft'>
-      <h1 className='upload-nft-title'>Mint NFT</h1>
-      <p>Describe the steps to uploading an NFT!</p>
+    <div class='mx-auto px-4 my-10 max-w-sm space-y-10 '>
+      <div class='text-5xl font-bold text-center font-primary'>Mint NFT</div>
 
-      <form onSubmit={onSubmit}>
+      <form class='space-y-4 font-mono' onSubmit={onSubmit}>
         <div>
-          <label htmlFor='text'>Title</label>
-          <br />
+          <div>Title</div>
           <input
+            class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900'
             type='text'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -63,9 +60,9 @@ const MintNFT = ({ account }) => {
         </div>
 
         <div>
-          <label htmlFor='description'>Description</label>
-          <br />
+          <div>Description</div>
           <input
+            class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
             type='text'
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -77,6 +74,7 @@ const MintNFT = ({ account }) => {
           <label htmlFor='sale'>Put on sale?</label>
           <br />
           <input
+            class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
             type='text'
             value={sale}
             onChange={(e) => setSale(e.target.value)}
@@ -88,6 +86,7 @@ const MintNFT = ({ account }) => {
           <label htmlFor='price'>Price in Ξ</label>
           <br />
           <input
+            class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
             type='text'
             value={price}
             onChange={(e) => setPrice(e.target.value)}
@@ -95,32 +94,38 @@ const MintNFT = ({ account }) => {
           />
         </div>
 
-        <ImageUpload getFileForUpload={getFileForUpload} />
-
-        {metadata && (
-          <Mint
-            commons={commons}
-            contract={contract}
-            metadata={metadata}
-            sale={sale}
-            price={price}
-            img={img}
-            setImg={setImg}
-            account={account}
-          />
-        )}
+        <div>
+          <ImageUpload getFileForUpload={getFileForUpload} />
+        </div>
 
         <div>
+          {metadata && (
+            <Mint
+              commons={commons}
+              contract={contract}
+              metadata={metadata}
+              sale={sale}
+              price={price}
+              img={img}
+              setImg={setImg}
+              account={account}
+            />
+          )}
+        </div>
+
+        <div class='flex justify-center items-center space-x-2'>
           <input
             type='Checkbox'
             checked={compliance}
             onChange={(e) => setCompliance(e.target.checked)}
           />
-          <label>I agree to XYZ.</label>
+          <span>I agree to XYZ.</span>
         </div>
 
-        <div>
-          <button>Mint</button>
+        <div class='flex justify-center'>
+          <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md'>
+            Mint
+          </button>
         </div>
       </form>
     </div>

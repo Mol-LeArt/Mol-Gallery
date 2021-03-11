@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
 import MOLVAULT_BYTECODE from '../comps/MOLVAULT_BYTECODE'
-import { ContractFactory, ethers } from 'ethers' 
+import { ContractFactory, ethers } from 'ethers'
 import { projectFirestore, timeStamp } from '../firebase/config'
 
 const DeployVault = ({ setCommunities }) => {
@@ -40,7 +40,7 @@ const DeployVault = ({ setCommunities }) => {
           .wait()
           .then((receipt) => {
             setContract(contract.address)
-            
+
             console.log('Receipt for deploying MolVault', receipt)
             upload(communityName, contract.address, [organizer])
           })
@@ -69,70 +69,78 @@ const DeployVault = ({ setCommunities }) => {
   }
 
   return (
-    <div>
+    <div class='space-y-4 font-primary'>
       <div>
-        <div>
-          <div>
-            <input
-              type='text'
-              value={communityName}
-              onChange={(e) => setCommunity(e.target.value)}
-              placeholder='Enter name of community'
-            />
-          </div>
-          <div>
-            <input
-              type='text'
-              value={organizer}
-              onChange={(e) => setOrganizer(e.target.value.toLowerCase())}
-              placeholder='Enter community organizer'
-            />
-          </div>
-          <div>
-            <input
-              type='text'
-              value={confirmationsRequired}
-              onChange={(e) => setConfirmationsRequired(e.target.value)}
-              placeholder='Number of confirmations'
-            />
-          </div>
-          <div>
-            <input
-              type='text'
-              value={tokenName}
-              onChange={(e) => setTokenName(e.target.value)}
-              placeholder='Name for vault shares'
-            />
-          </div>
-          <div>
-            <input
-              type='text'
-              value={tokenSymbol}
-              onChange={(e) => setTokenSymbol(e.target.value)}
-              placeholder='Symbol for vault shares'
-            />
-          </div>
-          <div>
-            <input
-              type='text'
-              value={fundingGoal}
-              onChange={(e) => setFundingGoal(e.target.value)}
-              placeholder='Enter funding goal'
-            />
-          </div>
-          <div>
-            <input
-              type='text'
-              value={lockPeriod}
-              onChange={(e) => setLockPeriod(e.target.value)}
-              placeholder='Enter lock period for withdrawal'
-            />
-          </div>
-          <button onClick={deploy}>Deploy Vault - deploy MolVault.sol</button>
-          {deployError && <p>{deployError}</p>}
-          {contract && <div> Vault Contract: {contract} </div>}
-        </div>
+        <input
+          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
+          type='text'
+          value={communityName}
+          onChange={(e) => setCommunity(e.target.value)}
+          placeholder='Enter name of community'
+        />
       </div>
+      <div>
+        <input
+          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
+          type='text'
+          value={organizer}
+          onChange={(e) => setOrganizer(e.target.value.toLowerCase())}
+          placeholder='Enter community organizer'
+        />
+      </div>
+      <div>
+        <input
+          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
+          type='text'
+          value={confirmationsRequired}
+          onChange={(e) => setConfirmationsRequired(e.target.value)}
+          placeholder='Number of confirmations'
+        />
+      </div>
+      <div>
+        <input
+          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
+          type='text'
+          value={tokenName}
+          onChange={(e) => setTokenName(e.target.value)}
+          placeholder='Name for vault shares'
+        />
+      </div>
+      <div>
+        <input
+          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
+          type='text'
+          value={tokenSymbol}
+          onChange={(e) => setTokenSymbol(e.target.value)}
+          placeholder='Symbol for vault shares'
+        />
+      </div>
+      <div>
+        <input
+          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
+          type='text'
+          value={fundingGoal}
+          onChange={(e) => setFundingGoal(e.target.value)}
+          placeholder='Enter funding goal'
+        />
+      </div>
+      <div>
+        <input
+          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
+          type='text'
+          value={lockPeriod}
+          onChange={(e) => setLockPeriod(e.target.value)}
+          placeholder='Enter lock period for withdrawal'
+        />
+      </div>
+      <button
+        class='py-4 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'
+        onClick={deploy}
+      >
+        Deploy Vault
+      </button>
+      {deployError && <p>{deployError}</p>}
+      {contract && <div> Vault Contract: {contract} </div>}
     </div>
   )
 }

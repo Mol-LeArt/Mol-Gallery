@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import BidVault from '../comps/BidVault'
 import ImageGrid from '../comps/ImageGrid';
 import { ethers } from 'ethers'
 // import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
 import GAMMA_ABI from '../comps/GAMMA_ABI'
-import './Commons.css'
 
 const Commons = () => {
   const [gamma, setGamma] = useState('')
   const [gammaUris, setGammaUris] = useState([])
   // const [depositTokenUris, setDepositTokenUris] = useState([])
-  const [bid, setBid] = useState('')
-  const [proposedOwners, setProposedOwners] = useState('')
   const [isArtist, toggleIsArtist] = useState(false)
   const [isVaultOwner, toggleIsVaultOwner] = useState(false)
+  const [isBidForm, setIsBidForm] = useState(false)
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
@@ -85,22 +84,6 @@ const Commons = () => {
   //   }
   // }
 
-  // ----- Bid
-  const bidVault = async () => {
-    const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
-    try {
-      const newOwners = [proposedOwners]
-      const overrides = { value: ethers.utils.parseEther(bid) }
-      console.log(_contract)
-      const tx = await _contract.bidVault(newOwners, overrides)
-      tx.wait().then(() => {
-        window.location.reload()
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
   // ----- Check owner status to toggle Vault button
   const isOwner = async () => {
     const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
@@ -130,6 +113,10 @@ const Commons = () => {
     }
   }
 
+  const toggleBidForm = () => {
+    setIsBidForm(true)
+  } 
+
   useEffect(() => {
     if (vault) {
       isOwner()
@@ -141,55 +128,66 @@ const Commons = () => {
   }, [])
 
   return (
-    <div>
-      <h1 className='commons-title'>Commons</h1>
-      <p className='commons-desc'>
-        Mol's Commons is open to the public <br />
-        Anyone can mint here <br />
-        You can also navigate over to Galleries to see works by Mol's member
-      </p>
-      <div>
-        <Link
-          to={{
-            pathname: '/manage',
-            state: { vault: vault },
-          }}
-        >
-          {isVaultOwner && <button>Vault</button>}
-        </Link>
+    <div class='mx-auto px-4 my-10 max-w-6xl space-y-6 font-primary flex-col justify-center'>
+      <div class='text-7xl font-bold text-center'>Commons</div>
+      <div class='flex justify-center'>
+        <p>
+          Admin - access limited to community organizers <br />
+          Mint - access limited to whitelisted members <br />
+          Bid - public access
+        </p>
       </div>
 
-      <div>
-        <div>Any bid amount will be locked in contract</div>
-        <input
-          type='text'
-          value={bid}
-          onChange={(e) => setBid(e.target.value)}
-          placeholder='Enter bid'
-        />
-        <input
-          type='text'
-          value={proposedOwners}
-          onChange={(e) => setProposedOwners(e.target.value)}
-          placeholder='Enter proposed owners'
-        />
-        <button onClick={bidVault}>Bid on Vault</button>
+      <div class='flex justify-center space-x-4'>
+        <div>
+          <Link
+            to={{
+              pathname: '/manage',
+              state: { vault: vault },
+            }}
+          >
+            {isVaultOwner && (
+              <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'>
+                Admin
+              </button>
+            )}
+          </Link>
+        </div>
+
+        <div>
+          <Link
+            to={{
+              pathname: '/mint',
+              state: { commons: 'commons', contract: vault },
+            }}
+          >
+            {isArtist && (
+              <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'>
+                Mint
+              </button>
+            )}
+          </Link>
+        </div>
+        <div>
+          <button
+            class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'
+            onClick={toggleBidForm}
+          >
+            Bid
+          </button>
+        </div>
       </div>
 
-      <Link
-        to={{
-          pathname: '/mint',
-          state: { commons: 'commons', contract: vault },
-        }}
-      >
-        {isArtist && <button>Mint</button>}
-      </Link>
-      <ImageGrid
-        origin={'vault'}
-        contract={vault}
-        uris={gammaUris}
-        gamma={gamma}
-      />
+      {isBidForm && <BidVault vault={vault} setIsBidForm={setIsBidForm} />}
+
+      <div>
+        <ImageGrid
+          origin={'vault'}
+          contract={vault}
+          uris={gammaUris}
+          gamma={gamma}
+        />
+      </div>
     </div>
   )
 }

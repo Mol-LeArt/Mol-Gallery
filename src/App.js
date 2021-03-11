@@ -10,7 +10,7 @@ import NFT from './pages/NFT';
 import Profile from './pages/Profile'
 import Gallery from './pages/Gallery'
 import Galleries from './pages/Galleries'
-import ManageVault from './pages/ManageVault'
+import ManageCommons from './pages/ManageCommons'
 import SelectCommons from './pages/SelectCommons'
 import { projectFirestore } from './firebase/config'
 require('dotenv').config()
@@ -81,7 +81,7 @@ function App() {
             exact
             component={() => <OpenGallery account={account} />}
           />
-          <Route path='/manage' exact component={() => <ManageVault />} />
+          <Route path='/manage' exact component={() => <ManageCommons />} />
           <Route
             path='/mint'
             exact
