@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ethers } from 'ethers'
 // import ABI from '../comps/MOLGAMMA_ABI'
 import { projectFirestore } from '../firebase/config'
-import './Connect.css'
+// import './Connect.css'
 
 const Connect = () => {
   const [account, setAccount] = useState('')
@@ -28,7 +28,7 @@ const Connect = () => {
     window.location.reload()
   })
 
-  async function connectMetamask() {
+  const connectMetamask = () => {
     if (typeof window.ethereum !== undefined) {
       getNetwork()
       getAccount()
@@ -41,7 +41,6 @@ const Connect = () => {
     provider
       .getNetwork()
       .then((network) => {
-        setChain(network.chainId)
         console.log('current chainId - ' + network.chainId)
         if (network.chainId === 100) {
           setChain('xDAI')
@@ -89,19 +88,28 @@ const Connect = () => {
     })
   }
 
+  useEffect(() => {
+    connectMetamask()
+  }, [])
+
   return (
     <div>
       {!connect && <button onClick={connectMetamask}>Connect</button>}
       {connect && (
-        <Link
-          to={{
-            pathname: `/profile/${account}`,
-            state: { account: account, contract: contract },
-          }}
-          style={{ textDecoration: 'none' }}
-        >
-          <button className='connect-button'>{account.slice(0, 6) + ' ... ' + account.slice(-4)} on {chain}</button>
-        </Link>
+        // <Link
+        //   to={{
+        //     // pathname: `/profile/${account}`,
+        //     // state: { account: account, contract: contract },
+        //   }}
+        // >
+          <button disabled>
+            {' '}
+            <span class='text-indigo-600'>
+              {account.slice(0, 6) + ' ... ' + account.slice(-4)}
+            </span>{' '}
+            on <span class='text-red-400'>{chain}</span>
+          </button>
+        // </Link>
       )}
     </div>
   )

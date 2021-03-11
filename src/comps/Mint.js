@@ -5,7 +5,6 @@ import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
 import { ethers } from 'ethers'
 // import { projectFirestore } from '../firebase/config'
-import './Mint.css'
 
 const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }) => {
   console.log(process.env)
@@ -160,7 +159,6 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
 
   return (
     <div>
-      {/* <div className='progress-bar' style={{ width: progress + '%' }}></div> */}
     </div>
   )
 }

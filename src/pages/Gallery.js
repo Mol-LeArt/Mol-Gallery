@@ -72,7 +72,7 @@ const Gallery = ({ account }) => {
   }, [])
 
   return (
-    <div>
+    <div class='mx-auto px-4 my-5 max-w-5xl space-y-2 font-mono flex-col justify-center'>
       <h1 className='gallery-title'>{galleryName}</h1>
       <p className='gallery-desc'>{galleryDesc}</p>
       <br />
@@ -86,9 +86,9 @@ const Gallery = ({ account }) => {
           state: { gallery: gallery, contract: contract },
         }}
       >
-        { (isOwner) && <button>Upload Image</button>}
+        {isOwner && <button>Upload Image</button>}
       </Link>
-      <ImageGrid contract={contract} uris={uris}/>
+      <ImageGrid contract={contract} uris={uris} />
     </div>
   )
 }

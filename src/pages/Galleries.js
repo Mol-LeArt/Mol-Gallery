@@ -28,16 +28,14 @@ const Galleries = () => {
   }, [])
 
   return (
-    <div>
-      <h1 className='galleries-title'>Mol Galleries</h1>
-      <p className='galleries-desc'>
-        Each member of the Mol LeArt DAO gets her own gallery for minting ERC721
+    <div class='mx-auto px-4 my-16 max-w-5xl space-y-6 font-mono flex-col justify-center'>
+      <h1 class='text-7xl font-bold text-center'>Galleries</h1>
+      <div class='max-w-xl mx-auto text-center'>
+        Each member gets a personal contract for minting ERC721
         NFTs
-         <br />
-        Through the gallery smart contract, memebers can (1) airdrop social currencies, (2) mint royalties token,
-        and (3) pick a royalties scheme.
-      </p>
-      <br />
+        <br />
+        Memebers can (1) airdrop social currencies, (2) mint royalties token, and (3) pick a royalties scheme.
+      </div>
       <div>
         {contracts &&
           contracts.map((contract) => (

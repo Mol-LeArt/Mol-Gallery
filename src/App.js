@@ -49,6 +49,7 @@ function App() {
       const vault = {
         contract: doc.data().contract,
         name: doc.data().name,
+        chain: doc.data().chain,
       }
       vaultArray.push(vault)
       setVaultArry([...vaultArray])

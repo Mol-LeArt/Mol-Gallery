@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import DeployVault from '../comps/DeployVault'
+import DeployCommons from '../comps/DeployCommons'
 
 const SelectCommons = ({ vaultArry }) => {
   const [code, setCode] = useState('')
@@ -25,32 +25,35 @@ const SelectCommons = ({ vaultArry }) => {
 
   return (
     <div>
-      <div class='mx-auto px-4 my-10 max-w-2xl space-y-10 font-primary flex-col justify-center'>
+      <div class='mx-auto px-4 my-20 max-w-2xl space-y-10 flex-col justify-center'>
         <div class='text-5xl font-bold self-auto text-center'>
           Select a Commons
         </div>
 
-        {vaults &&
-          vaults.map((vault, index) => (
-            <div class='text-center' key={index}>
-              <Link
-                to={{
-                  pathname: `/commons/${vault.contract}`,
-                  state: { vault: vault.contract },
-                }}
-                style={{ textDecoration: 'none' }}
-              >
-                <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'>
-                  {vault.name}
-                </button>
-              </Link>
-            </div>
-          ))}
+        <div class='border border-4 max-w-xl mx-auto grid grid-cols-3 gap-4'>
+          {vaults &&
+            vaults.map((vault, index) => (
+              <div key={index}>
+                <Link
+                  to={{
+                    pathname: `/commons/${vault.contract}`,
+                    state: { vault: vault.contract },
+                  }}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'>
+                    {vault.name} on {vault.chain}
+                  </button>
+                </Link>
+              </div>
+            ))}
+        </div>
       </div>
 
-      <div class='mx-auto px-4 my-10 max-w-2xl space-y-6 font-primary flex-col justify-center'>
-        <div class='text-4xl font-semibold text-center'>Deploy a Commons</div>
-        <div class='text-center'>Do you have an invite code?</div>
+      <div class='mx-auto px-4 my-10 max-w-2xl space-y-6 flex-col justify-center text-gray-400'>
+        <div class='text-4xl my-5 font-semibold text-center'>
+          Summon a Commons
+        </div>
         <div class='text-center'>
           <input
             class='border border-gray-400 py-2 px-4 rounded-md focus:outline-none focus:border-gray-800 font-mono'
@@ -70,7 +73,7 @@ const SelectCommons = ({ vaultArry }) => {
         <p class='text-center'>---------------------</p>
         <div class='text-center'>
           {err && <p>{err}</p>}
-          {canDeploy && <DeployVault />}
+          {canDeploy && <DeployCommons />}
         </div>
       </div>
     </div>

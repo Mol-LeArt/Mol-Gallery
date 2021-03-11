@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom'
 // import ImageGrid from '../comps/ImageGrid'
 import { ethers } from 'ethers'
 import ABI from '../comps/MOLGAMMA_ABI'
-import './Commons.css'
 
 const Profile = () => {
   const [gRoyalties, setRoyalties] = useState(null)
@@ -83,8 +82,8 @@ const Profile = () => {
 
   return (
     <div>
-      <h1 className='commons-title'>Profile</h1>
-      <p className='commons-desc'>
+      <h1>Profile</h1>
+      <p>
         This is your personal page. 
       </p>
       <h2>Royalties Tokens</h2>

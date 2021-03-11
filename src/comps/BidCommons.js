@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { ethers } from 'ethers'
-import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
+import MOLVAULT_ABI from './MOLVAULT_ABI'
 
-const BidVault = ({ vault, setIsBidForm }) => {
+const BidCommons = ({ vault, setIsBidForm }) => {
   const [bid, setBid] = useState('')
   const [proposedOwners, setProposedOwners] = useState('')
 
@@ -71,4 +71,4 @@ const BidVault = ({ vault, setIsBidForm }) => {
   )
 }
 
-export default BidVault
+export default BidCommons

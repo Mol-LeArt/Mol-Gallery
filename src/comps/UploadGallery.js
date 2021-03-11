@@ -1,6 +1,5 @@
 import React from 'react';
 import { projectFirestore, timeStamp } from  '../firebase/config'
-import './Mint.css'
 
 const UploadGallery = ({ gallery }) => {
     const collectionRef = projectFirestore.collection('gallery');

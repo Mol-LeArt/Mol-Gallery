@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import BidVault from '../comps/BidVault'
+import BidCommons from '../comps/BidCommons'
 import ImageGrid from '../comps/ImageGrid';
 import { ethers } from 'ethers'
 // import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
@@ -128,14 +128,12 @@ const Commons = () => {
   }, [])
 
   return (
-    <div class='mx-auto px-4 my-10 max-w-6xl space-y-6 font-primary flex-col justify-center'>
+    <div class='mx-auto px-4 my-16 max-w-5xl space-y-6 font-mono flex-col justify-center'>
       <div class='text-7xl font-bold text-center'>Commons</div>
-      <div class='flex justify-center'>
-        <p>
+      <div class='max-w-2xl mx-auto text-center'>
           Admin - access limited to community organizers <br />
           Mint - access limited to whitelisted members <br />
           Bid - public access
-        </p>
       </div>
 
       <div class='flex justify-center space-x-4'>
@@ -147,7 +145,7 @@ const Commons = () => {
             }}
           >
             {isVaultOwner && (
-              <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'>
+              <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'>
                 Admin
               </button>
             )}
@@ -162,7 +160,7 @@ const Commons = () => {
             }}
           >
             {isArtist && (
-              <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'>
+              <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'>
                 Mint
               </button>
             )}
@@ -170,7 +168,7 @@ const Commons = () => {
         </div>
         <div>
           <button
-            class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'
+            class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'
             onClick={toggleBidForm}
           >
             Bid
@@ -178,7 +176,7 @@ const Commons = () => {
         </div>
       </div>
 
-      {isBidForm && <BidVault vault={vault} setIsBidForm={setIsBidForm} />}
+      {isBidForm && <BidCommons vault={vault} setIsBidForm={setIsBidForm} />}
 
       <div>
         <ImageGrid

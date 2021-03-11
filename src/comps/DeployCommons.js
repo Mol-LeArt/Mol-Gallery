@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
-import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
-import MOLVAULT_BYTECODE from '../comps/MOLVAULT_BYTECODE'
+import React, { useState, useEffect } from 'react'
+import MOLVAULT_ABI from './MOLVAULT_ABI'
+import MOLVAULT_BYTECODE from './MOLVAULT_BYTECODE'
 import { ContractFactory, ethers } from 'ethers'
 import { projectFirestore, timeStamp } from '../firebase/config'
 
-const DeployVault = ({ setCommunities }) => {
+const DeployCommons = () => {
+  const gRoyaltiesUri = 'image'
   const [communityName, setCommunity] = useState('')
+  const [chain, setChain] = useState(null)
 
   // ----- Deploy MolVault
   const [organizer, setOrganizer] = useState('')
@@ -13,7 +15,6 @@ const DeployVault = ({ setCommunities }) => {
   const [tokenName, setTokenName] = useState('')
   const [tokenSymbol, setTokenSymbol] = useState('')
   const [fundingGoal, setFundingGoal] = useState('')
-  const [lockPeriod, setLockPeriod] = useState('')
   const [deployError, setDeployError] = useState(null)
   const [contract, setContract] = useState(null)
 
@@ -26,14 +27,14 @@ const DeployVault = ({ setCommunities }) => {
   const deploy = async () => {
     if (organizer.length > 0 && confirmationsRequired > 0) {
       try {
-        const p = ethers.utils.parseEther(fundingGoal)
+        const goal = ethers.utils.parseEther(fundingGoal)
         const contract = await factory.deploy(
           [organizer],
           confirmationsRequired,
           tokenName,
           tokenSymbol,
-          p,
-          lockPeriod
+          goal,
+          gRoyaltiesUri
         )
 
         contract.deployTransaction
@@ -62,14 +63,44 @@ const DeployVault = ({ setCommunities }) => {
       contract: contract,
       organizers: organizers,
       createdAt: createdAt,
+      chain: chain,
     }
     collectionRef.add(dict).then(() => {
       window.location.reload()
     })
   }
 
+  const getNetwork = () => {
+    provider
+      .getNetwork()
+      .then((network) => {
+        console.log('current chainId - ' + network.chainId)
+        if (network.chainId === 100) {
+          setChain('xDAI')
+        } else if (network.chainId === 4) {
+          setChain('Rinkeby')
+        } else if (network.chainId === 1) {
+          setChain('Mainnet')
+        } else if (network.chainId === 3) {
+          setChain('Ropsten')
+        } else if (network.chainId === 42) {
+          setChain('Kovan')
+        } else {
+          console.log('Pick a supported blockchain!')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  useEffect(() => {
+    getNetwork()
+  }, [])
+  
+
   return (
-    <div class='space-y-4 font-primary'>
+    <div class='space-y-4'>
       <div>
         <input
           class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
@@ -124,7 +155,7 @@ const DeployVault = ({ setCommunities }) => {
           placeholder='Enter funding goal'
         />
       </div>
-      <div>
+      {/* <div>
         <input
           class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
           type='text'
@@ -132,7 +163,7 @@ const DeployVault = ({ setCommunities }) => {
           onChange={(e) => setLockPeriod(e.target.value)}
           placeholder='Enter lock period for withdrawal'
         />
-      </div>
+      </div> */}
       <button
         class='py-4 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'
         onClick={deploy}
@@ -145,4 +176,4 @@ const DeployVault = ({ setCommunities }) => {
   )
 }
 
-export default DeployVault
+export default DeployCommons

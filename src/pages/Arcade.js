@@ -4,7 +4,8 @@ const Arcade = () => {
   
   
   return (
-    <div class='font-mono max-w-2xl mx-auto'>
+    <div class='mx-auto px-4 my-16 max-w-2xl space-y-6 font-mono flex-col justify-center'>
+      <h1 class='text-7xl font-bold text-center'>Arcade</h1>
       <div>
         <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
           Redeem Ξ

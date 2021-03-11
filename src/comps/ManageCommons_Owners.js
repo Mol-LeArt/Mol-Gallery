@@ -3,12 +3,11 @@ import { ethers } from 'ethers'
 import ABI from './MOLVAULT_ABI'
 
 const ManageCommons_Owners = ({ signer, commons }) => {
-  const [numConfirms, setNumConfirms] = useState(
-    ''
-  )
+  const [numConfirms, setNumConfirms] = useState('')
   const [confirmError, setConfirmError] = useState(null)
   const [revokeError, setRevokeError] = useState(null)
   const [numConfirmsRequired, setNumConfirmsRequired] = useState('')
+  const [newOwners, setNewOwners] = useState('')
   const [owners, setOwners] = useState('')
 
   const getNumConfirmationsRequired = async () => {
@@ -77,11 +76,11 @@ const ManageCommons_Owners = ({ signer, commons }) => {
     }
   }
 
-  const getConfirmWithdrawal = async () => {
+  const getNumConfirms = async () => {
     try {
       const _contract = new ethers.Contract(commons, ABI, signer)
       _contract
-        .numWithdrawalConfirmations()
+        .numProposedOwnersConfirmations()
         .then((data) => setNumConfirms(data))
     } catch (e) {
       console.log(e)
@@ -90,9 +89,8 @@ const ManageCommons_Owners = ({ signer, commons }) => {
 
   const proposeOwners = async () => {
     try {
-      const a = ethers.utils.parseEther(owners)
       const _contract = new ethers.Contract(commons, ABI, signer)
-      const tx = await _contract.proposeOwners(a)
+      const tx = await _contract.proposeOwners([newOwners])
       tx.wait().then(() => {
         window.location.reload()
       })
@@ -101,9 +99,21 @@ const ManageCommons_Owners = ({ signer, commons }) => {
     }
   }
   
+  const getProposedOwners = async () => {
+    try {
+      const _contract = new ethers.Contract(commons, ABI, signer)
+      _contract.getProposedOwners().then((data) => {
+        setOwners(data)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   useEffect(() => {
-    getConfirmWithdrawal()
+    getNumConfirms()
     getNumConfirmationsRequired()
+    getProposedOwners()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -117,14 +127,15 @@ const ManageCommons_Owners = ({ signer, commons }) => {
       </div>
       <div>No. Confirmations Required: {numConfirmsRequired}</div>
       <div>No. Confirmations : {numConfirms}</div>
+      <div>Proposed Owners : {owners}</div>
       {confirmError && <p>{confirmError}</p>}
       {revokeError && <p>{revokeError}</p>}
       <div class='flex space-x-4'>
         <input
           class='flex-2 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
           type='text'
-          value={owners}
-          onChange={(e) => setOwners(e.target.value)}
+          value={newOwners}
+          onChange={(e) => setNewOwners(e.target.value)}
           placeholder='Enter new organizers'
         />
         <button
