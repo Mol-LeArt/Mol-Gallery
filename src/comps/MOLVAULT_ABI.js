@@ -3,203 +3,6 @@ const ABI = [
     inputs: [
       {
         internalType: 'address payable[]',
-        name: '_address',
-        type: 'address[]',
-      },
-    ],
-    name: 'addToWhitelist',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address payable[]',
-        name: '_newOwners',
-        type: 'address[]',
-      },
-    ],
-    name: 'bidVault',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'confirmOwnersUpdate',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'confirmSale',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'confirmWithdrawal',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'executeWithdrawal',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_ethPrice',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenPrice',
-        type: 'uint256',
-      },
-      {
-        internalType: 'string',
-        name: '_tokenURI',
-        type: 'string',
-      },
-      {
-        internalType: 'uint8',
-        name: '_forSale',
-        type: 'uint8',
-      },
-    ],
-    name: 'mint',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address payable[]',
-        name: '_newOwners',
-        type: 'address[]',
-      },
-    ],
-    name: 'proposeOwners',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_tokenAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'purchase',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'redeemFunds',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address[]',
-        name: '_address',
-        type: 'address[]',
-      },
-    ],
-    name: 'removeFromWhitelist',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_tokenAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'removeGamma',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'revokeOwnersUpdate',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'revokeSale',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'revokeWithdrawal',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'sellVault',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_tokenAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'tokenPurchase',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address payable[]',
         name: '_owners',
         type: 'address[]',
       },
@@ -235,84 +38,34 @@ const ABI = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
+        internalType: 'bytes',
+        name: '',
+        type: 'bytes',
       },
     ],
-    name: 'updateAirdrop',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    name: 'NFTs',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
       {
-        internalType: 'uint8',
-        name: '_percFeeToFundingCollectors',
-        type: 'uint8',
-      },
-      {
-        internalType: 'uint8',
-        name: '_percFeeToWhitelist',
-        type: 'uint8',
+        internalType: 'address payable[]',
+        name: '_address',
+        type: 'address[]',
       },
     ],
-    name: 'updateFeeDistribution',
+    name: 'addToWhitelist',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'updateOwners',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_tokenAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_ethPrice',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenPrice',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint8',
-        name: '_forSale',
-        type: 'uint8',
-      },
-    ],
-    name: 'updateSale',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'withdrawBid',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    stateMutability: 'payable',
-    type: 'receive',
   },
   {
     inputs: [],
@@ -341,8 +94,14 @@ const ABI = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'bidder',
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'bidOwners',
     outputs: [
       {
         internalType: 'address payable',
@@ -356,12 +115,19 @@ const ABI = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        internalType: 'address payable[]',
+        name: '_newOwners',
+        type: 'address[]',
       },
     ],
-    name: 'bidOwners',
+    name: 'bidVault',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'bidder',
     outputs: [
       {
         internalType: 'address payable',
@@ -383,6 +149,45 @@ const ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'confirmOwnersUpdate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'confirmSale',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'confirmWithdrawal',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address payable',
+        name: '_address',
+        type: 'address',
+      },
+    ],
+    name: 'executeWithdrawal',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -605,20 +410,34 @@ const ABI = [
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
+        internalType: 'uint256',
+        name: '_ethPrice',
+        type: 'uint256',
       },
-    ],
-    name: 'NFTs',
-    outputs: [
       {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
+        internalType: 'uint256',
+        name: '_tokenPrice',
+        type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: '_tokenURI',
+        type: 'string',
+      },
+      {
+        internalType: 'uint8',
+        name: '_forSale',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: '_royalties',
+        type: 'uint8',
       },
     ],
-    stateMutability: 'view',
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -721,6 +540,19 @@ const ABI = [
   {
     inputs: [
       {
+        internalType: 'address payable[]',
+        name: '_newOwners',
+        type: 'address[]',
+      },
+    ],
+    name: 'proposeOwners',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'uint256',
         name: '',
         type: 'uint256',
@@ -754,6 +586,83 @@ const ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_tokenAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'purchase',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'redeemFunds',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: '_address',
+        type: 'address[]',
+      },
+    ],
+    name: 'removeFromWhitelist',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_tokenAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'removeGamma',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'revokeOwnersUpdate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'revokeSale',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'revokeWithdrawal',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -810,6 +719,102 @@ const ABI = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'sellVault',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_tokenAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'tokenPurchase',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'updateAirdrop',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint8',
+        name: '_percFeeToFundingCollectors',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: '_percFeeToWhitelist',
+        type: 'uint8',
+      },
+    ],
+    name: 'updateFeeDistribution',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'updateOwners',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_tokenAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_ethPrice',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_tokenPrice',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint8',
+        name: '_forSale',
+        type: 'uint8',
+      },
+    ],
+    name: 'updateSale',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -826,6 +831,13 @@ const ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'withdrawBid',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -846,6 +858,10 @@ const ABI = [
     ],
     stateMutability: 'view',
     type: 'function',
+  },
+  {
+    stateMutability: 'payable',
+    type: 'receive',
   },
 ]
 

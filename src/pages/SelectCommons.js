@@ -30,7 +30,7 @@ const SelectCommons = ({ vaultArry }) => {
           Select a Commons
         </div>
 
-        <div class='border border-4 max-w-xl mx-auto grid grid-cols-3 gap-4'>
+        <div class='max-w-xl mx-auto grid grid-cols-3 gap-4'>
           {vaults &&
             vaults.map((vault, index) => (
               <div key={index}>
