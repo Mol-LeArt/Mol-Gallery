@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import fleek from '@fleekhq/fleek-storage-js'
 import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
+import GAMMA_ABI from '../comps/GAMMA_ABI'
 import { ethers } from 'ethers'
 // import { projectFirestore } from '../firebase/config'
 
-const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }) => {
-  console.log(process.env)
+const Mint = ({ commons, contract, metadata, sale, price, coins, img }) => {
   // ----- Reaect Router Config
   const history = useHistory()
 
@@ -65,13 +65,13 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
       const tokenUri = baseUrl + result.hash
       console.log(tokenUri)
       const p = ethers.utils.parseEther(price)
+      const c = ethers.utils.parseEther(coins)
 
       if (commons === 'commons') {
-        molVault(p, tokenUri)
+        molVault(p, c, tokenUri)
       } else {
         molGamma(p, tokenUri)
       }
-      
     } catch (e) {
       console.log('error is - ' + e, i)
     }
@@ -96,7 +96,7 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
           }
         }
       })
-      
+
       contractListener(_contract)
     } catch (e) {
       console.log(e)
@@ -106,13 +106,14 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
     }
   }
 
-  const molVault = async (ethPrice, tokenURI) => {
+  // ----- Mint Gamma with MolVault
+  const molVault = async (price, coins, tokenURI) => {
     console.log('MolVault contract is - ', contract)
     const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
     try {
-      const tx = await _contract.mint(ethPrice, 0, tokenURI, sale)
+      const tx = await _contract.mint(price, coins, tokenURI, sale)
       console.log('tx.hash for minting - ' + tx.hash)
-      
+
       tx.wait().then((receipt) => {
         if (receipt.confirmations === 1) {
           console.log('mint receipt is - ', receipt)
@@ -125,11 +126,11 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
         }
       })
     } catch (e) {
-
+      console.log(e)
     }
   }
 
-  // ----- Listen to contract events 
+  // ----- Listen to contract events
   function contractListener(contract) {
     contract.on('Transfer', (from, to, tokenId) => {
       console.log('Token minted - ', from, to)
@@ -147,7 +148,6 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
 
   useEffect(() => {
     upload(img, contract)
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -157,10 +157,7 @@ const Mint = ({ commons, contract, metadata, sale, price, img, setImg, account }
   //   }
   // }, [img, setImg])
 
-  return (
-    <div>
-    </div>
-  )
+  return <div></div>
 }
 
-export default Mint;
+export default Mint

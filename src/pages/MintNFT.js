@@ -8,6 +8,7 @@ const MintNFT = ({ account }) => {
   const [description, setDescription] = useState('')
   const [sale, setSale] = useState('')
   const [price, setPrice] = useState('')
+  const [coins, setCoins] = useState('')
   const [img, setImg] = useState(null)
   const [compliance, setCompliance] = useState(false)
   const [metadata, setMetadata] = useState(null)
@@ -44,10 +45,10 @@ const MintNFT = ({ account }) => {
   // console.log("UploadNFT gallery variable " + gallery)
 
   return (
-    <div class='mx-auto px-4 my-10 max-w-sm space-y-10 '>
-      <div class='text-5xl font-bold text-center font-primary'>Mint NFT</div>
+    <div class='mx-auto px-4 my-10 max-w-sm space-y-10 font-mono'>
+      <div class='text-5xl font-bold text-center'>Mint NFT</div>
 
-      <form class='space-y-4 font-mono' onSubmit={onSubmit}>
+      <form class='space-y-4' onSubmit={onSubmit}>
         <div>
           <div>Title</div>
           <input
@@ -95,6 +96,18 @@ const MintNFT = ({ account }) => {
         </div>
 
         <div>
+          <label htmlFor='coins'>No. of Coins</label>
+          <br />
+          <input
+            class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
+            type='text'
+            value={coins}
+            onChange={(e) => setCoins(e.target.value)}
+            placeholder='Enter amount in coins'
+          />
+        </div>
+
+        <div>
           <ImageUpload getFileForUpload={getFileForUpload} />
         </div>
 
@@ -106,9 +119,8 @@ const MintNFT = ({ account }) => {
               metadata={metadata}
               sale={sale}
               price={price}
+              coins={coins}
               img={img}
-              setImg={setImg}
-              account={account}
             />
           )}
         </div>

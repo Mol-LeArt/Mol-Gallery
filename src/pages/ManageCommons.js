@@ -9,6 +9,7 @@ import ManageCommons_Coins from '../comps/ManageCommons_Coins'
 import ManageCommons_Creator from '../comps/ManageCommons_Creator'
 import ManageCommons_Remove from '../comps/ManageCommons_Remove'
 import ManageCommons_Owners from '../comps/ManageCommons_Owners'
+import ManageCommons_Gamma from '../comps/ManageCommons_Gamma'
 
 const ManageCommons = () => {
   // ----- Reacter Router Config
@@ -27,6 +28,7 @@ const ManageCommons = () => {
       <ManageCommons_Sale signer={signer} commons={vault} />
       <ManageCommons_Withdraw signer={signer} commons={vault} />
       <ManageCommons_Coins signer={signer} commons={vault} />
+      <ManageCommons_Gamma signer={signer} commons={vault} />
       <ManageCommons_Creator signer={signer} commons={vault} />
       <ManageCommons_Remove signer={signer} commons={vault} />
     </div>

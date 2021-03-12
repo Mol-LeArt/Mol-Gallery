@@ -430,9 +430,9 @@ const ABI = [
         type: 'uint8',
       },
       {
-        internalType: 'uint8',
+        internalType: 'uint256',
         name: '_royalties',
-        type: 'uint8',
+        type: 'uint256',
       },
     ],
     name: 'mint',
@@ -864,5 +864,4 @@ const ABI = [
     type: 'receive',
   },
 ]
-
 export default ABI
