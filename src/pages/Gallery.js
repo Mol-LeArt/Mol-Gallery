@@ -88,7 +88,7 @@ const Gallery = ({ account }) => {
       >
         {isOwner && <button>Upload Image</button>}
       </Link>
-      <ImageGrid contract={contract} uris={uris} />
+      <ImageGrid origin={gallery} contract={contract} uris={uris} />
     </div>
   )
 }

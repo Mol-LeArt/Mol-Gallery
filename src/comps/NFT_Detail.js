@@ -22,7 +22,6 @@ const NFT_Detail = ({
   setGammaAddress,
 }) => {
   const [royalties, setRoyalties] = useState(null)
-  
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
@@ -85,14 +84,14 @@ const NFT_Detail = ({
         _contract
           .getTokenKey(gAddress, tokenId)
           .then((tokenKey) => {
-            getGammaSale(tokenKey)
+            getGammaSaleData(tokenKey)
           })
           .catch((e) => console.log(e))
       })
       .catch((e) => console.log(e))
   }
 
-  const getGammaSale = async (tokenKey) => {
+  const getGammaSaleData = async (tokenKey) => {
     const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
     _contract
       .sale(tokenKey)
@@ -101,15 +100,20 @@ const NFT_Detail = ({
         setCreator(data[0])
 
         // Sale Status
-        setIsSale(data[1])
+        // setIsSale(data[1])
 
         // Sale Price in ETH
-        const p = ethers.utils.formatEther(data[2].toString())
-        setPrice(p)
+        if (owner === 'Commons') {
+          setIsSale(data[1])
+          const p = ethers.utils.formatEther(data[2].toString())
+          setPrice(p)
+        } else {
+          getGammaPriceAndSale()
+        }
 
         // Sale Price in Coins
         const t = ethers.utils.formatEther(data[3].toString())
-        setCoins(t)
+        setCoins(Math.trunc(t))
       })
       .catch((e) => console.log(e))
   }
@@ -119,7 +123,11 @@ const NFT_Detail = ({
     _contract
       .ownerOf(tokenId)
       .then((data) => {
-        setOwner(data)
+        if (data === contract) {
+          setOwner('Commons')
+        } else {
+          setOwner(data)
+        }
       })
       .catch((e) => console.log(e))
   }
@@ -129,23 +137,40 @@ const NFT_Detail = ({
     _contract
       .royalties()
       .then((data) => {
-        setRoyalties(data)
+        const r = ethers.utils.formatUnits(data, 'wei')
+        setRoyalties(Math.trunc(r))
+      })
+      .catch((e) => console.log(e))
+  }
+
+  // ----- Gamma Functions (for when Gamma is out of MolVault)
+  const getGammaPriceAndSale = async () => {
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    _contract
+      .gamma()
+      .then((gAddress) => {
+        const _contract = new ethers.Contract(gAddress, GAMMA_ABI, signer)
+        _contract.sale(tokenId).then((data) => {
+            const p = ethers.utils.formatEther(data[0])
+            setPrice(p)
+            setIsSale(data[1])
+          })
+          .catch((e) => console.log(e))
       })
       .catch((e) => console.log(e))
   }
 
   useEffect(() => {
-    if (origin !== 'vault') {
+    if (origin === 'vault') {
+      getTokenKey()
+    } else if (origin === 'personal') {
       getRoyalties(tokenId)
       getMolGammaOwner(tokenId)
       getMolGammaSale(tokenId)
       getCreator()
-    } else {
-      getTokenKey()
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [owner])
+  }, [owner, price])
 
   return (
     <div class='space-y-4'>
@@ -158,9 +183,11 @@ const NFT_Detail = ({
       <div class='text-gray-400'>
         Price: <span class='text-gray-800'>{price} Ξ</span>
       </div>
-      <div class='text-gray-400'>
-        Coins: <span class='text-gray-800'>{coins}</span>
-      </div>
+      {owner === 'Commons' && (
+        <div class='text-gray-400'>
+          Coins: <span class='text-gray-800'>{coins} 🎨</span>
+        </div>
+      )}
       <div class='text-gray-400'>
         Royalties: <span class='text-gray-800'>{royalties} %</span>
       </div>

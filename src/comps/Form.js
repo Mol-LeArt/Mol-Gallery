@@ -3,31 +3,35 @@ import { ethers } from 'ethers'
 
 import './Form.css'
 
-const Form = ({ toggleForm, contract, tokenId, gamma }) => {
+const Form = ({ setForm, contract, tokenId, gamma }) => {
   const [sale, setSale] = useState('')
   const [price, setPrice] = useState('')
+  const [coins, setCoins] = useState('')
 
   const clickBackdrop = (e) => {
     // classList is used to identify className
     if (e.target.classList.contains('backdrop')) {
-      toggleForm(false)
+      setForm(false)
     }
   }
 
   const handleClick = (e) => {
     e.preventDefault()
-    console.log('is token id #', tokenId, ' on sale?', sale, 'your price is ', price, )
-
-    if (gamma) {
+    console.log(contract.address, gamma)
+    if (contract.address === gamma) {
+      console.log('update gamma from vault')
+      updateGammaSale()
+    } else if (gamma) {
       console.log('update vault')
       updateVaultGammaSale()
     } else {
-      console.log('update gamma')
-      updateGammaSale(tokenId)
+      console.log('update MolGamma')
+      updateGammaSale()
     }
   }
 
-  const updateGammaSale = async (tokenId) => {
+  // ----- Update sale for MolGamma or Gamma sold from MolVault
+  const updateGammaSale = async () => {
     try {
       const p = ethers.utils.parseEther(price)
       const tx = await contract.updateSale(p, tokenId, sale)
@@ -42,20 +46,19 @@ const Form = ({ toggleForm, contract, tokenId, gamma }) => {
     }
   }
 
+  // ----- Update sale with MolVault
   const updateVaultGammaSale = async () => {
     try {
       const p = ethers.utils.parseEther(price)
-      const tx = await contract.updateSale(gamma, tokenId, p, 0, sale)
+      const c = ethers.utils.parseEther(coins)
+      const tx = await contract.updateSale(gamma, tokenId, p, c, sale)
 
       console.log('this is tx.hash for updating sale', tx.hash)
 
       const receipt = await tx.wait().then(() => {
         window.location.reload()
         console.log('update sale receipt is - ', receipt)
-      })
-      
-
-      
+      })  
     } catch (e) {
       console.log(e)
     }
@@ -88,6 +91,16 @@ const Form = ({ toggleForm, contract, tokenId, gamma }) => {
           />
         </div>
 
+        <div>
+          <label htmlFor='coins'>Price in coins</label>
+          <br />
+          <input
+            type='text'
+            value={coins}
+            onChange={(e) => setCoins(e.target.value)}
+            placeholder='Enter number of coins'
+          />
+        </div>
         <button className='form-button' type='submit' onClick={handleClick}>
           Confirm
         </button>

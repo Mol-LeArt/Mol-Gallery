@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { ethers } from 'ethers'
 import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
+import GAMMA_ABI from '../comps/GAMMA_ABI'
 import Form from '../comps/Form'
 import NFT_Detail from '../comps/NFT_Detail'
 
@@ -12,10 +13,13 @@ const NFT = ({ account }) => {
   const [isSale, setIsSale] = useState(0)
   const [price, setPrice] = useState(0.0)
   const [coins, setCoins] = useState(0.0)
-  const [match, toggleMatch] = useState(null)
-  const [form, toggleForm] = useState(false)
+  const [ownerMatch, setOwnerMatch] = useState(null)
+  const [creatorMatch, setCreatorMatch] = useState(null)
+  const [form, setForm] = useState(false)
   const [gammaAddress, setGammaAddress] = useState(null)
   const [contractToUpdateSale, setContractToUpdateSale] = useState(null)
+  const [fundingCollectorsFee, setFundingCollectorsFee] = useState(null)
+  const [whitelistedFee, setWhitelistedFee] = useState(null)
 
   // ----- Reaect Router Config
   const location = useLocation()
@@ -32,17 +36,47 @@ const NFT = ({ account }) => {
   const signer = provider.getSigner()
 
   const isOwner = () => {
-    if (owner && creator) {
-      if (owner.toLowerCase() === account || creator.toLowerCase() === account) {
-        toggleMatch(true)
+    if (owner) {
+      if (owner.toLowerCase() === account) {
+        setOwnerMatch(true)
       } else {
         console.log('Not owner of NFT')
       }
     }
   }
 
-  const buyWithEth = async (tokenId) => {
-    if (origin !== 'vault') {
+  const isCreator = () => {
+    if (creator) {
+      if (creator.toLowerCase() === account) {
+        setCreatorMatch(true)
+      } else {
+        console.log('Not creator of NFT')
+      }
+    }
+  }
+
+  const getFundingCollectorsFee = async () => {
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    try {
+      _contract.percFeeToFundingCollectors().then((data) => {
+        setFundingCollectorsFee(data)
+      })
+    } catch (e) {
+
+    }
+  }
+
+  const getWhitelistedFee = async () => {
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    try {
+      _contract.percFeeToWhitelist().then((data) => {
+        setWhitelistedFee(data)
+      })
+    } catch (e) {}
+  }
+
+  const buyWithEth = async () => {
+    if (origin === 'personal') {
       const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
       const overrides = {
         value: ethers.utils.parseEther(price),
@@ -59,19 +93,37 @@ const NFT = ({ account }) => {
       } catch (e) {
         console.log(e.message)
       }
-    } else {
+    } else if (origin === 'vault' && owner === 'Commons') {
       const ethPrice = ethers.utils.parseEther(price)
       const p = parseInt(ethPrice, 10)
-      const priceWithFee = p + p * 0.003 // get x and y for distribution
+      const priceWithFee = p + p * 0.001 * (fundingCollectorsFee + whitelistedFee) 
 
       console.log('Buyer pays a total of - ', priceWithFee)
       const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
       const overrides = {
         value: priceWithFee.toString(),
       }
-
+      console.log(contract, gammaAddress, tokenId)
       try {
         const tx = await _contract.purchase(gammaAddress, tokenId, overrides)
+        console.log('this is tx.hash for purchase', tx.hash)
+
+        const receipt = await tx.wait()
+        console.log('mint receipt is - ', receipt)
+        window.location.reload()
+        // contractListener(_contract)
+      } catch (e) {
+        console.log(e.message)
+      }
+    } else if (origin === 'vault' && owner !== 'Commons') {
+      const ethPrice = ethers.utils.parseEther(price)
+      const _contract = new ethers.Contract(gammaAddress, GAMMA_ABI, signer)
+      const overrides = {
+        value: ethPrice.toString(),
+      }
+      console.log(contract, gammaAddress, tokenId)
+      try {
+        const tx = await _contract.purchase(tokenId, overrides)
         console.log('this is tx.hash for purchase', tx.hash)
 
         const receipt = await tx.wait()
@@ -84,7 +136,8 @@ const NFT = ({ account }) => {
     }
   }
 
-  const buyWithCoins = async (tokenId) => {
+  // ----- Buy NFT with Commons coins
+  const buyWithCoins = async () => {
     const c = ethers.utils.parseEther(coins)
     console.log('Buyer pays a total of - ', c)
     const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
@@ -103,21 +156,29 @@ const NFT = ({ account }) => {
   }
 
   function updateSale() {
-    toggleForm(true)
-
-    if (origin !== 'vault') {
-      const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
+    setForm(true)
+    if (origin === 'vault' && owner !== 'Commons') {
+      const _contract = new ethers.Contract(gammaAddress, GAMMA_ABI, signer)
       setContractToUpdateSale(_contract)
-    } else {
+    } else if (origin === 'vault' && owner === 'Commons') {
       const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
       setContractToUpdateSale(_contract)
-    }
+    } else if (origin === 'personal') {
+      const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
+      setContractToUpdateSale(_contract)
+    } 
   }
 
   useEffect(() => {
     isOwner()
+    isCreator()
+    if (origin === 'vault') {
+      getFundingCollectorsFee()
+      getWhitelistedFee()
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [owner, isSale])
+  }, [owner, creator, isSale])
 
   return (
     <div class='font-mono flex items-center my-16 max-w-4xl mx-auto'>
@@ -145,18 +206,20 @@ const NFT = ({ account }) => {
           <button
             class='flex-1 py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md disabled:opacity-50'
             onClick={buyWithEth}
-            disabled={isSale === 0 || match}
+            disabled={isSale === 0 || ownerMatch || creatorMatch}
           >
             Buy (Ξ)
           </button>
-          <button
-            class='flex-1 py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md disabled:opacity-50'
-            onClick={buyWithCoins}
-            disabled={isSale === 0 || match}
-          >
-            Buy (Coins)
-          </button>
-          {match && (
+          {owner === 'Commons' && (
+            <button
+              class='flex-1 py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md disabled:opacity-50'
+              onClick={buyWithCoins}
+              disabled={isSale === 0 || ownerMatch || creatorMatch}
+            >
+              Buy (Coins)
+            </button>
+          )}
+          {(ownerMatch || (owner === 'Commons' && creatorMatch)) && (
             <button
               class='flex-1 py-2 px-4 text-white bg-yellow-600 hover:bg-yellow-500 w-max rounded-md'
               onClick={updateSale}
@@ -168,7 +231,7 @@ const NFT = ({ account }) => {
 
         {form && (
           <Form
-            toggleForm={toggleForm}
+            setForm={setForm}
             contract={contractToUpdateSale}
             tokenId={tokenId}
             gamma={gamma}

@@ -6,13 +6,15 @@ const Arcade = () => {
   return (
     <div class='mx-auto px-4 my-16 max-w-2xl space-y-6 font-mono flex-col justify-center'>
       <h1 class='text-7xl font-bold text-center'>Arcade</h1>
-      <div>
+      <div class='space-y-4'>
         <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
           Redeem Ξ
         </div>
         <div class='pb-5 text-center text-gray-400'>
           Trade Commons coins for Ξ
         </div>
+        <div>Total coins in circulation:</div>
+        <div>You have XXX coins to redeem xxx Ξ.</div>
         <div class='flex space-x-4'>
           <input
             class='flex-2 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
