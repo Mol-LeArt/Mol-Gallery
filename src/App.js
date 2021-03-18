@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import NavBar from './comps/NavBar';
-import Commons from './pages/Commons';
-import About from './pages/About';
-import Arcade from './pages/Arcade'
-import OpenGallery from './pages/OpenGallery';
-import MintNFT from './pages/MintNFT'
-import NFT from './pages/NFT';
-import Profile from './pages/Profile'
-import Gallery from './pages/Gallery'
-import Galleries from './pages/Galleries'
-import ManageCommons from './pages/ManageCommons'
-import SelectCommons from './pages/SelectCommons'
+// import NavBar from './comps/NavBar';
+// import Commons from './pages/Commons';
+// import About from './pages/About';
+// import Arcade from './pages/Arcade'
+// import OpenGallery from './pages/OpenGallery';
+// import MintNFT from './pages/MintNFT'
+// import NFT from './pages/NFT';
+// import Profile from './pages/Profile'
+// import Gallery from './pages/Gallery'
+// import Galleries from './pages/Galleries'
+import Community from './pages/Community'
+import SelectCommunity from './pages/SelectCommunity'
+import { GlobalContext } from './GlobalContext'
 import { projectFirestore } from './firebase/config'
 require('dotenv').config()
 
@@ -65,40 +66,20 @@ function App() {
   return (
     <Router>
       <div className='App'>
-        <NavBar hasGallery={hasGallery} />
-        <Switch>
-          <Route path='/commons/:contract' exact component={() => <Commons />} />
-          <Route
-            path='/'
-            exact
-            component={() => <SelectCommons vaultArry={vaultArry} />}
-          />
-          <Route path='/about' exact component={About} />
-          <Route path='/arcade' exact component={Arcade} />
-          <Route path='/galleries' exact component={Galleries} />
-          <Route path='/profile/:account' exact component={Profile} />
-          <Route
-            path='/open-gallery'
-            exact
-            component={() => <OpenGallery account={account} />}
-          />
-          <Route path='/manage' exact component={() => <ManageCommons />} />
-          <Route
-            path='/mint'
-            exact
-            component={() => <MintNFT account={account} />}
-          />
-          <Route
-            path='/gallery/:contract'
-            exact
-            component={() => <Gallery account={account} />}
-          />
-          <Route
-            path='/nft/:image'
-            exact
-            component={() => <NFT account={account} />}
-          />
-        </Switch>
+        <GlobalContext.Provider value={{ account, hasGallery }}>
+          <Switch>
+            <Route
+              path='/'
+              exact
+              component={() => <SelectCommunity vaultArry={vaultArry} />}
+            />
+            <Route
+              path='/:contract'
+              exact
+              component={() => <Community />}
+            />
+          </Switch>
+        </GlobalContext.Provider>
       </div>
     </Router>
   )

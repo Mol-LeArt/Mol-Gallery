@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import DeployCommons from '../comps/DeployCommons'
 
-const SelectCommons = ({ vaultArry }) => {
+const SelectCommunity = ({ vaultArry }) => {
   const [code, setCode] = useState('')
   const [err, setErr] = useState(null)
   const [canDeploy, setCanDeploy] = useState(false)
@@ -27,7 +27,7 @@ const SelectCommons = ({ vaultArry }) => {
     <div>
       <div class='mx-auto px-4 my-20 max-w-2xl space-y-10 flex-col justify-center'>
         <div class='text-5xl font-bold self-auto text-center'>
-          Select a Commons
+          Select a Community
         </div>
 
         <div class='max-w-xl mx-auto grid grid-cols-3 gap-4'>
@@ -36,7 +36,7 @@ const SelectCommons = ({ vaultArry }) => {
               <div key={index}>
                 <Link
                   to={{
-                    pathname: `/commons/${vault.contract}`,
+                    pathname: `/${vault.contract}`,
                     state: { vault: vault.contract },
                   }}
                   style={{ textDecoration: 'none' }}
@@ -52,7 +52,7 @@ const SelectCommons = ({ vaultArry }) => {
 
       <div class='mx-auto px-4 my-10 max-w-2xl space-y-6 flex-col justify-center text-gray-400'>
         <div class='text-4xl my-5 font-semibold text-center'>
-          Summon a Commons
+          Summon a Community
         </div>
         <div class='text-center'>
           <input
@@ -80,4 +80,4 @@ const SelectCommons = ({ vaultArry }) => {
   )
 }
 
-export default SelectCommons
+export default SelectCommunity

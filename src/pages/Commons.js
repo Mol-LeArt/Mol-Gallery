@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import BidCommons from '../comps/BidCommons'
 import ImageGrid from '../comps/ImageGrid';
 import { ethers } from 'ethers'
@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
 import GAMMA_ABI from '../comps/GAMMA_ABI'
 
-const Commons = () => {
+const Commons = ({ vault }) => {
   const [gamma, setGamma] = useState('')
   const [gammaUris, setGammaUris] = useState([])
   // const [depositTokenUris, setDepositTokenUris] = useState([])
@@ -18,11 +18,12 @@ const Commons = () => {
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-  // const vault = '0x85c72bAd2B9Bc6bECF6BF81b7efccA04cC137426'
 
   // ----- Reaect Router Config
-  const location = useLocation()
-  const vault = location.state.vault
+  // const location = useLocation()
+  // const vault = location.state.vault
+  // let { contract } = useParams()
+  // const vault = contract
 
   // ----- Get Gamma tokens
   const getGamma = async () => {
@@ -124,6 +125,8 @@ const Commons = () => {
       getGamma()
       // getDepositTokens()
     }
+
+    console.log(vault)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -131,16 +134,15 @@ const Commons = () => {
     <div class='mx-auto px-4 my-16 max-w-5xl space-y-6 font-mono flex-col justify-center'>
       <div class='text-7xl font-bold text-center'>Commons</div>
       <div class='max-w-2xl mx-auto text-center'>
-          Admin - access limited to community organizers <br />
-          Mint - access limited to whitelisted members <br />
-          Bid - public access
+        Admin - access limited to community organizers <br />
+        Mint - access limited to whitelisted members <br />
+        Bid - public access
       </div>
-
       <div class='flex justify-center space-x-4'>
         <div>
           <Link
             to={{
-              pathname: '/manage',
+              pathname: `/${vault}/manage`,
               state: { vault: vault },
             }}
           >

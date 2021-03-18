@@ -1,4 +1,6 @@
 import React from 'react'
+import Arcade_Bid from '../comps/Arcade_Bid'
+import { ethers } from 'ethers'
 
 const Arcade = () => {
   
@@ -6,6 +8,7 @@ const Arcade = () => {
   return (
     <div class='mx-auto px-4 my-16 max-w-2xl space-y-6 font-mono flex-col justify-center'>
       <h1 class='text-7xl font-bold text-center'>Arcade</h1>
+      <Arcade_Bid />
       <div class='space-y-4'>
         <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
           Redeem Ξ

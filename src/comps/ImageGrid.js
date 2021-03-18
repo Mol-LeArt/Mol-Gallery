@@ -32,7 +32,7 @@ const ImageGrid = ({ origin, contract, uris, gamma }) => {
     <div className='img-grid'>
       {!nfts && <label>Wow, such empty!</label>}
       {nfts &&
-        nfts.map((nfts, index) => (
+        nfts.map((nft, index) => (
           <div className='img-wrap' key={index+1}>
             <Link
               to={{
@@ -42,13 +42,13 @@ const ImageGrid = ({ origin, contract, uris, gamma }) => {
                   tokenId: index+1,
                   contract: contract,
                   gamma: gamma, 
-                  title: nfts.title,
-                  description: nfts.description,
-                  image: nfts.image,
+                  title: nft.title,
+                  description: nft.description,
+                  image: nft.image,
                 },
               }}
             >
-              <img src={nfts.image} alt='' />
+              <img src={nft.image} alt='' />
             </Link>
           </div>
         ))}

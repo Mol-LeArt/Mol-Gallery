@@ -46,10 +46,10 @@ const ManageCommons_Gamma = ({ signer, commons }) => {
   return (
     <div class='space-y-4'>
       <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
-        Gamma
+        NFT
       </div>
-      <div class='pb-5 text-center text-gray-400'>Commons mints Gamma</div>
-      <div>Gamma Contract Address: {gamma}</div>
+      <div class='pb-5 text-center text-gray-400'>Commons mints NFTs</div>
+      <div>NFT Contract Address: {gamma}</div>
       <div>Royalties: {royalties} %</div>
       <div class='flex space-x-4'>
         <input

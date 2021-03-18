@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { ethers } from 'ethers'
 import ManageCommons_Main from '../comps/ManageCommons_Main'
 import ManageCommons_Funding from '../comps/ManageCommons_Funding'
-import ManageCommons_Sale from '../comps/ManageCommons_Sale'
+import ManageCommons_Bid from '../comps/ManageCommons_Bid'
 import ManageCommons_Withdraw from '../comps/ManageCommons_Withdraw'
 import ManageCommons_Coins from '../comps/ManageCommons_Coins'
 import ManageCommons_Creator from '../comps/ManageCommons_Creator'
@@ -25,7 +25,7 @@ const ManageCommons = () => {
       <ManageCommons_Main provider={provider} signer={signer} commons={vault} />
       <ManageCommons_Funding signer={signer} commons={vault} />
       <ManageCommons_Owners signer={signer} commons={vault} />
-      <ManageCommons_Sale signer={signer} commons={vault} />
+      <ManageCommons_Bid signer={signer} commons={vault} />
       <ManageCommons_Withdraw signer={signer} commons={vault} />
       <ManageCommons_Coins signer={signer} commons={vault} />
       <ManageCommons_Gamma signer={signer} commons={vault} />
