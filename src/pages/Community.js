@@ -16,8 +16,9 @@ require('dotenv').config()
 
 function Community() {
   const { account, hasGallery } = useContext(GlobalContext)
-
   let { contract } = useParams()
+
+  // Get all community related values and pass down via community context provider 
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -28,12 +29,11 @@ function Community() {
       <div>
         <CommunityContext.Provider value={{ contract }}>
           <NavBar />
-
           <Switch>
             <Route
               path='/:contract'
               exact
-              component={() => <Commons vault={contract} />}
+              component={() => <Commons />}
             />
             <Route path='/:contract/about' exact component={About} />
             <Route
@@ -58,7 +58,7 @@ function Community() {
               component={() => <ManageCommons />}
             />
             <Route
-              path='/mint'
+              path='/:contract/mint'
               exact
               component={() => <MintNFT account={account} />}
             />

@@ -8,7 +8,7 @@ import './NavBar.css';
 
 const NavBar = ({  }) => {
   const [menuItem, setMenuItem] = useState('commons')
-  const { account, hasGallery } = useContext(GlobalContext)
+  const { hasGallery } = useContext(GlobalContext)
   const { contract } = useContext(CommunityContext)
 
   // ----- Smart Contract Config

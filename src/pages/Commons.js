@@ -6,14 +6,17 @@ import { ethers } from 'ethers'
 // import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
 import GAMMA_ABI from '../comps/GAMMA_ABI'
+import { CommunityContext } from '../GlobalContext';
 
-const Commons = ({ vault }) => {
+const Commons = () => {
   const [gamma, setGamma] = useState('')
   const [gammaUris, setGammaUris] = useState([])
   // const [depositTokenUris, setDepositTokenUris] = useState([])
   const [isArtist, toggleIsArtist] = useState(false)
   const [isVaultOwner, toggleIsVaultOwner] = useState(false)
   const [isBidForm, setIsBidForm] = useState(false)
+
+  const { contract } = useContext(CommunityContext)
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
@@ -27,7 +30,7 @@ const Commons = ({ vault }) => {
 
   // ----- Get Gamma tokens
   const getGamma = async () => {
-    const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
     try {
       _contract.gamma().then((gAddress) => {
         setGamma(gAddress)
@@ -87,7 +90,7 @@ const Commons = ({ vault }) => {
 
   // ----- Check owner status to toggle Vault button
   const isOwner = async () => {
-    const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
     try {
       signer.getAddress().then((address) => {
         _contract.isOwner(address).then((data) => {
@@ -101,7 +104,7 @@ const Commons = ({ vault }) => {
 
   // ----- Check whitelist status to toggle Mint button
   const isWhitelisted = async () => {
-    const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
+    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
 
     try {
       signer.getAddress().then((address) => {
@@ -119,14 +122,14 @@ const Commons = ({ vault }) => {
   } 
 
   useEffect(() => {
-    if (vault) {
+    if (contract) {
       isOwner()
       isWhitelisted()
       getGamma()
       // getDepositTokens()
     }
 
-    console.log(vault)
+    console.log(contract)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -142,8 +145,8 @@ const Commons = ({ vault }) => {
         <div>
           <Link
             to={{
-              pathname: `/${vault}/manage`,
-              state: { vault: vault },
+              pathname: `/${contract}/manage`,
+              state: { vault: contract },
             }}
           >
             {isVaultOwner && (
@@ -157,8 +160,8 @@ const Commons = ({ vault }) => {
         <div>
           <Link
             to={{
-              pathname: '/mint',
-              state: { commons: 'commons', contract: vault },
+              pathname: `/${contract}/mint`,
+              state: { commons: 'commons', contract: contract },
             }}
           >
             {isArtist && (
@@ -178,12 +181,12 @@ const Commons = ({ vault }) => {
         </div>
       </div>
 
-      {isBidForm && <BidCommons vault={vault} setIsBidForm={setIsBidForm} />}
+      {isBidForm && <BidCommons vault={contract} setIsBidForm={setIsBidForm} />}
 
       <div>
         <ImageGrid
           origin={'vault'}
-          contract={vault}
+          contract={contract}
           uris={gammaUris}
           gamma={gamma}
         />
