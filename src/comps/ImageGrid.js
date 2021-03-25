@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom'
+import { CommunityContext } from '../GlobalContext';
 import './ImageGrid.css'
 
-const ImageGrid = ({ origin, contract, uris, gamma }) => {
+const ImageGrid = ({ uris }) => {
+  // ----- useState
   const [nfts, setNfts] = useState(null)
+
+  // ----- useState
+  const { commons } = useContext(CommunityContext)
 
   const getNft = async () => {
     const nftArray = []
-    
+
     for (var i = 0; i < uris.length; i++) {
       fetch(uris[i])
         .then((res) => res.json())
@@ -16,8 +21,10 @@ const ImageGrid = ({ origin, contract, uris, gamma }) => {
             title: data.title,
             description: data.description,
             image: data.image,
+            createdAt: data.createdAt,
           }
           nftArray.push(nft)
+          nftArray.sort((a, b) => a.createdAt - b.createdAt)
           setNfts([...nftArray])
         })
     }
@@ -33,15 +40,12 @@ const ImageGrid = ({ origin, contract, uris, gamma }) => {
       {!nfts && <label>Wow, such empty!</label>}
       {nfts &&
         nfts.map((nft, index) => (
-          <div className='img-wrap' key={index+1}>
+          <div className='img-wrap' key={index + 1}>
             <Link
               to={{
-                pathname: `/nft/${contract}:${index+1}`,
+                pathname: `/${commons}/${index + 1}`,
                 state: {
-                  origin: origin,
-                  tokenId: index+1,
-                  contract: contract,
-                  gamma: gamma, 
+                  tokenId: index + 1,
                   title: nft.title,
                   description: nft.description,
                   image: nft.image,

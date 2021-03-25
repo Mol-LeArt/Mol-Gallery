@@ -1,30 +1,35 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { ethers } from 'ethers'
-import ABI from './MOLVAULT_ABI'
+import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
+import { CommunityContext } from '../GlobalContext'
 
-const ManageCommons_Bid = ({ signer, commons}) => {
+const ManageCommons_Bid = ({ signer }) => {
+  // ----- useState
   const [bid, setBid] = useState('')
   const [bidder, setBidder] = useState('')
   const [bidOwners, setBidOwners] = useState([])
-const [numSaleConfirmations, setNumSaleConfirmations] = useState('')
-const [confirmSaleError, setConfirmSaleError] = useState(null)
-const [revokeSaleError, setRevokeSaleError] = useState(null)
-const [numConfirmationsRequired, setNumConfirmationsRequired] = useState('')
+  const [numSaleConfirmations, setNumSaleConfirmations] = useState('')
+  const [confirmSaleError, setConfirmSaleError] = useState(null)
+  const [revokeSaleError, setRevokeSaleError] = useState(null)
+  const [numConfirmationsRequired, setNumConfirmationsRequired] = useState('')
 
-const getNumConfirmationsRequired = async () => {
-  try {
-    const _contract = new ethers.Contract(commons, ABI, signer)
-    _contract
-      .numConfirmationsRequired()
-      .then((data) => setNumConfirmationsRequired(data))
-  } catch (e) {
-    console.log(e)
+  // ----- useContext
+  const { commons } = useContext(CommunityContext)
+
+  const getNumConfirmationsRequired = async () => {
+    try {
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+      _contract
+        .numConfirmationsRequired()
+        .then((data) => setNumConfirmationsRequired(data))
+    } catch (e) {
+      console.log(e)
+    }
   }
-}
 
   const getBid = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract.bid().then((data) => {
         const b = ethers.utils.formatEther(data)
         setBid(b)
@@ -36,7 +41,7 @@ const getNumConfirmationsRequired = async () => {
 
   const getBidder = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract.bidder().then((data) => {
         setBidder(data)
       })
@@ -47,7 +52,7 @@ const getNumConfirmationsRequired = async () => {
 
   const getBidOwners = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract.getBidOwners().then((data) => {
         setBidOwners(data)
       })
@@ -59,8 +64,8 @@ const getNumConfirmationsRequired = async () => {
   // ----- Sell vault
   const confirmSale = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
-      const tx = await _contract.confirmSale()
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+      const tx = await _contract.confirmBid()
       tx.wait().then(() => {
         _contract
           .numSaleConfirmations()
@@ -80,8 +85,8 @@ const getNumConfirmationsRequired = async () => {
 
   const revokeSale = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
-      const tx = await _contract.revokeSale()
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+      const tx = await _contract.revokeBidConfirmation()
       tx.wait().then(() => {
         _contract
           .numSaleConfirmations()
@@ -93,7 +98,7 @@ const getNumConfirmationsRequired = async () => {
         console.log(e.message)
       } else {
         setRevokeSaleError(
-          'You have already revoked your vote to sell the vault!'
+          'Bid is not yet confirmed!'
         )
       }
     }
@@ -101,8 +106,8 @@ const getNumConfirmationsRequired = async () => {
 
   const sellVault = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
-      _contract.sellVault()
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+      _contract.executeBid()
     } catch (e) {
       if (e.code === 4001) {
         console.log(e.message)
@@ -114,9 +119,9 @@ const getNumConfirmationsRequired = async () => {
 
   const getConfirmSale = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
-        .numSaleConfirmations()
+        .numBidConfirmations()
         .then((data) => setNumSaleConfirmations(data))
     } catch (e) {
       console.log(e)
@@ -133,7 +138,7 @@ const getNumConfirmationsRequired = async () => {
   }, [])
 
   return (
-    <div class='font-mono space-y-2'>
+    <div class='space-y-4'>
       <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
         Sell Commons
       </div>
@@ -143,12 +148,14 @@ const getNumConfirmationsRequired = async () => {
       <div>Highest Bid: {bid} Ξ</div>
       <div>Highest Bidder: {bidder}</div>
       <div>New Organizer(s): {bidOwners}</div>
-      <div>
-        No. Confirmations Required: {numConfirmationsRequired}
-      </div>
+      <div>No. Confirmations Required: {numConfirmationsRequired}</div>
       <div>No. Sell Confirmations: {numSaleConfirmations}</div>
-      {confirmSaleError && <p>{confirmSaleError}</p>}
-      {revokeSaleError && <p>{revokeSaleError}</p>}
+      {confirmSaleError && (
+        <p class='text-red-400 text-base text-center'>{confirmSaleError}</p>
+      )}
+      {revokeSaleError && (
+        <p class='text-red-400 text-base text-center'>{revokeSaleError}</p>
+      )}
       <div class='flex space-x-4'>
         <button
           class='flex-1 py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md'

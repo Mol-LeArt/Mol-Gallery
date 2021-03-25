@@ -1,12 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
-
 import './Form.css'
+import { CommunityContext } from '../GlobalContext'
 
 const Form = ({ setForm, contract, tokenId, gamma }) => {
+  // ----- useState
   const [sale, setSale] = useState('')
-  const [price, setPrice] = useState('')
-  const [coins, setCoins] = useState('')
+  const [ethPrice, setEthPrice] = useState('')
+  const [coinPrice, setCoinPrice] = useState('')
+
+  // ----- useContext 
+  const { commons } = useContext(CommunityContext)
+
+  // ----- Reaect Router Config
+  const history = useHistory()
 
   const clickBackdrop = (e) => {
     // classList is used to identify className
@@ -21,44 +29,39 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
     if (contract.address === gamma) {
       console.log('update gamma from vault')
       updateGammaSale()
-    } else if (gamma) {
-      console.log('update vault')
-      updateVaultGammaSale()
     } else {
-      console.log('update MolGamma')
-      updateGammaSale()
+      console.log('update commons')
+      updateCommonsGammaSale()
     }
   }
 
-  // ----- Update sale for MolGamma or Gamma sold from MolVault
+  // ----- Update sale for when Gamma leaves MolCommons
   const updateGammaSale = async () => {
     try {
-      const p = ethers.utils.parseEther(price)
+      const p = ethers.utils.parseEther(ethPrice)
       const tx = await contract.updateSale(p, tokenId, sale)
       console.log('this is tx.hash for updating sale', tx.hash)
 
       const receipt = await tx.wait()
       console.log('update sale receipt is - ', receipt)
-
-      window.location.reload()
+      history.push(`/${commons}`)
     } catch (e) {
       console.log(e.message)
     }
   }
 
-  // ----- Update sale with MolVault
-  const updateVaultGammaSale = async () => {
+  // ----- Update sale with MolCommons
+  const updateCommonsGammaSale = async () => {
     try {
-      const p = ethers.utils.parseEther(price)
-      const c = ethers.utils.parseEther(coins)
-      const tx = await contract.updateSale(gamma, tokenId, p, c, sale)
+      const p = ethers.utils.parseEther(ethPrice)
+      const c = ethers.utils.parseEther(coinPrice)
+      const tx = await contract.updateGammaSale(tokenId, p, c, sale)
 
       console.log('this is tx.hash for updating sale', tx.hash)
 
-      const receipt = await tx.wait().then(() => {
-        window.location.reload()
-        console.log('update sale receipt is - ', receipt)
-      })  
+      const receipt = await tx.wait()
+      console.log('update sale receipt is - ', receipt)
+      history.push(`/${commons}`)
     } catch (e) {
       console.log(e)
     }
@@ -85,8 +88,8 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
           <br />
           <input
             type='text'
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            value={ethPrice}
+            onChange={(e) => setEthPrice(e.target.value)}
             placeholder='Enter amount in Ξ'
           />
         </div>
@@ -96,8 +99,8 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
           <br />
           <input
             type='text'
-            value={coins}
-            onChange={(e) => setCoins(e.target.value)}
+            value={coinPrice}
+            onChange={(e) => setCoinPrice(e.target.value)}
             placeholder='Enter number of coins'
           />
         </div>

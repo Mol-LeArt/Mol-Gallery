@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ethers } from 'ethers'
-import MOLVAULT_ABI from './MOLVAULT_ABI'
+import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
 
 const BidCommons = ({ vault, setIsBidForm }) => {
   const [bid, setBid] = useState('')
@@ -12,12 +12,12 @@ const BidCommons = ({ vault, setIsBidForm }) => {
 
   // ----- Bid
   const bidVault = async () => {
-    const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
+    const _contract = new ethers.Contract(vault, MOLCOMMONS_ABI, signer)
     try {
       const newOwners = [proposedOwners]
       const overrides = { value: ethers.utils.parseEther(bid) }
       console.log(_contract)
-      const tx = await _contract.bidVault(newOwners, overrides)
+      const tx = await _contract.bidCommons(newOwners, overrides)
       tx.wait().then(() => {
         window.location.reload()
       })

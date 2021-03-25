@@ -7,20 +7,16 @@ import { GlobalContext, CommunityContext } from '../GlobalContext'
 import './NavBar.css';
 
 const NavBar = ({  }) => {
-  const [menuItem, setMenuItem] = useState('commons')
-  const { hasGallery } = useContext(GlobalContext)
-  const { contract } = useContext(CommunityContext)
+  // const { hasGallery } = useContext(GlobalContext)
+  const { commons } = useContext(CommunityContext)
 
   // ----- Smart Contract Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
 
   return (
-    <div class='flex justify-between items-center mx-auto px-4 my-10 max-w-5xl font-mono'>
-      <Link
-        style={{ textDecoration: 'none' }}
-        to={`/${contract}`}
-      >
+    <div class='flex justify-between items-center mx-auto px-4 my-10 max-w-5xl'>
+      <Link style={{ textDecoration: 'none' }} to={`/${commons}`}>
         <div
           class='flex-1 text-xl font-primary font-black tracking-wider '
           style={{ textDecoration: 'none' }}
@@ -30,35 +26,29 @@ const NavBar = ({  }) => {
       </Link>
       <div class='flex-2 flex space-x-8'>
         {/* use whitelist from vault to toggle  */}
-        {!hasGallery ? (
+        {/* {!hasGallery ? (
           <Link
             style={{ textDecoration: 'none' }}
-            to={`/${contract}/open-gallery`}
+            to={`/${commons}/open-gallery`}
           >
             <div class='flex-1 underline'>Open a Gallery</div>
           </Link>
         ) : (
           ''
-        )}
+        )} */}
 
-        <Link
-          style={{ textDecoration: 'none' }}
-          to={`/${contract}/arcade`}
-        >
+        <Link style={{ textDecoration: 'none' }} to={`/${commons}/arcade`}>
           <div class='flex-1 underline'>Arcade</div>
         </Link>
 
-        <Link
+        {/* <Link
           style={{ textDecoration: 'none' }}
-          to={`/${contract}/galleries`}
+          to={`/${commons}/galleries`}
         >
           <div class='flex-1 underline'>Galleries</div>
-        </Link>
+        </Link> */}
 
-        <Link
-          style={{ textDecoration: 'none' }}
-          to={`/${contract}/about`}
-        >
+        <Link style={{ textDecoration: 'none' }} to={`/${commons}/about`}>
           <div class='flex-1 underline'>About Us</div>
         </Link>
 

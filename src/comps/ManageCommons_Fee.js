@@ -5,12 +5,10 @@ import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
 import COIN_ABI from './COIN_ABI'
 import { CommunityContext } from '../GlobalContext'
 
-
 const ManageCommons_Coins = ({ signer }) => {
   // ----- useState
-  const [airdrop, setAirdrop] = useState(0)
-  const [updatedAirdrop, setUpdatedAirdrop] = useState('')
-  const [coins, setCoins] = useState(0)
+  const [fee, setFee] = useState(0)
+  const [updatedFee, setUpdatedFee] = useState('')
 
   // ----- useContext
   const { commons, coin } = useContext(CommunityContext)
@@ -18,23 +16,23 @@ const ManageCommons_Coins = ({ signer }) => {
   // ----- React router config
   const history = useHistory()
 
-  const getAirdrop = async () => {
+  const getFee = async () => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      _contract.airdrop().then((data) => {
-        const a = ethers.utils.formatEther(data)
-        setAirdrop(a)
+      _contract.percFeeToCreators().then((data) => {
+        const f = ethers.utils.formatUnits(data, 'wei')
+        setFee(f)
       })
     } catch (e) {
       console.log(e)
     }
   }
 
-  const updateAirdrop = async () => {
+  const updateFee = async () => {
+    const f = updatedFee * 10
     try {
-      const a = ethers.utils.parseEther(updatedAirdrop)
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const tx = await _contract.updateAirdrop(a)
+      const tx = await _contract.updateFeeDistribution(updatedFee)
       tx.wait().then(() => {
         history.push(`/${commons}`)
       })
@@ -43,47 +41,31 @@ const ManageCommons_Coins = ({ signer }) => {
     }
   }
 
-  const getCoins = async () => {
-    try {
-      const _contract = new ethers.Contract(coin, COIN_ABI, signer)
-      _contract.totalSupply().then((data) => {
-        const c = ethers.utils.formatEther(data)
-        setCoins(c)
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
   useEffect(() => {
-    getAirdrop()
-    getCoins()
+    getFee()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div class='space-y-4'>
       <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
-        Commons Coins
+        Transaction Fee
       </div>
       <div class='pb-5 text-center text-gray-400'>
-        Collectors get designated airdrop amount for buying NFTs <br /> Creators
-        get amount x 2
+        All sale includes a transaction fee that is split between creators. <br/> Default transactin fee is 1%. 
       </div>
-      <div>Commons Coin Contract Address: {coin} </div>
-      <div>Total Coins in Circulation: {Math.trunc(coins)} 💵</div>
-      <div>Current Airdrop Amount: {Math.trunc(airdrop)} 💵</div>
+      <div>Current Transaction Fee: {fee} %</div>
       <div class='flex space-x-4'>
         <input
           class='flex-2 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
           type='text'
-          value={updatedAirdrop}
-          onChange={(e) => setUpdatedAirdrop(e.target.value)}
-          placeholder='Enter new amount to airdrop'
+          value={updatedFee}
+          onChange={(e) => setUpdatedFee(e.target.value)}
+          placeholder='Enter new fee percentage'
         />
         <button
           class='flex-1 py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'
-          onClick={updateAirdrop}
+          onClick={updateFee}
         >
           Update
         </button>

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { ethers } from 'ethers'
-import ABI from '../comps/MOLVAULT_ABI'
+import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
+import { CommunityContext } from '../GlobalContext'
 
-const ManageCommons_Withdraw = ({signer, commons}) => {
+const ManageCommons_Withdraw = ({signer}) => {
     const [
       numWithdrawalConfirmations,
       setNumWithdrawalConfirmations,
@@ -11,9 +12,11 @@ const ManageCommons_Withdraw = ({signer, commons}) => {
     const [revokeWithdrawalError, setRevokeWithdrawalError] = useState(null)
     const [numConfirmationsRequired, setNumConfirmationsRequired] = useState('')
 
+    const { commons } = useContext(CommunityContext)
+
   const getNumConfirmationsRequired = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
         .numConfirmationsRequired()
         .then((data) => setNumConfirmationsRequired(data))
@@ -24,7 +27,7 @@ const ManageCommons_Withdraw = ({signer, commons}) => {
 
   const confirmWithdrawal = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.confirmWithdrawal()
       tx.wait().then(() => {
         _contract
@@ -45,7 +48,7 @@ const ManageCommons_Withdraw = ({signer, commons}) => {
 
   const revokeWithdrawal = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.revokeWithdrawal()
       tx.wait().then(() => {
         _contract
@@ -53,20 +56,24 @@ const ManageCommons_Withdraw = ({signer, commons}) => {
           .then((data) => setNumWithdrawalConfirmations(data))
       })
     } catch (e) {
-      console.log(e.code)
-      if (e.code === 4001) {
-        console.log(e.message)
-      } else {
-        setRevokeWithdrawalError(
-          'You have already revoked your vote to withdraw funds!'
-        )
-      }
+      setRevokeWithdrawalError(
+        'Withdrawal is not yet confirmed!'
+      )
+
+      // console.log(e.code)
+      // if (e.code === 4001) {
+      //   console.log(e.message)
+      // } else {
+      //   setRevokeWithdrawalError(
+      //     'You have already revoked your vote to withdraw funds!'
+      //   )
+      // }
     }
   }
 
   const executeWithdrawal = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract.executeWithdrawal()
     } catch (e) {
       if (e.code === 4001) {
@@ -79,7 +86,7 @@ const ManageCommons_Withdraw = ({signer, commons}) => {
 
   const getConfirmWithdrawal = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
         .numWithdrawalConfirmations()
         .then((data) => setNumWithdrawalConfirmations(data))
@@ -94,7 +101,7 @@ const ManageCommons_Withdraw = ({signer, commons}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
-    <div class='font-mono space-y-2'>
+    <div class='space-y-4'>
       <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
         Withdraw Funds from Common
       </div>
@@ -103,8 +110,12 @@ const ManageCommons_Withdraw = ({signer, commons}) => {
       </div>
       <div>No. Confirmations Required: {numConfirmationsRequired}</div>
       <div>No. Withdrawal Confirmations: {numWithdrawalConfirmations}</div>
-      {confirmWithdrawalError && <p>{confirmWithdrawalError}</p>}
-      {revokeWithdrawalError && <p>{revokeWithdrawalError}</p>}
+      {confirmWithdrawalError && (
+        <p class='text-red-400 text-base text-center'>{confirmWithdrawalError}</p>
+      )}
+      {revokeWithdrawalError && (
+        <p class='text-red-400 text-base text-center'>{revokeWithdrawalError}</p>
+      )}
       <div class='flex space-x-4'>
         <button
           class='flex-1 py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md'

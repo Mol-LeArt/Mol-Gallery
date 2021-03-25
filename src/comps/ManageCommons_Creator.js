@@ -1,16 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
-import ABI from '../comps/MOLVAULT_ABI'
+import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
+import { CommunityContext } from '../GlobalContext'
 
-const ManageCommons_Creator = ({ signer, commons}) => {
+const ManageCommons_Creator = ({ signer }) => {
+  // ----- useState
   const [creators, setCreators] = useState([])
   const [creatorToAdd, setCreatorToAdd] = useState('')
   const [creatorToRemove, setCreatorToRemove] = useState('')
 
+  // ----- useContext
+  const { commons } = useContext(CommunityContext)
+
+  // ----- React router config
+  const history = useHistory()
+
   const getWhitelist = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
-      _contract.getWhitelist().then((data) => {
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+      _contract.getCreators().then((data) => {
         setCreators(data)
       })
     } catch (e) {
@@ -21,10 +30,10 @@ const ManageCommons_Creator = ({ signer, commons}) => {
   const addToWhitelist = async () => {
     try {
       const artist = [creatorToAdd]
-      const _contract = new ethers.Contract(commons, ABI, signer)
-      const tx = await _contract.addToWhitelist(artist)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+      const tx = await _contract.addCreator(artist)
       tx.wait().then(() => {
-        window.location.reload()
+        history.push(`/${commons}`)
       })
     } catch (e) {
       console.log(e)
@@ -34,8 +43,11 @@ const ManageCommons_Creator = ({ signer, commons}) => {
   const removeFromWhitelist = async () => {
     try {
       const artist = [creatorToRemove]
-      const _contract = new ethers.Contract(commons, ABI, signer)
-      _contract.removeFromWhitelist(artist).then((data) => console.log(data))
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+      const tx = await _contract.removeCreator(artist)
+      tx.wait().then(() => {
+        history.push(`/${commons}`)
+      })
     } catch (e) {
       console.log(e)
     }
@@ -52,7 +64,7 @@ const ManageCommons_Creator = ({ signer, commons}) => {
         Creator Roster
       </div>
       <div class='pb-5 text-center text-gray-400'>
-        Enter token address and id to remove token from Commons.{' '}
+        Add or remove a creator by entering her Eth address below.{' '}
       </div>
       {creators && (
         <div>

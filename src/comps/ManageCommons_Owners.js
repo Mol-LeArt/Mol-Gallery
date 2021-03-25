@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
-import ABI from './MOLVAULT_ABI'
+import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
 
 const ManageCommons_Owners = ({ signer, commons }) => {
   const [numConfirms, setNumConfirms] = useState('')
@@ -12,7 +12,7 @@ const ManageCommons_Owners = ({ signer, commons }) => {
 
   const getNumConfirmationsRequired = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
         .numConfirmationsRequired()
         .then((data) => setNumConfirmsRequired(data))
@@ -23,7 +23,7 @@ const ManageCommons_Owners = ({ signer, commons }) => {
 
   const confirmOwnersUpdate = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.confirmOwnersUpdate()
       tx.wait().then(() => {
         _contract
@@ -44,7 +44,7 @@ const ManageCommons_Owners = ({ signer, commons }) => {
 
   const revokeOwnersUpdate = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.revokeOwnersUpdate()
       tx.wait().then(() => {
         _contract
@@ -65,7 +65,7 @@ const ManageCommons_Owners = ({ signer, commons }) => {
 
   const updateOwners = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract.updateOwners()
     } catch (e) {
       if (e.code === 4001) {
@@ -78,7 +78,7 @@ const ManageCommons_Owners = ({ signer, commons }) => {
 
   const getNumConfirms = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
         .numProposedOwnersConfirmations()
         .then((data) => setNumConfirms(data))
@@ -89,7 +89,7 @@ const ManageCommons_Owners = ({ signer, commons }) => {
 
   const proposeOwners = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.proposeOwners([newOwners])
       tx.wait().then(() => {
         window.location.reload()
@@ -101,7 +101,7 @@ const ManageCommons_Owners = ({ signer, commons }) => {
   
   const getProposedOwners = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract.getProposedOwners().then((data) => {
         setOwners(data)
       })

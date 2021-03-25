@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { projectFirestore } from '../firebase/config'
 import { Link, useLocation } from 'react-router-dom'
 import ImageGrid from '../comps/ImageGrid'
 import { ethers } from 'ethers'
 import ABI from '../comps/MOLGAMMA_ABI'
-
+import { GlobalContext, CommunityContext } from '../GlobalContext'
 import './Gallery.css'
 
-const Gallery = ({ account }) => {
+const Gallery = () => {
   const [uris, setUris] = useState({})
   const [isOwner, toggleIsOwner] = useState(false)
   const gallery = 'personal'
+
+  const { account } = useContext(GlobalContext)
 
   // React Router Config
   const location = useLocation()
@@ -44,7 +46,6 @@ const Gallery = ({ account }) => {
   const [royaltiesType, setRoyaltiesType] = useState(null)
   const [royalties, setRoyalties] = useState(0)
   const [compliance, setCompliance] = useState(false)
-  // console.log(account)
 
   async function getGallery() {
     const query = await projectFirestore

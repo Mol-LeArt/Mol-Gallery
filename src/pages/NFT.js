@@ -1,35 +1,38 @@
-import React, { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react'
+import { useLocation, useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
-import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
-import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
+import MOLCOMMONS_ABI from '../comps/MOLCOMMONS_ABI'
 import GAMMA_ABI from '../comps/GAMMA_ABI'
 import Form from '../comps/Form'
 import NFT_Detail from '../comps/NFT_Detail'
+import { GlobalContext, CommunityContext } from '../GlobalContext'
+import { firebaseFieldValue, projectFirestore } from '../firebase/config'
 
-const NFT = ({ account }) => {
+const NFT = () => {
   const [owner, setOwner] = useState(null)
   const [creator, setCreator] = useState(null)
-  const [isSale, setIsSale] = useState(0)
-  const [price, setPrice] = useState(0.0)
-  const [coins, setCoins] = useState(0.0)
   const [ownerMatch, setOwnerMatch] = useState(null)
   const [creatorMatch, setCreatorMatch] = useState(null)
+
+  const [isSale, setIsSale] = useState(0)
+  const [ethPrice, setEthPrice] = useState(0.0)
+  const [coinPrice, setCoinPrice] = useState(0.0)
+
   const [form, setForm] = useState(false)
-  const [gammaAddress, setGammaAddress] = useState(null)
   const [contractToUpdateSale, setContractToUpdateSale] = useState(null)
-  const [fundingCollectorsFee, setFundingCollectorsFee] = useState(null)
-  const [whitelistedFee, setWhitelistedFee] = useState(null)
+  const [creatorsFee, setCreatorsFee] = useState(null)
+  const [buyError, setBuyError] = useState(null)
+
+  const { account } = useContext(GlobalContext)
+  const { commons, gamma } = useContext(CommunityContext)
 
   // ----- Reaect Router Config
+  const history = useHistory()
   const location = useLocation()
-  const origin = location.state.origin
-  const contract = location.state.contract
   const tokenId = location.state.tokenId
   const title = location.state.title
   const desc = location.state.description
   const img = location.state.image
-  const gamma = location.state.gamma
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
@@ -55,81 +58,72 @@ const NFT = ({ account }) => {
     }
   }
 
-  const getFundingCollectorsFee = async () => {
-    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+  const getWhitelistedFee = async () => {
+    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
     try {
-      _contract.percFeeToFundingCollectors().then((data) => {
-        setFundingCollectorsFee(data)
+      _contract.percFeeToCreators().then((data) => {
+        setCreatorsFee(data)
       })
     } catch (e) {
-
+      console.log(e)
     }
   }
 
-  const getWhitelistedFee = async () => {
-    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
-    try {
-      _contract.percFeeToWhitelist().then((data) => {
-        setWhitelistedFee(data)
-      })
-    } catch (e) {}
-  }
-
   const buyWithEth = async () => {
-    if (origin === 'personal') {
-      const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
-      const overrides = {
-        value: ethers.utils.parseEther(price),
-      }
+    setBuyError('')
 
-      try {
-        const tx = await _contract.purchase(tokenId, overrides)
-        console.log('this is tx.hash for purchase', tx.hash)
-
-        const receipt = await tx.wait()
-        console.log('mint receipt is - ', receipt)
-        window.location.reload()
-        // contractListener(_contract)
-      } catch (e) {
-        console.log(e.message)
-      }
-    } else if (origin === 'vault' && owner === 'Commons') {
-      const ethPrice = ethers.utils.parseEther(price)
-      const p = parseInt(ethPrice, 10)
-      const priceWithFee = p + p * 0.001 * (fundingCollectorsFee + whitelistedFee) 
-
+    if (owner === 'Commons') {
+      // Set price
+      const price = ethers.utils.parseEther(ethPrice)
+      const p = parseInt(price, 10)
+      const priceWithFee = p + p * 0.001 * creatorsFee
       console.log('Buyer pays a total of - ', priceWithFee)
-      const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+
+      // Config contract
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const overrides = {
         value: priceWithFee.toString(),
       }
-      console.log(contract, gammaAddress, tokenId)
-      try {
-        const tx = await _contract.purchase(gammaAddress, tokenId, overrides)
-        console.log('this is tx.hash for purchase', tx.hash)
 
-        const receipt = await tx.wait()
-        console.log('mint receipt is - ', receipt)
-        window.location.reload()
-        // contractListener(_contract)
-      } catch (e) {
-        console.log(e.message)
-      }
-    } else if (origin === 'vault' && owner !== 'Commons') {
-      const ethPrice = ethers.utils.parseEther(price)
-      const _contract = new ethers.Contract(gammaAddress, GAMMA_ABI, signer)
-      const overrides = {
-        value: ethPrice.toString(),
-      }
-      console.log(contract, gammaAddress, tokenId)
+      // Contract interaction
       try {
         const tx = await _contract.purchase(tokenId, overrides)
         console.log('this is tx.hash for purchase', tx.hash)
 
         const receipt = await tx.wait()
         console.log('mint receipt is - ', receipt)
-        window.location.reload()
-        // contractListener(_contract)
+        addBuyerToCoinHolders()
+        history.push(`/${commons}`)
+      } catch (e) {
+        // if (e.code) {
+        //   setBuyError('User cancelled transaction!')
+        // }
+        console.log(e)
+        // if (e.error.code) {
+        //   const err = Math.abs(e.error.code)
+        //   if (err === 32000) {
+        //     setBuyError('Insufficient funds!')
+        //   }
+        // }
+      }
+    } else {
+      // Set price
+      const price = ethers.utils.parseEther(ethPrice)
+
+      // Config contract
+      const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
+      const overrides = {
+        value: price.toString(),
+      }
+
+      // Contract interaction
+      try {
+        const tx = await _contract.purchase(tokenId, overrides)
+        console.log('this is tx.hash for purchase', tx.hash)
+
+        const receipt = await tx.wait()
+        console.log('mint receipt is - ', receipt)
+        history.push(`/${commons}`)
       } catch (e) {
         console.log(e.message)
       }
@@ -138,44 +132,60 @@ const NFT = ({ account }) => {
 
   // ----- Buy NFT with Commons coins
   const buyWithCoins = async () => {
-    const c = ethers.utils.parseEther(coins)
+    setBuyError('')
+
+    const c = ethers.utils.parseEther(coinPrice.toString())
     console.log('Buyer pays a total of - ', c)
-    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
 
     try {
-      const tx = await _contract.tokenPurchase(gammaAddress, tokenId)
+      const tx = await _contract.coinPurchase(tokenId)
       console.log('this is tx.hash for purchase', tx.hash)
 
       const receipt = await tx.wait()
       console.log('mint receipt is - ', receipt)
+      history.push(`/${commons}`)
       window.location.reload()
       // contractListener(_contract)
     } catch (e) {
-      console.log(e.message)
+      console.log(e)
+      const err = Math.abs(e.error.code)
+      const message = e.error.message
+
+      if (err === 32603 && message === 'execution reverted: !price') {
+        setBuyError('Insufficient coins!')
+      }
     }
   }
 
   function updateSale() {
     setForm(true)
-    if (origin === 'vault' && owner !== 'Commons') {
-      const _contract = new ethers.Contract(gammaAddress, GAMMA_ABI, signer)
+    if (owner !== 'Commons') {
+      const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
       setContractToUpdateSale(_contract)
-    } else if (origin === 'vault' && owner === 'Commons') {
-      const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    } else {
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       setContractToUpdateSale(_contract)
-    } else if (origin === 'personal') {
-      const _contract = new ethers.Contract(contract, MOLGAMMA_ABI, signer)
-      setContractToUpdateSale(_contract)
-    } 
+    }
+  }
+
+  // Add buyer to Firestore
+  const addBuyerToCoinHolders = async () => {
+    console.log(commons)
+    const docRef = projectFirestore.collection('vault').doc(commons)
+
+    signer.getAddress().then((address) => {
+      console.log(address)
+      docRef.update({
+        holders: firebaseFieldValue.arrayUnion(address),
+      })
+    })
   }
 
   useEffect(() => {
     isOwner()
     isCreator()
-    if (origin === 'vault') {
-      getFundingCollectorsFee()
-      getWhitelistedFee()
-    }
+    getWhitelistedFee()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [owner, creator, isSale])
@@ -186,21 +196,18 @@ const NFT = ({ account }) => {
 
       <div class='flex-1 max-w-md mx-auto flex-col justify-center space-y-4'>
         <NFT_Detail
-          origin={origin}
-          contract={contract}
           title={title}
           desc={desc}
-          price={price}
-          setPrice={setPrice}
-          coins={coins}
-          setCoins={setCoins}
+          price={ethPrice}
+          setPrice={setEthPrice}
+          coins={coinPrice}
+          setCoins={setCoinPrice}
           tokenId={tokenId}
           creator={creator}
           setCreator={setCreator}
           owner={owner}
           setOwner={setOwner}
           setIsSale={setIsSale}
-          setGammaAddress={setGammaAddress}
         />
         <div class='flex space-x-4 mx-4'>
           <button
@@ -228,7 +235,9 @@ const NFT = ({ account }) => {
             </button>
           )}
         </div>
-
+        {buyError && (
+          <div class='text-red-400 text-sm text-center'>{buyError}</div>
+        )}
         {form && (
           <Form
             setForm={setForm}

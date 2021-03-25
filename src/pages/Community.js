@@ -1,77 +1,79 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { BrowserRouter as Router, Switch, Route, useParams } from 'react-router-dom'
+import { GlobalContext, CommunityContext } from '../GlobalContext'
+import { ethers } from 'ethers'
 import NavBar from '../comps/NavBar'
 import Commons from '../pages/Commons'
 import About from '../pages/About'
 import Arcade from '../pages/Arcade'
-import OpenGallery from '../pages/OpenGallery'
 import MintNFT from '../pages/MintNFT'
 import NFT from '../pages/NFT'
 import Profile from '../pages/Profile'
-import Gallery from '../pages/Gallery'
-import Galleries from '../pages/Galleries'
 import ManageCommons from '../pages/ManageCommons'
-import { GlobalContext, CommunityContext } from '../GlobalContext'
-require('dotenv').config()
+import MOLCOMMONS_ABI from '../comps/MOLCOMMONS_ABI'
 
 function Community() {
-  const { account, hasGallery } = useContext(GlobalContext)
-  let { contract } = useParams()
+  const [coin, setCoin] = useState(null)
+  const [gamma, setGamma] = useState(null)
 
-  // Get all community related values and pass down via community context provider 
+  let { commons } = useParams()
+
+  // ----- Smart Contract Interaction Config
+  const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+  const signer = provider.getSigner()
+
+  const getGamma = async () => {
+    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+    try {
+      _contract.gamma().then((contract) => {
+        setGamma(contract)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getCoin = async () => {
+    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+    try {
+      _contract
+        .coin()
+        .then((contract) => {
+          setCoin(contract)
+        })
+        .catch((e) => console.log(e))
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   useEffect(() => {
+    if (commons) {
+      getGamma()
+      getCoin()
+    }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <Router>
       <div>
-        <CommunityContext.Provider value={{ contract }}>
+        <CommunityContext.Provider value={{ commons, gamma, coin }}>
           <NavBar />
           <Switch>
-            <Route
-              path='/:contract'
-              exact
-              component={() => <Commons />}
-            />
-            <Route path='/:contract/about' exact component={About} />
-            <Route
-              path='/:contract/arcade'
-              exact
-              component={Arcade}
-            />
-            <Route
-              path='/:contract/galleries'
-              exact
-              component={Galleries}
-            />
+            <Route path='/:commons' exact component={() => <Commons />} />
+            <Route path='/:commons/about' exact component={About} />
+            <Route path='/:commons/arcade' exact component={Arcade} />
             <Route path='/profile/:account' exact component={Profile} />
             <Route
-              path='/:contract/open-gallery'
-              exact
-              component={() => <OpenGallery account={account} />}
-            />
-            <Route
-              path='/:contract/manage'
+              path='/:commons/manage'
               exact
               component={() => <ManageCommons />}
             />
-            <Route
-              path='/:contract/mint'
-              exact
-              component={() => <MintNFT account={account} />}
-            />
-            <Route
-              path='/gallery/:contract'
-              exact
-              component={() => <Gallery account={account} />}
-            />
-            <Route
-              path='/nft/:image'
-              exact
-              component={() => <NFT account={account} />}
-            />
+            <Route path='/:commons/mint' exact component={() => <MintNFT />} />
+
+            <Route path='/:commons/:image' exact component={() => <NFT />} />
           </Switch>
         </CommunityContext.Provider>
       </div>

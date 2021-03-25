@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import MOLVAULT_ABI from './MOLVAULT_ABI'
-import MOLVAULT_BYTECODE from './MOLVAULT_BYTECODE'
+import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
+import MOLVAULT_BYTECODE from './MOLCOMMONS_BYTECODE'
 import { ContractFactory, ethers } from 'ethers'
 import { projectFirestore, timeStamp } from '../firebase/config'
 
 const DeployCommons = () => {
-  const gRoyaltiesUri = 'image'
-  const [communityName, setCommunity] = useState('')
+  // ----- useState
+  const [community, setCommunity] = useState('')
   const [chain, setChain] = useState(null)
 
   // ----- Deploy MolVault
@@ -14,36 +14,34 @@ const DeployCommons = () => {
   const [confirmationsRequired, setConfirmationsRequired] = useState('')
   const [tokenName, setTokenName] = useState('')
   const [tokenSymbol, setTokenSymbol] = useState('')
-  const [fundingGoal, setFundingGoal] = useState('')
   const [deployError, setDeployError] = useState(null)
-  const [contract, setContract] = useState(null)
+  const [commons, setCommons] = useState(null)
+  const gRoyaltiesUri = 'image'
 
   // ----- Smart Contract Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-  const factory = new ContractFactory(MOLVAULT_ABI, MOLVAULT_BYTECODE, signer)
+  const factory = new ContractFactory(MOLCOMMONS_ABI, MOLVAULT_BYTECODE, signer)
 
   // ----- Deploy MolVault
   const deploy = async () => {
     if (organizer.length > 0 && confirmationsRequired > 0) {
       try {
-        const goal = ethers.utils.parseEther(fundingGoal)
-        const contract = await factory.deploy(
+        const _contract = await factory.deploy(
           [organizer],
           confirmationsRequired,
           tokenName,
           tokenSymbol,
-          goal,
           gRoyaltiesUri
         )
 
-        contract.deployTransaction
+        _contract.deployTransaction
           .wait()
           .then((receipt) => {
-            setContract(contract.address)
+            setCommons(_contract.address)
 
-            console.log('Receipt for deploying MolVault', receipt)
-            upload(communityName, contract.address, [organizer])
+            console.log('Receipt for deploying MolCommons', receipt)
+            upload(community, _contract.address, [organizer])
           })
           .catch((e) => console.log(e))
       } catch (e) {
@@ -56,7 +54,7 @@ const DeployCommons = () => {
 
   // Upload to Firestore
   const upload = async (communityName, contract, organizers) => {
-    const collectionRef = projectFirestore.collection('vault')
+    const docRef = projectFirestore.collection('vault').doc(contract)
     const createdAt = timeStamp()
     const dict = {
       name: communityName,
@@ -65,7 +63,7 @@ const DeployCommons = () => {
       createdAt: createdAt,
       chain: chain,
     }
-    collectionRef.add(dict).then(() => {
+    docRef.set(dict).then(() => {
       window.location.reload()
     })
   }
@@ -96,7 +94,8 @@ const DeployCommons = () => {
 
   useEffect(() => {
     getNetwork()
-  }, [])
+    console.log(chain)
+  }, [chain])
   
 
   return (
@@ -105,7 +104,7 @@ const DeployCommons = () => {
         <input
           class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
           type='text'
-          value={communityName}
+          value={community}
           onChange={(e) => setCommunity(e.target.value)}
           placeholder='Enter name of community'
         />
@@ -146,24 +145,6 @@ const DeployCommons = () => {
           placeholder='Symbol for vault shares'
         />
       </div>
-      <div>
-        <input
-          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
-          type='text'
-          value={fundingGoal}
-          onChange={(e) => setFundingGoal(e.target.value)}
-          placeholder='Enter funding goal'
-        />
-      </div>
-      {/* <div>
-        <input
-          class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
-          type='text'
-          value={lockPeriod}
-          onChange={(e) => setLockPeriod(e.target.value)}
-          placeholder='Enter lock period for withdrawal'
-        />
-      </div> */}
       <button
         class='py-4 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'
         onClick={deploy}
@@ -171,7 +152,7 @@ const DeployCommons = () => {
         Deploy Vault
       </button>
       {deployError && <p>{deployError}</p>}
-      {contract && <div> Vault Contract: {contract} </div>}
+      {commons && <div> Vault Contract: {commons} </div>}
     </div>
   )
 }

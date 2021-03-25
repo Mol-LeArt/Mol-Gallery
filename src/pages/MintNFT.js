@@ -1,22 +1,21 @@
-import React, { useState } from 'react'
-import { useLocation } from "react-router-dom";
+import React, { useState, useContext } from 'react'
 import Mint from '../comps/Mint'
 import ImageUpload from '../comps/ImageUpload'
+import { GlobalContext } from '../GlobalContext'
 
-const MintNFT = ({ account }) => {
+const MintNFT = () => {
+  // ----- useState
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [sale, setSale] = useState('')
-  const [price, setPrice] = useState('')
-  const [coins, setCoins] = useState('')
+  const [ethPrice, setEthPrice] = useState('')
+  const [coinPrice, setCoinPrice] = useState('')
   const [img, setImg] = useState(null)
   const [compliance, setCompliance] = useState(false)
   const [metadata, setMetadata] = useState(null)
 
-  // ----- Reaect Router Config
-  const location = useLocation()
-  const commons = location.state.commons
-  const contract = location.state.contract
+  // ----- useContext
+  const { account } = useContext(GlobalContext)
 
   const getFileForUpload = (img) => {
     setImg(img)
@@ -37,12 +36,6 @@ const MintNFT = ({ account }) => {
       alert('You must accept!')
     }
   }
-
-  // ----- Console Tests
-  // console.log(metadata, img)
-  // console.log('account from App.js - ' + account)
-  // console.log('collection from Commons.js - ' + gallery)
-  // console.log("UploadNFT gallery variable " + gallery)
 
   return (
     <div class='mx-auto px-4 my-10 max-w-sm space-y-10 font-mono'>
@@ -89,8 +82,8 @@ const MintNFT = ({ account }) => {
           <input
             class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
             type='text'
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            value={ethPrice}
+            onChange={(e) => setEthPrice(e.target.value)}
             placeholder='Enter amount in Ξ'
           />
         </div>
@@ -101,8 +94,8 @@ const MintNFT = ({ account }) => {
           <input
             class='border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm'
             type='text'
-            value={coins}
-            onChange={(e) => setCoins(e.target.value)}
+            value={coinPrice}
+            onChange={(e) => setCoinPrice(e.target.value)}
             placeholder='Enter amount in coins'
           />
         </div>
@@ -114,12 +107,10 @@ const MintNFT = ({ account }) => {
         <div>
           {metadata && (
             <Mint
-              commons={commons}
-              contract={contract}
               metadata={metadata}
               sale={sale}
-              price={price}
-              coins={coins}
+              ethPrice={ethPrice}
+              coinPrice={coinPrice}
               img={img}
             />
           )}

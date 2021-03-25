@@ -1,30 +1,37 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
 // import ABI from '../comps/MOLGAMMA_ABI'
 import { projectFirestore } from '../firebase/config'
+import { CommunityContext } from '../GlobalContext'
 // import './Connect.css'
 
 const Connect = () => {
+  // ----- useState
   const [account, setAccount] = useState('')
   const [connect, toggleConnect] = useState(false)
   const [contract, setContract] = useState({})
   const [chain, setChain] = useState(null)
 
+  // ----- useContext
+  const { commons } = useContext(CommunityContext)
+
+  const history = useHistory()
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   // const signer = provider.getSigner()
 
-  // Detect network change in Metamask and reload ~ provided by ethers.js
+  // Detect NETWORK change in Metamask and reload ~ provided by ethers.js
   provider.on('network', (newNetwork, oldNetwork) => {
     if (oldNetwork) {
-      window.location.reload()
+      history.push(`/${commons}`)
     }
   })
 
-  // Detect account change in Metamask and reload
+  // Detect ACCOUNT change in Metamask and reload
   window.ethereum.on('accountsChanged', (accounts) => {
     setAccount(accounts[0])
+    history.push(`/${commons}`)
     window.location.reload()
   })
 
@@ -103,13 +110,13 @@ const Connect = () => {
         //     // state: { account: account, contract: contract },
         //   }}
         // >
-          <button disabled>
-            {' '}
-            <span class='text-indigo-600'>
-              {account.slice(0, 6) + ' ... ' + account.slice(-4)}
-            </span>{' '}
-            on <span class='text-red-400'>{chain}</span>
-          </button>
+        <button disabled>
+          {' '}
+          <span class='text-indigo-600'>
+            {account.slice(0, 6) + ' ... ' + account.slice(-4)}
+          </span>{' '}
+          on <span class='text-red-400'>{chain}</span>
+        </button>
         // </Link>
       )}
     </div>

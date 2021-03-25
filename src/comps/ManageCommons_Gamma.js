@@ -1,37 +1,50 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
-import MOLVAULT_ABI from './MOLVAULT_ABI'
+import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
 import GAMMA_ABI from '../comps/GAMMA_ABI'
+import { CommunityContext } from '../GlobalContext'
 
-const ManageCommons_Gamma = ({ signer, commons }) => {
-  const [gamma, setGamma] = useState(null)
+const ManageCommons_Gamma = ({ signer }) => {
+  // ----- useState
+  const [gammaSupply, setGammaSupply] = useState(0)
   const [royalties, setRoyalties] = useState(0)
   const [updatedRoyalties, setUpdatedRoyalties] = useState('')
 
+  // ----- useContext
+  const { commons, gamma } = useContext(CommunityContext)
+
+  // ----- React router config
+  const history = useHistory()
+
   const getGammaRoyalties = async () => {
-    const _contract = new ethers.Contract(commons, MOLVAULT_ABI, signer)
+    const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
     _contract
-      .gamma()
-      .then((gAddress) => {
-        setGamma(gAddress)
-        const _contract = new ethers.Contract(gAddress, GAMMA_ABI, signer)
-        _contract
-          .royalties()
-          .then((data) => {
-            const r = ethers.utils.formatUnits(data, 'wei')
-            setRoyalties(Math.trunc(r))
-          })
-          .catch((e) => console.log(e))
+      .royalties()
+      .then((data) => {
+        const r = ethers.utils.formatUnits(data, 'wei')
+        setRoyalties(Math.trunc(r))
       })
-      .catch((e) => console.log(e))    
+      .catch((e) => console.log(e))
+  }
+
+  const getGammaSupply = async () => {
+    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+    _contract
+      .gammaSupply()
+      .then((data) => {
+        const s = ethers.utils.formatUnits(data, 'wei')
+        setGammaSupply(Math.trunc(s))
+      })
+      .catch((e) => console.log(e))
   }
 
   const updateRoyalties = async () => {
     try {
-      const _contract = new ethers.Contract(commons, MOLVAULT_ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.updateRoyalties(updatedRoyalties)
       tx.wait().then(() => {
-        window.location.reload()
+        history.push(`/${commons}`)
       })
     } catch (e) {
       console.log(e)
@@ -40,6 +53,7 @@ const ManageCommons_Gamma = ({ signer, commons }) => {
 
   useEffect(() => {
     getGammaRoyalties()
+    getGammaSupply()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -50,6 +64,7 @@ const ManageCommons_Gamma = ({ signer, commons }) => {
       </div>
       <div class='pb-5 text-center text-gray-400'>Commons mints NFTs</div>
       <div>NFT Contract Address: {gamma}</div>
+      <div>Total minted: {gammaSupply}</div>
       <div>Royalties: {royalties} %</div>
       <div class='flex space-x-4'>
         <input

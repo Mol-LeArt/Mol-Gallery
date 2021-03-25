@@ -1,49 +1,28 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
-import BidCommons from '../comps/BidCommons'
+import { Link } from 'react-router-dom';
 import ImageGrid from '../comps/ImageGrid';
 import { ethers } from 'ethers'
-// import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
-import MOLVAULT_ABI from '../comps/MOLVAULT_ABI'
+import MOLCOMMONS_ABI from '../comps/MOLCOMMONS_ABI'
 import GAMMA_ABI from '../comps/GAMMA_ABI'
 import { CommunityContext } from '../GlobalContext';
 
 const Commons = () => {
-  const [gamma, setGamma] = useState('')
+  // ----- useState
   const [gammaUris, setGammaUris] = useState([])
-  // const [depositTokenUris, setDepositTokenUris] = useState([])
-  const [isArtist, toggleIsArtist] = useState(false)
-  const [isVaultOwner, toggleIsVaultOwner] = useState(false)
-  const [isBidForm, setIsBidForm] = useState(false)
+  const [isArtist, setIsArtist] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
-  const { contract } = useContext(CommunityContext)
+  // ----- useContext
+  const { commons, gamma } = useContext(CommunityContext)
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
 
-  // ----- Reaect Router Config
-  // const location = useLocation()
-  // const vault = location.state.vault
-  // let { contract } = useParams()
-  // const vault = contract
-
   // ----- Get Gamma tokens
-  const getGamma = async () => {
-    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
-    try {
-      _contract.gamma().then((gAddress) => {
-        setGamma(gAddress)
-        getGammaUri(gAddress)
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  const getGammaUri = async (gAddress) => {
+  const getGammaUri = async () => {
     const uris = []
-    const _contract = new ethers.Contract(gAddress, GAMMA_ABI, signer)
+    const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
     try {
       _contract.totalSupply().then((num) => {
         for (var i = 1; i <= num.toNumber(); i++) {
@@ -58,44 +37,17 @@ const Commons = () => {
     }
   }
 
-  // ----- Get deposited tokens
-  // const getDepositTokens = async () => {
-  //   const _contract = new ethers.Contract(vault, MOLVAULT_ABI, signer)
-  //   try {
-  //     _contract.getDepositTokens().then((data) => {
-  //       for (var i = 0; i < data.length; i++) {
-  //         const tokenAddress = data[i].slice(0, 42)
-  //         const tokenId = parseInt(data[i].slice(-10), 16)
-  //         getDepositTokenUri(tokenAddress, tokenId)
-  //       }
-  //     })
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
-
-  // const getDepositTokenUri = async (tokenAddress, tokenId) => {
-  //   const baseUrl = 'https://rinkeby-api.opensea.io/api/v1/'
-  //   try {
-  //     fetch(`${baseUrl}/${tokenAddress}/${tokenId}`)
-  //      .then((res) => res.json())
-  //      .then((data) => {
-  //        console.log(data)
-  //        setDepositTokenUris(data)
-  //      })
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
-
-  // ----- Check owner status to toggle Vault button
+  // ----- Check owner status to toggle Admin button
   const isOwner = async () => {
-    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
     try {
       signer.getAddress().then((address) => {
-        _contract.isOwner(address).then((data) => {
-          toggleIsVaultOwner(data)
-        })
+        _contract
+          .isOrganizer(address)
+          .then((data) => {
+            setIsAdmin(data)
+          })
+          .catch((e) => console.log(e))
       })
     } catch (e) {
       console.log(e)
@@ -104,32 +56,28 @@ const Commons = () => {
 
   // ----- Check whitelist status to toggle Mint button
   const isWhitelisted = async () => {
-    const _contract = new ethers.Contract(contract, MOLVAULT_ABI, signer)
+    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
 
     try {
       signer.getAddress().then((address) => {
-        _contract.isWhitelisted(address).then((data) => {
-          toggleIsArtist(data)
-        })
+        _contract.isCreator(address).then((data) => {
+          setIsArtist(data)
+        }).catch((e) => console.log(e))
       })
     } catch (e) {
       console.log(e)
     }
   }
 
-  const toggleBidForm = () => {
-    setIsBidForm(true)
-  } 
-
   useEffect(() => {
-    if (contract) {
+    if (commons) {
       isOwner()
       isWhitelisted()
-      getGamma()
-      // getDepositTokens()
     }
 
-    console.log(contract)
+    if (gamma) {
+      getGammaUri()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -139,17 +87,15 @@ const Commons = () => {
       <div class='max-w-2xl mx-auto text-center'>
         Admin - access limited to community organizers <br />
         Mint - access limited to whitelisted members <br />
-        Bid - public access
       </div>
       <div class='flex justify-center space-x-4'>
         <div>
           <Link
             to={{
-              pathname: `/${contract}/manage`,
-              state: { vault: contract },
+              pathname: `/${commons}/manage`,
             }}
           >
-            {isVaultOwner && (
+            {isAdmin && (
               <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'>
                 Admin
               </button>
@@ -160,8 +106,7 @@ const Commons = () => {
         <div>
           <Link
             to={{
-              pathname: `/${contract}/mint`,
-              state: { commons: 'commons', contract: contract },
+              pathname: `/${commons}/mint`,
             }}
           >
             {isArtist && (
@@ -171,24 +116,11 @@ const Commons = () => {
             )}
           </Link>
         </div>
-        <div>
-          <button
-            class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'
-            onClick={toggleBidForm}
-          >
-            Bid
-          </button>
-        </div>
       </div>
-
-      {isBidForm && <BidCommons vault={contract} setIsBidForm={setIsBidForm} />}
 
       <div>
         <ImageGrid
-          origin={'vault'}
-          contract={contract}
           uris={gammaUris}
-          gamma={gamma}
         />
       </div>
     </div>

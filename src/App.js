@@ -1,47 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-// import NavBar from './comps/NavBar';
-// import Commons from './pages/Commons';
-// import About from './pages/About';
-// import Arcade from './pages/Arcade'
-// import OpenGallery from './pages/OpenGallery';
-// import MintNFT from './pages/MintNFT'
-// import NFT from './pages/NFT';
-// import Profile from './pages/Profile'
-// import Gallery from './pages/Gallery'
-// import Galleries from './pages/Galleries'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { ethers } from 'ethers'
 import Community from './pages/Community'
 import SelectCommunity from './pages/SelectCommunity'
 import { GlobalContext } from './GlobalContext'
 import { projectFirestore } from './firebase/config'
 require('dotenv').config()
 
-
 function App() {
   const [account, setAccount] = useState(null)
-  const [hasGallery, setHasGallery] = useState(false)
+  // const [hasGallery, setHasGallery] = useState(false)
   const [vaultArry, setVaultArry] = useState([])
+
+  // ----- Smart Contract Interaction Config
+  const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+  provider.on('network', (newNetwork, oldNetwork) => {
+    if (oldNetwork) {
+      window.location.reload()
+    }
+  })
 
   const getAccount = async () => {
     window.ethereum
       .request({ method: 'eth_requestAccounts' })
       .then((result) => {
-        console.log("Account connected - " + result[0])
+        console.log('Account connected - ' + result[0])
         setAccount(result[0])
-        getGallery(result[0])
-    })
+        // getGallery(result[0])
+      })
   }
 
-  const getGallery = async (account) => {
-    const query = await projectFirestore
-      .collection('gallery')
-      .where('account', '==', account)
-      .get()
+  // const getGallery = async (account) => {
+  //   const query = await projectFirestore
+  //     .collection('gallery')
+  //     .where('account', '==', account)
+  //     .get()
 
-    if (!query.empty) {
-      setHasGallery(true)
-    }
-  }
+  //   if (!query.empty) {
+  //     setHasGallery(true)
+  //   }
+  // }
 
   const getAllVaults = async () => {
     const vaultArray = []
@@ -62,23 +60,24 @@ function App() {
     getAllVaults()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  
+
   return (
     <Router>
-      <div className='App'>
-        <GlobalContext.Provider value={{ account, hasGallery }}>
+      <div className='App' class='font-mono'>
+        <GlobalContext.Provider value={{ account }}>
           <Switch>
             <Route
               path='/'
               exact
               component={() => <SelectCommunity vaultArry={vaultArry} />}
             />
-            <Route
-              path='/:contract'
-              exact
-              component={() => <Community />}
-            />
+            <Route path='/:commons' exact component={() => <Community />} />
           </Switch>
+          <Link to='/'>
+            <div class='text-center max-w-sm mx-auto my-5'>
+              Switch community!
+            </div>
+          </Link>
         </GlobalContext.Provider>
       </div>
     </Router>

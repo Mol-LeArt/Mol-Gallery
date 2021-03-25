@@ -19,13 +19,12 @@ const SelectCommunity = ({ vaultArry }) => {
 
   useEffect(() => {
     setVaults(vaultArry)
-    console.log(vaultArry)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div>
-      <div class='mx-auto px-4 my-20 max-w-2xl space-y-10 flex-col justify-center'>
+      <div class='mx-auto px-4 my-20 max-w-3xl space-y-10 flex-col justify-center'>
         <div class='text-5xl font-bold self-auto text-center'>
           Select a Community
         </div>

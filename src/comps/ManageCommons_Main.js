@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { ethers } from 'ethers'
+import { CommunityContext } from '../GlobalContext'
 
-const ManageCommons_Main = ({ provider, commons }) => {
+const ManageCommons_Main = ({ provider }) => {
   const [balance, setBalance] = useState('')
+  const { commons } = useContext(CommunityContext)
 
   // ----- Get Vault  data
   const getVaultBalance = async () => {
@@ -22,15 +24,15 @@ const ManageCommons_Main = ({ provider, commons }) => {
   }, [])
 
   return (
-    <div class='space-y-2'>
+    <div class='space-y-4'>
       <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
         Basic
       </div>
       <div class='pb-5 text-center text-gray-400'>
-        Smart contract and current Ξ balance
+        Smart contract and its Ξ balance
       </div>
-      <div class='text-gray-600'> Vault Contract: {commons} </div>
-      <div> Vault Balance: {balance} Ξ</div>
+      <div> Commons Contract: {commons} </div>
+      <div> Commons Balance: {balance} Ξ</div>
     </div>
   )
 }

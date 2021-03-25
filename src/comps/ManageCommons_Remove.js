@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { ethers } from 'ethers'
-import ABI from '../comps/MOLVAULT_ABI'
+import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
+import { CommunityContext } from '../GlobalContext'
 
-const ManageCommons_Remove = ({ signer, commons}) => {
+const ManageCommons_Remove = ({ signer }) => {
+  // ----- useState
   const [tokenAddress, setTokenAddress] = useState('')
   const [tokenId, setTokenId] = useState('')
 
+  // ----- useContext
+  const { commons } = useContext(CommunityContext)
+
   const removeGamma = async () => {
     try {
-      const _contract = new ethers.Contract(commons, ABI, signer)
+      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
         .removeGamma(tokenAddress, tokenId)
         .then((data) => console.log(data))

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
-import ABI from '../comps/MOLVAULT_ABI'
+import ABI from './MOLCOMMONS_ABI'
 
 const ManageCommons_Funding = ({ signer, commons }) => {
   const [onChainfundingGoal, setOnChainfundingGoal] = useState('')
