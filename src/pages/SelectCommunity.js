@@ -24,12 +24,12 @@ const SelectCommunity = ({ vaultArry }) => {
 
   return (
     <div>
-      <div class='mx-auto px-4 my-20 max-w-3xl space-y-10 flex-col justify-center'>
+      <div class='mx-auto px-4 my-20 max-w-4xl space-y-10 flex-col justify-center'>
         <div class='text-5xl font-bold self-auto text-center'>
           Select a Community
         </div>
 
-        <div class='max-w-xl mx-auto grid grid-cols-3 gap-4'>
+        <div class='max-w-2xl mx-auto grid grid-cols-2 gap-4 place-items-center'>
           {vaults &&
             vaults.map((vault, index) => (
               <div key={index}>

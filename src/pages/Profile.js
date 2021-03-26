@@ -1,124 +1,74 @@
-import React, { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-// import ImageGrid from '../comps/ImageGrid'
+import React, { useState, useEffect, useContext } from 'react'
+import { GlobalContext, CommunityContext } from '../GlobalContext'
 import { ethers } from 'ethers'
-import ABI from '../comps/MOLGAMMA_ABI'
+import GAMMA_ABI from '../comps/GAMMA_ABI'
+import GROYALTIES_ABI from '../comps/GROYALTIES_ABI'
 
 const Profile = () => {
+  // ----- useState
   const [gRoyalties, setRoyalties] = useState(null)
-  const [social, setSocial] = useState('')
-  const [airdrop, setAirdrop] = useState('')
 
-  // ----- React Router Config
-  const location = useLocation()
-  // const account = location.state.account
-    const contract = location.state.contract
-
+  // ----- useContext
+  const { account } = useContext(GlobalContext)
+  const { gamma } = useContext(CommunityContext)
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-  const _contract = new ethers.Contract(contract, ABI, signer)
-
-  // const getContract = async () => {
-  //   const query = await projectFirestore
-  //     .collection('gallery')
-  //     .where('account', '==', account)
-  //     .get()
-
-  //   query.forEach((doc) => {
-  //     getTotalSupply(doc.data().contract)
-  //     setContract(doc.data().contract)
-  //   })
-  // }
-
-  const getTotalSupply = async (contract) => {
-    const gRoyaltiesArray = []
-
-    // const _contract = new ethers.Contract(contract, ABI, signer)
-    contract.totalSupply().then((ts) => {
-      for (var i = 1; i <= ts.toNumber(); i++) {
-        contract.getRoyalties(i).then((r) => {
-          console.log(r[0])
-          gRoyaltiesArray.push(r[0])
-          console.log(gRoyaltiesArray)
-          setRoyalties([...gRoyaltiesArray])
-        })
-      }
-    })
-  }
-
-  const handleClick = (e) => {
-    e.preventDefault()
-
-    updateSocial(_contract)
-  }
-
-  const updateSocial = async (contract) => {
-    try {
-      const tx = await contract.setSocialAirdrop(social, airdrop)
-      console.log('tx.hash for minting - ' + tx.hash)
-
-      tx.wait().then((receipt) => {
-        if (receipt.confirmations === 1) {
-          console.log('mint receipt is - ', receipt)
-          // history.push('/galleries')
-        }
+ 
+  // ----- Get functions
+  const getGammaSupply = async () => {
+    const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
+    _contract
+      .totalSupply()
+      .then((data) => {
+        const s = ethers.utils.formatUnits(data, 'wei')
+        getRoyaltiesTokens(Math.trunc(s))
       })
+      .catch((e) => console.log(e))
+  }
 
-    } catch (e) {
-      console.log(e)
-      if (e.code === 4001) {
-        alert('MetaMask Tx Signature: User denied transaction signature.')
-      }
+  const getRoyaltiesTokens = async (supply) => {
+    const array = []
+
+    const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
+    for (let i = 1; i <= supply; i++) {
+      _contract.gRoyaltiesByTokenId(i)
+      .then((token) => {
+        const _contract = new ethers.Contract(token, GROYALTIES_ABI, signer)
+
+        _contract.ownerOf(1).then((data) => {
+          if (data.toLowerCase() === account) {
+            array.push(token)
+            setRoyalties([...array])
+          } else console.log('Found nothing!')
+        })
+      })
+      .catch((e) => console.log(e))
     }
   }
 
   useEffect(() => {
-    getTotalSupply(_contract)
-
+    getGammaSupply()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <div>
-      <h1>Profile</h1>
-      <p>
-        This is your personal page. 
-      </p>
-      <h2>Royalties Tokens</h2>
-      <p>Royalties payments from buying and selling your NFTs will automatically flow to these royalties tokens. Payments will sit in these royalties tokens until owners withdraw from the token contract. Owners may also gift or sell these tokens!</p>
-      <br />
-      {gRoyalties && gRoyalties.map((r, index) => <div key={index}>{r}</div>)}
+    <div class='mx-auto px-4 my-16 max-w-2xl space-y-4'>
+      <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
+        Royalties Tokens
+      </div>
+      <div class='pb-5 text-left text-gray-400'>
+        1. When you mint an NFT in this community, a royalties token is minted for you. 
+        <br />
+        2. These tokens receive royalties payments automatically whenever your NFT is sold. 
+        <br/>
+        3. You may withdraw royalties payments from these tokens. You may also gift or sell these tokens!
+      </div>
+      
+      {!gRoyalties && <div class='text-center'>🤷 You have no royalties token! 🤷</div>}
+      {gRoyalties && gRoyalties.map((r, index) => <div key={index} class='text-center'>{r}</div>)}
 
-      <br />
-      <form >
-        <h2>Set $social for airdrop</h2>
-
-        <div>
-          <label>Social Token</label>
-          <br />
-          <input
-            type='text'
-            value={social}
-            onChange={(e) => setSocial(e.target.value)}
-            placeholder='Enter Any Social Token'
-          />
-        </div>
-
-        <div>
-          <label>Amount</label>
-          <br />
-          <input
-            type='text'
-            value={airdrop}
-            onChange={(e) => setAirdrop(e.target.value)}
-            placeholder='Enter Amount to Airdrop'
-          />
-        </div>
-
-        <button onClick={handleClick}>Submit</button>
-      </form>
       {/* {uris && <ImageGrid contract={contract} uris={uris} />} */}
     </div>
   )

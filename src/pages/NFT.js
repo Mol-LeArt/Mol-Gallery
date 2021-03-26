@@ -76,7 +76,7 @@ const NFT = () => {
       // Set price
       const price = ethers.utils.parseEther(ethPrice)
       const p = parseInt(price, 10)
-      const priceWithFee = p + p * 0.001 * creatorsFee
+      const priceWithFee = p + p * 0.01 * creatorsFee
       console.log('Buyer pays a total of - ', priceWithFee)
 
       // Config contract

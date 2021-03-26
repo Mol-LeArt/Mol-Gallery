@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, useHistory } from 'react-router-dom';
 import { ethers } from 'ethers'
-import Community from './pages/Community'
-import SelectCommunity from './pages/SelectCommunity'
 import { GlobalContext } from './GlobalContext'
 import { projectFirestore } from './firebase/config'
+import Community from './pages/Community'
+import SelectCommunity from './pages/SelectCommunity'
+import Footer from './comps/Footer'
 require('dotenv').config()
 
 function App() {
   const [account, setAccount] = useState(null)
-  // const [hasGallery, setHasGallery] = useState(false)
   const [vaultArry, setVaultArry] = useState([])
 
+  const history = useHistory()
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+  
+  // Detect NETWORK change in Metamask and reload ~ provided by ethers.js
   provider.on('network', (newNetwork, oldNetwork) => {
     if (oldNetwork) {
-      window.location.reload()
+      history.push('/')
     }
   })
 
@@ -30,17 +33,6 @@ function App() {
       })
   }
 
-  // const getGallery = async (account) => {
-  //   const query = await projectFirestore
-  //     .collection('gallery')
-  //     .where('account', '==', account)
-  //     .get()
-
-  //   if (!query.empty) {
-  //     setHasGallery(true)
-  //   }
-  // }
-
   const getAllVaults = async () => {
     const vaultArray = []
     const query = await projectFirestore.collection('vault').get()
@@ -49,8 +41,10 @@ function App() {
         contract: doc.data().contract,
         name: doc.data().name,
         chain: doc.data().chain,
+        timeStamp: doc.data().createdAt,
       }
       vaultArray.push(vault)
+      vaultArray.sort((a, b) => b.timeStamp - a.timeStamp)
       setVaultArry([...vaultArray])
     })
   }
@@ -73,11 +67,7 @@ function App() {
             />
             <Route path='/:commons' exact component={() => <Community />} />
           </Switch>
-          <Link to='/'>
-            <div class='text-center max-w-sm mx-auto my-5'>
-              Switch community!
-            </div>
-          </Link>
+          <Footer />
         </GlobalContext.Provider>
       </div>
     </Router>

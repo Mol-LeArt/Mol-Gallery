@@ -6,7 +6,7 @@ import COIN_ABI from '../comps/COIN_ABI'
 
 const Arcade_Leaderboard = () => {
   // ----- useState
-  const [holders, setHolders] = useState([])
+  const [holders, setHolders] = useState(null)
 
   // ----- useContext
   const { commons, coin } = useContext(CommunityContext)
@@ -57,13 +57,23 @@ const Arcade_Leaderboard = () => {
       <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
         Leaderboard
       </div>
+      <div class='pb-5 text-center text-gray-400'>
+        Ranking of holders by coin balance
+      </div>
+      {!holders && (
+        <div class='text-center'>🔎 Cannot find any coin holders 🔎 </div>
+      )}
       {holders &&
         holders.map((holder, index) => (
           <div key={index} class='flex items-center mx-auto'>
-            <div class='flex-1'>{index+1}. {holder.address}</div>
+            <div class='flex-1'>
+              {index + 1}.{' '}
+              {holder.address}
+            </div>
             <div class='flex-2'>{holder.balance}</div>
           </div>
         ))}
+      <div class='text-center text-gray-300'>--------------</div>
     </div>
   )
 }

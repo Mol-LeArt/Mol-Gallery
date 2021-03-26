@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
 import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
 import { CommunityContext } from '../GlobalContext'
@@ -8,14 +9,17 @@ const ManageCommons_Bid = ({ signer }) => {
   const [bid, setBid] = useState('')
   const [bidder, setBidder] = useState('')
   const [bidOwners, setBidOwners] = useState([])
-  const [numSaleConfirmations, setNumSaleConfirmations] = useState('')
-  const [confirmSaleError, setConfirmSaleError] = useState(null)
-  const [revokeSaleError, setRevokeSaleError] = useState(null)
+  const [numBidConfirmations, setNumBidConfirmations] = useState('')
+  const [err, setErr] = useState(null)
   const [numConfirmationsRequired, setNumConfirmationsRequired] = useState('')
 
   // ----- useContext
   const { commons } = useContext(CommunityContext)
 
+  // ----- React router config
+  const history = useHistory()
+
+  // ----- Get functions
   const getNumConfirmationsRequired = async () => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
@@ -61,24 +65,26 @@ const ManageCommons_Bid = ({ signer }) => {
     }
   }
 
-  // ----- Sell vault
+  // ----- Execution functions
   const confirmSale = async () => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.confirmBid()
       tx.wait().then(() => {
         _contract
-          .numSaleConfirmations()
-          .then((data) => setNumSaleConfirmations(data))
+          .numBidConfirmations()
+          .then((data) => setNumBidConfirmations(data))
+          setErr('')
       })
     } catch (e) {
-      console.log(e.code)
       if (e.code === 4001) {
-        console.log(e.message)
+        setErr('User rejected transaction!')
+      } else if (e.error.code === 4001) {
+        setErr('User rejected transaction!')
+      } else if (Math.abs(e.error.code) === 32603) {
+        setErr('You have already confirmed to sell this commons!')
       } else {
-        setConfirmSaleError(
-          'You have already confirmed to withdraw funds from the vault!'
-        )
+        setErr('Something went wrong!')
       }
     }
   }
@@ -89,17 +95,19 @@ const ManageCommons_Bid = ({ signer }) => {
       const tx = await _contract.revokeBidConfirmation()
       tx.wait().then(() => {
         _contract
-          .numSaleConfirmations()
-          .then((data) => setNumSaleConfirmations(data))
+          .numBidConfirmations()
+          .then((data) => setNumBidConfirmations(data))
+        setErr('')
       })
     } catch (e) {
-      console.log(e.code)
       if (e.code === 4001) {
-        console.log(e.message)
+        setErr('User rejected transaction!')
+      } else if (e.error.code === 4001) {
+        setErr('User rejected transaction!')
+      } else if (Math.abs(e.error.code) === 32603) {
+        setErr('Bid is not yet confirmed!')
       } else {
-        setRevokeSaleError(
-          'Bid is not yet confirmed!'
-        )
+        setErr('Something went wrong!')
       }
     }
   }
@@ -107,12 +115,19 @@ const ManageCommons_Bid = ({ signer }) => {
   const sellVault = async () => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      _contract.executeBid()
+      const tx = await _contract.executeBid()
+      tx.wait().then(() => {
+        history.push(`/${commons}`)
+      })
     } catch (e) {
       if (e.code === 4001) {
-        console.log(e.message)
+        setErr('User rejected transaction!')
+      } else if (e.error.code === 4001) {
+        setErr('User rejected transaction!')
+      } else if (Math.abs(e.error.code) === 32603) {
+        setErr('You have not confirmed current bid!')
       } else {
-        console.log(e)
+        setErr('Something went wrong!')
       }
     }
   }
@@ -122,7 +137,7 @@ const ManageCommons_Bid = ({ signer }) => {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
         .numBidConfirmations()
-        .then((data) => setNumSaleConfirmations(data))
+        .then((data) => setNumBidConfirmations(data))
     } catch (e) {
       console.log(e)
     }
@@ -143,18 +158,15 @@ const ManageCommons_Bid = ({ signer }) => {
         Sell Commons
       </div>
       <div class='pb-5 text-center text-gray-400'>
-        Click 'Confirm' to vote, and execute when consensus reached.
+        Click 'Confirm' to vote, and execute when consensus is reached.
       </div>
       <div>Highest Bid: {bid} Ξ</div>
       <div>Highest Bidder: {bidder}</div>
       <div>New Organizer(s): {bidOwners}</div>
       <div>No. Confirmations Required: {numConfirmationsRequired}</div>
-      <div>No. Sell Confirmations: {numSaleConfirmations}</div>
-      {confirmSaleError && (
-        <p class='text-red-400 text-base text-center'>{confirmSaleError}</p>
-      )}
-      {revokeSaleError && (
-        <p class='text-red-400 text-base text-center'>{revokeSaleError}</p>
+      <div>No. Sell Confirmations: {numBidConfirmations}</div>
+      {err && (
+        <p class='text-red-400 text-base text-center'>{err}</p>
       )}
       <div class='flex space-x-4'>
         <button

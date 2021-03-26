@@ -9,7 +9,7 @@ import { CommunityContext } from '../GlobalContext';
 const Commons = () => {
   // ----- useState
   const [gammaUris, setGammaUris] = useState([])
-  const [isArtist, setIsArtist] = useState(false)
+  const [isCreator, setIsCreator] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
 
   // ----- useContext
@@ -61,7 +61,7 @@ const Commons = () => {
     try {
       signer.getAddress().then((address) => {
         _contract.isCreator(address).then((data) => {
-          setIsArtist(data)
+          setIsCreator(data)
         }).catch((e) => console.log(e))
       })
     } catch (e) {
@@ -109,7 +109,7 @@ const Commons = () => {
               pathname: `/${commons}/mint`,
             }}
           >
-            {isArtist && (
+            {isCreator && (
               <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'>
                 Mint
               </button>

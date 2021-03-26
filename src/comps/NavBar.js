@@ -1,18 +1,10 @@
-import React, { useState, useContext} from 'react';
+import React, { useContext} from 'react';
 import { Link } from 'react-router-dom';
 import Connect from './Connect'
-import { ethers } from 'ethers'
-import { GlobalContext, CommunityContext } from '../GlobalContext'
+import { CommunityContext } from '../GlobalContext'
 
-import './NavBar.css';
-
-const NavBar = ({  }) => {
-  // const { hasGallery } = useContext(GlobalContext)
+const NavBar = () => {
   const { commons } = useContext(CommunityContext)
-
-  // ----- Smart Contract Config
-  const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-  const signer = provider.getSigner()
 
   return (
     <div class='flex justify-between items-center mx-auto px-4 my-10 max-w-5xl'>
@@ -25,33 +17,12 @@ const NavBar = ({  }) => {
         </div>
       </Link>
       <div class='flex-2 flex space-x-8'>
-        {/* use whitelist from vault to toggle  */}
-        {/* {!hasGallery ? (
-          <Link
-            style={{ textDecoration: 'none' }}
-            to={`/${commons}/open-gallery`}
-          >
-            <div class='flex-1 underline'>Open a Gallery</div>
-          </Link>
-        ) : (
-          ''
-        )} */}
-
         <Link style={{ textDecoration: 'none' }} to={`/${commons}/arcade`}>
           <div class='flex-1 underline'>Arcade</div>
         </Link>
-
-        {/* <Link
-          style={{ textDecoration: 'none' }}
-          to={`/${commons}/galleries`}
-        >
-          <div class='flex-1 underline'>Galleries</div>
-        </Link> */}
-
         <Link style={{ textDecoration: 'none' }} to={`/${commons}/about`}>
           <div class='flex-1 underline'>About Us</div>
         </Link>
-
         <Connect />
       </div>
     </div>

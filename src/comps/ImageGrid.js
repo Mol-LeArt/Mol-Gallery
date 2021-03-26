@@ -25,6 +25,7 @@ const ImageGrid = ({ uris }) => {
           }
           nftArray.push(nft)
           nftArray.sort((a, b) => a.createdAt - b.createdAt)
+          console.log(nftArray)
           setNfts([...nftArray])
         })
     }

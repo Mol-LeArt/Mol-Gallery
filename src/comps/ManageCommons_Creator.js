@@ -16,7 +16,7 @@ const ManageCommons_Creator = ({ signer }) => {
   // ----- React router config
   const history = useHistory()
 
-  const getWhitelist = async () => {
+  const getCreators = async () => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract.getCreators().then((data) => {
@@ -27,7 +27,18 @@ const ManageCommons_Creator = ({ signer }) => {
     }
   }
 
-  const addToWhitelist = async () => {
+  // const strikeCreators = async () => {
+  //   try {
+  //     const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+  //     _contract.getCreators().then((data) => {
+  //       setCreators(data)
+  //     })
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
+
+  const addCreator = async () => {
     try {
       const artist = [creatorToAdd]
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
@@ -40,7 +51,7 @@ const ManageCommons_Creator = ({ signer }) => {
     }
   }
 
-  const removeFromWhitelist = async () => {
+  const removeCreator = async () => {
     try {
       const artist = [creatorToRemove]
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
@@ -54,7 +65,7 @@ const ManageCommons_Creator = ({ signer }) => {
   }
 
   useEffect(() => {
-    getWhitelist()
+    getCreators()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -83,7 +94,7 @@ const ManageCommons_Creator = ({ signer }) => {
         />
         <button
           class='flex-1 py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider'
-          onClick={addToWhitelist}
+          onClick={addCreator}
         >
           Add
         </button>
@@ -98,7 +109,7 @@ const ManageCommons_Creator = ({ signer }) => {
         />
         <button
           class='flex-1 py-2 px-4 text-white bg-red-800 hover:bg-red-500 w-max rounded-md tracking-wider'
-          onClick={removeFromWhitelist}
+          onClick={removeCreator}
         >
           Remove
         </button>
