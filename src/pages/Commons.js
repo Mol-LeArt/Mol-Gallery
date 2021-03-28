@@ -13,7 +13,7 @@ const Commons = () => {
   const [isAdmin, setIsAdmin] = useState(false)
 
   // ----- useContext
-  const { commons, gamma } = useContext(CommunityContext)
+  const { commons, commonsName, gamma } = useContext(CommunityContext)
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
@@ -83,7 +83,7 @@ const Commons = () => {
 
   return (
     <div class='mx-auto px-4 my-16 max-w-5xl space-y-6 font-mono flex-col justify-center'>
-      <div class='text-7xl font-bold text-center'>Commons</div>
+      <div class='text-6xl font-bold text-center'>Commons</div>
       <div class='max-w-2xl mx-auto text-center'>
         Admin - access limited to community organizers <br />
         Mint - access limited to whitelisted members <br />

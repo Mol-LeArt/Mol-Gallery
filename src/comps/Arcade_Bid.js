@@ -73,7 +73,7 @@ const Arcade_Bid = () => {
 
   return (
     <div class='space-y-4'>
-      <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
+      <div class='mt-14 mb-5 text-4xl font-semibold text-semibold text-center'>
         Bids on Commons
       </div>
       <div class='pb-5 text-center text-gray-400'>Description</div>

@@ -4,7 +4,7 @@ import Connect from './Connect'
 import { CommunityContext } from '../GlobalContext'
 
 const NavBar = () => {
-  const { commons } = useContext(CommunityContext)
+  const { commons, commonsName } = useContext(CommunityContext)
 
   return (
     <div class='flex justify-between items-center mx-auto px-4 my-10 max-w-5xl'>
@@ -13,7 +13,7 @@ const NavBar = () => {
           class='flex-1 text-xl font-primary font-black tracking-wider '
           style={{ textDecoration: 'none' }}
         >
-          Mol LeArt
+          {commonsName}
         </div>
       </Link>
       <div class='flex-2 flex space-x-8'>

@@ -6,7 +6,7 @@ const SelectCommunity = ({ vaultArry }) => {
   const [code, setCode] = useState('')
   const [err, setErr] = useState(null)
   const [canDeploy, setCanDeploy] = useState(false)
-  const [vaults, setVaults] = useState('')
+  const [commons, setCommons] = useState('')
 
   const submitCode = () => {
     if (code === 'mol') {
@@ -18,7 +18,7 @@ const SelectCommunity = ({ vaultArry }) => {
   }
 
   useEffect(() => {
-    setVaults(vaultArry)
+    setCommons(vaultArry)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -30,18 +30,18 @@ const SelectCommunity = ({ vaultArry }) => {
         </div>
 
         <div class='max-w-2xl mx-auto grid grid-cols-2 gap-4 place-items-center'>
-          {vaults &&
-            vaults.map((vault, index) => (
+          {commons &&
+            commons.map((commons, index) => (
               <div key={index}>
                 <Link
                   to={{
-                    pathname: `/${vault.contract}`,
-                    state: { vault: vault.contract },
+                    pathname: `/${commons.contract}`,
+                    state: { commonsName: commons.name },
                   }}
                   style={{ textDecoration: 'none' }}
                 >
                   <button class='py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md tracking-wider font-mono'>
-                    {vault.name} on {vault.chain}
+                    {commons.name} on {commons.chain}
                   </button>
                 </Link>
               </div>

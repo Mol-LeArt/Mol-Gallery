@@ -54,7 +54,7 @@ const Arcade_Leaderboard = () => {
 
   return (
     <div class='space-y-2'>
-      <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
+      <div class='mt-14 mb-5 text-4xl font-semibold text-semibold text-center'>
         Leaderboard
       </div>
       <div class='pb-5 text-center text-gray-400'>

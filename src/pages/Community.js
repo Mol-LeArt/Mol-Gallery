@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { BrowserRouter as Router, Switch, Route, useParams } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, useParams, useLocation } from 'react-router-dom'
 import { GlobalContext, CommunityContext } from '../GlobalContext'
 import { ethers } from 'ethers'
 import NavBar from '../comps/NavBar'
@@ -16,6 +16,9 @@ function Community() {
   const [coin, setCoin] = useState(null)
   const [gamma, setGamma] = useState(null)
 
+  // ----- React router config
+  const location = useLocation()
+  const commonsName = location.state.commonsName
   let { commons } = useParams()
 
   // ----- Smart Contract Interaction Config
@@ -59,7 +62,7 @@ function Community() {
   return (
     <Router>
       <div>
-        <CommunityContext.Provider value={{ commons, gamma, coin }}>
+        <CommunityContext.Provider value={{ commons, commonsName, gamma, coin }}>
           <NavBar />
           <Switch>
             <Route path='/:commons' exact component={() => <Commons />} />
