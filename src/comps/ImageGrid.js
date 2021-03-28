@@ -53,7 +53,7 @@ const ImageGrid = ({ uris }) => {
                 },
               }}
             >
-              <img class='h-full w-full object-contain' src={nft.image} alt='' />
+              <img class='h-full w-full object-cover' src={nft.image} alt='' />
             </Link>
           </div>
         ))}
