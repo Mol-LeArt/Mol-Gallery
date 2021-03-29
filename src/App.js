@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Switch, Route, useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, useHistory } from 'react-router-dom';
 import { ethers } from 'ethers'
 import { GlobalContext } from './GlobalContext'
 import { projectFirestore } from './firebase/config'

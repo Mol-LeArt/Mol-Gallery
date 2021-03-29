@@ -44,7 +44,7 @@ const ManageCommons_Creator = ({ signer }) => {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.addCreator(artist)
       tx.wait().then(() => {
-        history.push(`/community`)
+        window.location.reload()
       })
     } catch (e) {
       console.log(e)
@@ -57,7 +57,7 @@ const ManageCommons_Creator = ({ signer }) => {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.removeCreator(artist)
       tx.wait().then(() => {
-        history.push(`/community`)
+        window.location.reload()
       })
     } catch (e) {
       console.log(e)

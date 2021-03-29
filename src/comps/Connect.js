@@ -24,7 +24,6 @@ const Connect = () => {
   // Detect ACCOUNT change in Metamask and reload
   window.ethereum.on('accountsChanged', (accounts) => {
     // setAccount(accounts[0])
-    history.push(`/community`)
     window.location.reload()
   })
 

@@ -118,7 +118,7 @@ const ManageCommons_Withdraw = ({ signer }) => {
         const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
         const tx = await _contract.executeWithdrawal(f, account)
         tx.wait().then(() => {
-          history.push(`/community`)
+          window.location.reload()
         })
       } catch (e) {
         if (e.code === 4001) {
