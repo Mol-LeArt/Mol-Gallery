@@ -36,7 +36,7 @@ const ManageCommons_Coins = ({ signer }) => {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.updateAirdrop(a)
       tx.wait().then(() => {
-        history.push(`/${commons}`)
+        history.push(`/community`)
       })
     } catch (e) {
       console.log(e)

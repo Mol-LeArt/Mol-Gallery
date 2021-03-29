@@ -24,6 +24,7 @@ const ImageGrid = ({ uris }) => {
             createdAt: data.createdAt,
           }
           nftArray.push(nft)
+          console.log(nft)
           nftArray.sort((a, b) => a.createdAt - b.createdAt)
           console.log(nftArray)
           setNfts([...nftArray])
@@ -44,7 +45,7 @@ const ImageGrid = ({ uris }) => {
           <div className='img-wrap' key={index + 1}>
             <Link
               to={{
-                pathname: `/${commons}/${index + 1}`,
+                pathname: `/community/${index + 1}`,
                 state: {
                   tokenId: index + 1,
                   title: nft.title,

@@ -44,7 +44,7 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
 
       const receipt = await tx.wait()
       console.log('update sale receipt is - ', receipt)
-      history.push(`/${commons}`)
+      history.push(`/community`)
     } catch (e) {
       console.log(e.message)
     }
@@ -61,7 +61,7 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
 
       const receipt = await tx.wait()
       console.log('update sale receipt is - ', receipt)
-      history.push(`/${commons}`)
+      history.push(`/community`)
     } catch (e) {
       console.log(e)
     }

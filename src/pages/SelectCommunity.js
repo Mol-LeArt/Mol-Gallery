@@ -35,8 +35,8 @@ const SelectCommunity = ({ vaultArry }) => {
               <div key={index}>
                 <Link
                   to={{
-                    pathname: `/${commons.contract}`,
-                    state: { commonsName: commons.name },
+                    pathname: `/community`,
+                    state: { commons: commons.contract, commonsName: commons.name },
                   }}
                   style={{ textDecoration: 'none' }}
                 >

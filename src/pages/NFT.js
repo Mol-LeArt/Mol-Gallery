@@ -93,7 +93,7 @@ const NFT = () => {
         const receipt = await tx.wait()
         console.log('mint receipt is - ', receipt)
         addBuyerToCoinHolders()
-        history.push(`/${commons}`)
+        history.push(`/community`)
       } catch (e) {
         // if (e.code) {
         //   setBuyError('User cancelled transaction!')
@@ -123,7 +123,7 @@ const NFT = () => {
 
         const receipt = await tx.wait()
         console.log('mint receipt is - ', receipt)
-        history.push(`/${commons}`)
+        history.push(`/community`)
       } catch (e) {
         console.log(e.message)
       }
@@ -144,7 +144,7 @@ const NFT = () => {
 
       const receipt = await tx.wait()
       console.log('mint receipt is - ', receipt)
-      history.push(`/${commons}`)
+      history.push(`/community`)
       window.location.reload()
       // contractListener(_contract)
     } catch (e) {

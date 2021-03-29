@@ -18,8 +18,9 @@ function Community() {
 
   // ----- React router config
   const location = useLocation()
+  const commons = location.state.commons
   const commonsName = location.state.commonsName
-  let { commons } = useParams()
+  // let { commons } = useParams()
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
@@ -30,6 +31,7 @@ function Community() {
     try {
       _contract.gamma().then((contract) => {
         setGamma(contract)
+        console.log(contract)
       })
     } catch (e) {
       console.log(e)
@@ -55,7 +57,7 @@ function Community() {
       getGamma()
       getCoin()
     }
-    
+    console.log(commons)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -65,18 +67,18 @@ function Community() {
         <CommunityContext.Provider value={{ commons, commonsName, gamma, coin }}>
           <NavBar />
           <Switch>
-            <Route path='/:commons' exact component={() => <Commons />} />
-            <Route path='/:commons/about' exact component={About} />
-            <Route path='/:commons/arcade' exact component={Arcade} />
+            <Route path='/community' exact component={() => <Commons />} />
+            <Route path='/community/about' exact component={About} />
+            <Route path='/community/arcade' exact component={Arcade} />
             <Route path='/profile/:account' exact component={Profile} />
             <Route
-              path='/:commons/manage'
+              path='/community/manage'
               exact
               component={() => <ManageCommons />}
             />
-            <Route path='/:commons/mint' exact component={() => <MintNFT />} />
+            <Route path='/community/mint' exact component={() => <MintNFT />} />
 
-            <Route path='/:commons/:image' exact component={() => <NFT />} />
+            <Route path='/community/:image' exact component={() => <NFT />} />
           </Switch>
         </CommunityContext.Provider>
       </div>

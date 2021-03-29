@@ -44,7 +44,7 @@ const ManageCommons_Gamma = ({ signer }) => {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.updateRoyalties(updatedRoyalties)
       tx.wait().then(() => {
-        history.push(`/${commons}`)
+        history.push(`/community`)
       })
     } catch (e) {
       console.log(e)

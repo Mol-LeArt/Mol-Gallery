@@ -28,6 +28,7 @@ const Commons = () => {
         for (var i = 1; i <= num.toNumber(); i++) {
           _contract.tokenURI(i).then((uri) => {
             uris.push(uri)
+            console.log(uri)
             setGammaUris([...uris])
           })
         }
@@ -48,7 +49,7 @@ const Commons = () => {
             setIsAdmin(data)
           })
           .catch((e) => console.log(e))
-      })
+      }).catch((e) => console.log(e))
     } catch (e) {
       console.log(e)
     }
@@ -63,7 +64,7 @@ const Commons = () => {
         _contract.isCreator(address).then((data) => {
           setIsCreator(data)
         }).catch((e) => console.log(e))
-      })
+      }).catch((e) => console.log(e))
     } catch (e) {
       console.log(e)
     }
@@ -75,6 +76,7 @@ const Commons = () => {
       isWhitelisted()
     }
 
+    console.log(commons)
     if (gamma) {
       getGammaUri()
     }
@@ -92,7 +94,7 @@ const Commons = () => {
         <div>
           <Link
             to={{
-              pathname: `/${commons}/manage`,
+              pathname: `/community/manage`,
             }}
           >
             {isAdmin && (
@@ -106,7 +108,7 @@ const Commons = () => {
         <div>
           <Link
             to={{
-              pathname: `/${commons}/mint`,
+              pathname: `/community/mint`,
             }}
           >
             {isCreator && (
@@ -119,9 +121,7 @@ const Commons = () => {
       </div>
 
       <div>
-        <ImageGrid
-          uris={gammaUris}
-        />
+        <ImageGrid uris={gammaUris} />
       </div>
     </div>
   )

@@ -117,7 +117,7 @@ const ManageCommons_Bid = ({ signer }) => {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.executeBid()
       tx.wait().then(() => {
-        history.push(`/${commons}`)
+        history.push(`/community`)
       })
     } catch (e) {
       if (e.code === 4001) {

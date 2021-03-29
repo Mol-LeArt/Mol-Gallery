@@ -86,7 +86,7 @@ const Mint = ({ metadata, sale, ethPrice, coinPrice, img }) => {
       tx.wait().then((receipt) => {
         if (receipt.confirmations === 1) {
           console.log('mint receipt is - ', receipt)
-          history.push(`/${commons}`)
+          history.push(`/community`)
 
           // Store user address to Firestore
           addMinterToCoinHolders()

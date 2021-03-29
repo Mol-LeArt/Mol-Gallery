@@ -34,7 +34,7 @@ const ManageCommons_Coins = ({ signer }) => {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       const tx = await _contract.updateFeeDistribution(updatedFee)
       tx.wait().then(() => {
-        history.push(`/${commons}`)
+        history.push(`/community`)
       })
     } catch (e) {
       console.log(e)

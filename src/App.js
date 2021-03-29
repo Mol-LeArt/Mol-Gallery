@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, useHistory } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route, useHistory } from 'react-router-dom';
 import { ethers } from 'ethers'
 import { GlobalContext } from './GlobalContext'
 import { projectFirestore } from './firebase/config'
@@ -19,7 +19,7 @@ function App() {
   // Detect NETWORK change in Metamask and reload ~ provided by ethers.js
   provider.on('network', (newNetwork, oldNetwork) => {
     if (oldNetwork) {
-      history.push('/')
+      window.location.reload()
     }
   })
 
@@ -65,7 +65,7 @@ function App() {
               exact
               component={() => <SelectCommunity vaultArry={vaultArry} />}
             />
-            <Route path='/:commons' exact component={() => <Community />} />
+            <Route path='/community' exact component={() => <Community />} />
           </Switch>
           <Footer />
         </GlobalContext.Provider>
