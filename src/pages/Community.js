@@ -32,6 +32,9 @@ function Community() {
       _contract.gamma().then((contract) => {
         setGamma(contract)
         console.log(contract)
+      }).catch(e => {
+        alert('You are on the wrong network!') 
+        console.log(e)
       })
     } catch (e) {
       console.log(e)
@@ -45,8 +48,9 @@ function Community() {
         .coin()
         .then((contract) => {
           setCoin(contract)
+        }).catch((e) => {
+          console.log(e)
         })
-        .catch((e) => console.log(e))
     } catch (e) {
       console.log(e)
     }
