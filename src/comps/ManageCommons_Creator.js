@@ -40,9 +40,9 @@ const ManageCommons_Creator = ({ signer }) => {
 
   const addCreator = async () => {
     try {
-      const artist = [creatorToAdd]
+      // const artist = [creatorToAdd]
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const tx = await _contract.addCreator(artist)
+      const tx = await _contract.addCreator(creatorToAdd)
       tx.wait().then(() => {
         window.location.reload()
       })
@@ -53,9 +53,9 @@ const ManageCommons_Creator = ({ signer }) => {
 
   const removeCreator = async () => {
     try {
-      const artist = [creatorToRemove]
+      // const artist = [creatorToRemove]
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const tx = await _contract.removeCreator(artist)
+      const tx = await _contract.removeCreator(creatorToRemove)
       tx.wait().then(() => {
         window.location.reload()
       })
