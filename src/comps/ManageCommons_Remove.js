@@ -15,7 +15,7 @@ const ManageCommons_Remove = ({ signer }) => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
-        .removeGamma(tokenAddress, tokenId)
+        .removeGamma(tokenId)
         .then((data) => console.log(data))
     } catch (e) {
       console.log(e)
@@ -28,18 +28,11 @@ const ManageCommons_Remove = ({ signer }) => {
         Remove from Commons
       </div>
       <div class='pb-5 text-center text-gray-400'>
-        Enter token address and id to remove token from Commons.{' '}
+        Enter token id to remove token from Commons.{' '}
       </div>
       <div class='flex space-x-4'>
         <input
-          class='flex-1 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
-          type='text'
-          value={tokenAddress}
-          onChange={(e) => setTokenAddress(e.target.value)}
-          placeholder='Enter token address'
-        />
-        <input
-          class='flex-1 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
+          class='flex-2 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
           type='text'
           value={tokenId}
           onChange={(e) => setTokenId(e.target.value)}

@@ -23,7 +23,7 @@ const ManageCommons = () => {
       <ManageCommons_Coins signer={signer} />
       <ManageCommons_Gamma signer={signer} />
       <ManageCommons_Creator signer={signer} />
-      <ManageCommons_Remove signer={signer} />
+      {/* <ManageCommons_Remove signer={signer} /> */}
       <ManageCommons_Fee signer={signer} />
     </div>
   )

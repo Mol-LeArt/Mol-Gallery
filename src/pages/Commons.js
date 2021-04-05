@@ -86,10 +86,10 @@ const Commons = () => {
   return (
     <div class='mx-auto px-4 my-16 max-w-5xl space-y-6 font-mono flex-col justify-center'>
       <div class='text-6xl font-bold text-center'>Commons</div>
-      <div class='max-w-2xl mx-auto text-center'>
+      {/* <div class='max-w-2xl mx-auto text-center'>
         Admin - access limited to community organizers <br />
         Mint - access limited to whitelisted members <br />
-      </div>
+      </div> */}
       <div class='flex justify-center space-x-4'>
         <div>
           <Link

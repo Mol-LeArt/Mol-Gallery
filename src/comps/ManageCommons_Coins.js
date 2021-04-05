@@ -64,7 +64,7 @@ const ManageCommons_Coins = ({ signer }) => {
   return (
     <div class='space-y-4'>
       <div class='mt-14 mb-5 text-4xl font-bold text-semibold text-center'>
-        Commons Coins
+        Coins
       </div>
       <div class='pb-5 text-center text-gray-400'>
         Collectors get designated airdrop amount for buying NFTs <br /> Creators
