@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 import { CommunityContext } from '../GlobalContext'
 
 
-const Mint = ({ metadata, sale, ethPrice, coinPrice, img }) => {
+const Mint = ({ nft }) => {
   // ----- useContext
   const { commons } = useContext(CommunityContext)
   
@@ -24,9 +24,9 @@ const Mint = ({ metadata, sale, ethPrice, coinPrice, img }) => {
       apiKey: process.env.REACT_APP_FLEEK_API_KEY,
       apiSecret: process.env.REACT_APP_FLEEK_API_SECRET,
       bucket: 'audsssy-team-bucket',
-      key: metadata.title,
+      key: nft.title,
       data,
-    }
+    }   
 
     try {
       const result = await fleek.upload(input)
@@ -46,7 +46,7 @@ const Mint = ({ metadata, sale, ethPrice, coinPrice, img }) => {
     // Add timestamp to metadata
     const date = new Date()
     const timestamp = date.getTime()
-    const dict = { ...metadata, image: baseUrl + hash, createdAt: timestamp }
+    const dict = { ...nft, image: baseUrl + hash, createdAt: timestamp }
     console.log('tokenURI at mint is - ', dict)
 
     const data = JSON.stringify(dict)
@@ -66,9 +66,7 @@ const Mint = ({ metadata, sale, ethPrice, coinPrice, img }) => {
       // Mint NFT
       const tokenUri = baseUrl + result.hash
       console.log(tokenUri)
-      const p = ethers.utils.parseEther(ethPrice)
-      const c = ethers.utils.parseEther(coinPrice)
-      molCommons(p, c, tokenUri)
+      molCommons(tokenUri)
   
     } catch (e) {
       console.log('error is - ' + e, i)
@@ -76,20 +74,31 @@ const Mint = ({ metadata, sale, ethPrice, coinPrice, img }) => {
   }
 
   // ----- Mint Gamma with MolVault
-  const molCommons = async (price, coins, tokenURI) => {
-    console.log('MolVault contract is - ', commons)
+  const molCommons = async (tokenURI) => {    
     const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+    const price = ethers.utils.parseEther(nft.ethPrice)
+    // const signerAddress = signer.getAddress()
+    const collaborators = [nft.firstCollaborator, nft.secondCollaborator]
+    const collaboratorsWeight = [nft.firstCollaboratorWeight, nft.secondCollaboratorWeight]
+    
+    // console.log(nft.sale, nft.split, collaboratorsWeight, collaboratorsWeight)
+    console.log('signer ', nft.account)
     try {
-      const tx = await _contract.mint(price, coins, tokenURI, sale)
+      const tx = await _contract.mint(
+        price,
+        tokenURI,
+        nft.sale,
+        nft.account,
+        nft.split,
+        collaborators,
+        collaboratorsWeight
+      )
       console.log('tx.hash for minting - ' + tx.hash)
 
       tx.wait().then((receipt) => {
         if (receipt.confirmations === 1) {
           console.log('mint receipt is - ', receipt)
           history.push(`/community`)
-
-          // Store user address to Firestore
-          addMinterToCoinHolders()
         }
       })
     } catch (e) {
@@ -109,21 +118,9 @@ const Mint = ({ metadata, sale, ethPrice, coinPrice, img }) => {
   //   })
   // }
 
-  // Add minter to Firestore
-  const addMinterToCoinHolders = async () => {
-    console.log(commons)
-    const docRef = projectFirestore.collection('vault').doc(commons)   
-    
-    signer.getAddress().then(address => {
-      console.log(address)
-       docRef.update({
-         holders: firebaseFieldValue.arrayUnion(address),
-       }) 
-    })
-  }
-
   useEffect(() => {
-    upload(img)
+    console.log(nft)
+    upload(nft.img)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

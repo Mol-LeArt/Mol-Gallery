@@ -12,11 +12,6 @@ const ABI = [
         type: 'string',
       },
       {
-        internalType: 'uint8',
-        name: '_decimals',
-        type: 'uint8',
-      },
-      {
         internalType: 'address',
         name: '_owner',
         type: 'address',

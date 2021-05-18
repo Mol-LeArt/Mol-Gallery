@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
-import MOLVAULT_BYTECODE from './MOLCOMMONS_BYTECODE'
+import MOLCOMMONS_BYTECODE from './MOLCOMMONS_BYTECODE'
 import { ContractFactory, ethers } from 'ethers'
 import { projectFirestore, timeStamp } from '../firebase/config'
 
@@ -21,18 +21,23 @@ const DeployCommons = () => {
   // ----- Smart Contract Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
   const signer = provider.getSigner()
-  const factory = new ContractFactory(MOLCOMMONS_ABI, MOLVAULT_BYTECODE, signer)
+  const factory = new ContractFactory(
+    MOLCOMMONS_ABI,
+    MOLCOMMONS_BYTECODE,
+    signer
+  )
 
   // ----- Deploy MolVault
   const deploy = async () => {
     if (organizer.length > 0 && confirmationsRequired > 0) {
       try {
         const _contract = await factory.deploy(
-          [organizer],
-          confirmationsRequired,
           tokenName,
           tokenSymbol,
-          gRoyaltiesUri
+          gRoyaltiesUri,
+          [organizer],
+          [organizer],
+          confirmationsRequired
         )
 
         _contract.deployTransaction
@@ -124,7 +129,7 @@ const DeployCommons = () => {
           type='text'
           value={confirmationsRequired}
           onChange={(e) => setConfirmationsRequired(e.target.value)}
-          placeholder='Number of confirmations'
+          placeholder='Number of confirmations '
         />
       </div>
       <div>
@@ -133,7 +138,7 @@ const DeployCommons = () => {
           type='text'
           value={tokenName}
           onChange={(e) => setTokenName(e.target.value)}
-          placeholder='Name for vault shares'
+          placeholder='Name of NFT'
         />
       </div>
       <div>
@@ -142,7 +147,7 @@ const DeployCommons = () => {
           type='text'
           value={tokenSymbol}
           onChange={(e) => setTokenSymbol(e.target.value)}
-          placeholder='Symbol for vault shares'
+          placeholder='Symbol of NFT'
         />
       </div>
       <button

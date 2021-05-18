@@ -2,26 +2,26 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
 import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
-import COIN_ABI from './COIN_ABI'
+import GAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import { CommunityContext } from '../GlobalContext'
 
 const ManageCommons_Coins = ({ signer }) => {
   // ----- useState
   const [fee, setFee] = useState(0)
-  const [updatedFee, setUpdatedFee] = useState('')
+  const [newFee, setNewFee] = useState('')
 
   // ----- useContext
-  const { commons, coin } = useContext(CommunityContext)
+  const { commons, gamma } = useContext(CommunityContext)
 
   // ----- React router config
   const history = useHistory()
 
   const getFee = async () => {
     try {
-      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      _contract.percFeeToCreators().then((data) => {
+      const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
+      _contract.fee().then((data) => {
         const f = ethers.utils.formatUnits(data, 'wei')
-        setFee(f)
+        setFee(Math.trunc(f))
       })
     } catch (e) {
       console.log(e)
@@ -29,10 +29,9 @@ const ManageCommons_Coins = ({ signer }) => {
   }
 
   const updateFee = async () => {
-    const f = updatedFee * 10
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const tx = await _contract.updateFeeDistribution(updatedFee)
+      const tx = await _contract.updateFee(newFee)
       tx.wait().then(() => {
         window.location.reload()
       })
@@ -59,8 +58,8 @@ const ManageCommons_Coins = ({ signer }) => {
         <input
           class='flex-2 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
           type='text'
-          value={updatedFee}
-          onChange={(e) => setUpdatedFee(e.target.value)}
+          value={newFee}
+          onChange={(e) => setNewFee(e.target.value)}
           placeholder='Enter new fee percentage'
         />
         <button

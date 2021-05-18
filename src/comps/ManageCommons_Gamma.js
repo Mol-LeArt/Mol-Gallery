@@ -2,14 +2,14 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
 import MOLCOMMONS_ABI from './MOLCOMMONS_ABI'
-import GAMMA_ABI from '../comps/GAMMA_ABI'
+import GAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import { CommunityContext } from '../GlobalContext'
 
 const ManageCommons_Gamma = ({ signer }) => {
   // ----- useState
   const [gammaSupply, setGammaSupply] = useState(0)
   const [royalties, setRoyalties] = useState(0)
-  const [updatedRoyalties, setUpdatedRoyalties] = useState('')
+  const [newRoyalties, setNewRoyalties] = useState('')
 
   // ----- useContext
   const { commons, gamma } = useContext(CommunityContext)
@@ -29,9 +29,9 @@ const ManageCommons_Gamma = ({ signer }) => {
   }
 
   const getGammaSupply = async () => {
-    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+    const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
     _contract
-      .gammaSupply()
+      .totalSupply()
       .then((data) => {
         const s = ethers.utils.formatUnits(data, 'wei')
         setGammaSupply(Math.trunc(s))
@@ -42,7 +42,7 @@ const ManageCommons_Gamma = ({ signer }) => {
   const updateRoyalties = async () => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const tx = await _contract.updateRoyalties(updatedRoyalties)
+      const tx = await _contract.updateRoyalties(newRoyalties)
       tx.wait().then(() => {
         window.location.reload()
       })
@@ -70,8 +70,8 @@ const ManageCommons_Gamma = ({ signer }) => {
         <input
           class='flex-2 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'
           type='text'
-          value={updatedRoyalties}
-          onChange={(e) => setUpdatedRoyalties(e.target.value)}
+          value={newRoyalties}
+          onChange={(e) => setNewRoyalties(e.target.value)}
           placeholder='Enter new royalties %'
         />
         <button

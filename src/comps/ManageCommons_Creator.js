@@ -6,7 +6,7 @@ import { CommunityContext } from '../GlobalContext'
 
 const ManageCommons_Creator = ({ signer }) => {
   // ----- useState
-  const [creators, setCreators] = useState([])
+  const [creators, setCreators] = useState('')
   const [creatorToAdd, setCreatorToAdd] = useState('')
   const [creatorToRemove, setCreatorToRemove] = useState('')
 
@@ -17,32 +17,29 @@ const ManageCommons_Creator = ({ signer }) => {
   const history = useHistory()
 
   const getCreators = async () => {
+    const _creators = []
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      _contract.getCreators().then((data) => {
-        setCreators(data)
-      })
+      
+      // brute force iteration up to 3 minters, otherwise would rely on backend to retrieve minters list
+      for (var i = 0; i < 3; i++) {
+        _contract.minters(i).then((data) => {
+          _creators.push(data)
+          setCreators([..._creators])
+        })
+      }
+      
     } catch (e) {
       console.log(e)
     }
   }
 
-  // const strikeCreators = async () => {
-  //   try {
-  //     const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-  //     _contract.getCreators().then((data) => {
-  //       setCreators(data)
-  //     })
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }
-
   const addCreator = async () => {
     try {
       // const artist = [creatorToAdd]
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const tx = await _contract.addCreator(creatorToAdd)
+      const _creators = [...creators, creatorToAdd]
+      const tx = await _contract.updateMinter(_creators)
       tx.wait().then(() => {
         window.location.reload()
       })
@@ -55,7 +52,8 @@ const ManageCommons_Creator = ({ signer }) => {
     try {
       // const artist = [creatorToRemove]
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const tx = await _contract.removeCreator(creatorToRemove)
+      const _creators = creators.filter(creator => creator !== creatorToRemove)
+      const tx = await _contract.updateMinter(_creators)
       tx.wait().then(() => {
         window.location.reload()
       })
@@ -79,8 +77,8 @@ const ManageCommons_Creator = ({ signer }) => {
       </div>
       {creators && (
         <div>
-          {creators.map((artist, index) => (
-            <p key={index}>{artist}</p>
+          {creators && creators.map((creator, index) => (
+            <div id={index}>{index+1}.{creator}</div>
           ))}
         </div>
       )}

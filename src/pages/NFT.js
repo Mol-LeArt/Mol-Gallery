@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useLocation, useHistory } from 'react-router-dom'
+import { Link, useLocation, useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
 import MOLCOMMONS_ABI from '../comps/MOLCOMMONS_ABI'
-import GAMMA_ABI from '../comps/GAMMA_ABI'
+import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import Form from '../comps/Form'
 import NFT_Detail from '../comps/NFT_Detail'
 import { GlobalContext, CommunityContext } from '../GlobalContext'
-import { firebaseFieldValue, projectFirestore } from '../firebase/config'
 
 const NFT = () => {
   const [owner, setOwner] = useState(null)
   const [creator, setCreator] = useState(null)
+  const [split, setSplit] = useState(null)
+  const [collaborators, setCollaborators] = useState(null)
+  const [collaboratorsWeight, setCollaboratorsWeight] = useState(null)
   const [ownerMatch, setOwnerMatch] = useState(null)
   const [creatorMatch, setCreatorMatch] = useState(null)
 
@@ -19,9 +21,10 @@ const NFT = () => {
   const [coinPrice, setCoinPrice] = useState(0.0)
 
   const [form, setForm] = useState(false)
-  const [contractToUpdateSale, setContractToUpdateSale] = useState(null)
-  const [creatorsFee, setCreatorsFee] = useState(null)
+  const [fee, setFee] = useState(null)
   const [buyError, setBuyError] = useState(null)
+
+  const [isMinter, setIsMinter] = useState(null)
 
   const { account } = useContext(GlobalContext)
   const { commons, gamma } = useContext(CommunityContext)
@@ -58,11 +61,24 @@ const NFT = () => {
     }
   }
 
-  const getWhitelistedFee = async () => {
+  const getFee = async () => {
+    const _contract = new ethers.Contract(gamma, MOLGAMMA_ABI, signer)
+    try {
+      _contract.fee().then((data) => {
+        const _fee = Math.trunc(ethers.utils.formatUnits(data, 'wei'))
+        setFee(_fee)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const checkMinterStatus = async () => {
     const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
     try {
-      _contract.percFeeToCreators().then((data) => {
-        setCreatorsFee(data)
+      _contract.isMinter(account).then((data) => {
+        console.log('is minter? ', data)
+        setIsMinter(data)
       })
     } catch (e) {
       console.log(e)
@@ -71,62 +87,25 @@ const NFT = () => {
 
   const buyWithEth = async () => {
     setBuyError('')
+    // Set price
+    const price = ethers.utils.parseEther(ethPrice)
 
-    if (owner === 'Commons') {
-      // Set price
-      const price = ethers.utils.parseEther(ethPrice)
-      const p = parseInt(price, 10)
-      const priceWithFee = p + p * 0.01 * creatorsFee
-      console.log('Buyer pays a total of - ', priceWithFee)
+    // Config contract
+    const _contract = new ethers.Contract(gamma, MOLGAMMA_ABI, signer)
+    const overrides = {
+      value: price.toString(),
+    }
 
-      // Config contract
-      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const overrides = {
-        value: priceWithFee.toString(),
-      }
+    // Contract interaction
+    try {
+      const tx = await _contract.purchase(tokenId, overrides)
+      console.log('this is tx.hash for purchase', tx.hash)
 
-      // Contract interaction
-      try {
-        const tx = await _contract.purchase(tokenId, overrides)
-        console.log('this is tx.hash for purchase', tx.hash)
-
-        const receipt = await tx.wait()
-        console.log('mint receipt is - ', receipt)
-        addBuyerToCoinHolders()
-        window.location.reload()
-      } catch (e) {
-        // if (e.code) {
-        //   setBuyError('User cancelled transaction!')
-        // }
-        console.log(e)
-        // if (e.error.code) {
-        //   const err = Math.abs(e.error.code)
-        //   if (err === 32000) {
-        //     setBuyError('Insufficient funds!')
-        //   }
-        // }
-      }
-    } else {
-      // Set price
-      const price = ethers.utils.parseEther(ethPrice)
-
-      // Config contract
-      const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
-      const overrides = {
-        value: price.toString(),
-      }
-
-      // Contract interaction
-      try {
-        const tx = await _contract.purchase(tokenId, overrides)
-        console.log('this is tx.hash for purchase', tx.hash)
-
-        const receipt = await tx.wait()
-        console.log('mint receipt is - ', receipt)
-        window.location.reload()
-      } catch (e) {
-        console.log(e.message)
-      }
+      const receipt = await tx.wait()
+      console.log('mint receipt is - ', receipt)
+      window.location.reload()
+    } catch (e) {
+      console.log(e.message)
     }
   }
 
@@ -159,35 +138,15 @@ const NFT = () => {
 
   function updateSale() {
     setForm(true)
-    if (owner !== 'Commons') {
-      const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
-      setContractToUpdateSale(_contract)
-    } else {
-      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      setContractToUpdateSale(_contract)
-    }
-  }
-
-  // Add buyer to Firestore
-  const addBuyerToCoinHolders = async () => {
-    console.log(commons)
-    const docRef = projectFirestore.collection('vault').doc(commons)
-
-    signer.getAddress().then((address) => {
-      console.log(address)
-      docRef.update({
-        holders: firebaseFieldValue.arrayUnion(address),
-      })
-    })
   }
 
   useEffect(() => {
     isOwner()
     isCreator()
-    getWhitelistedFee()
-
+    getFee()
+    checkMinterStatus()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [owner, creator, isSale])
+  }, [owner, creator, isSale, fee])
 
   return (
     <div class='font-mono flex items-center my-16 max-w-4xl mx-auto'>
@@ -207,12 +166,19 @@ const NFT = () => {
           owner={owner}
           setOwner={setOwner}
           setIsSale={setIsSale}
+          fee={fee}
+          split={split}
+          setSplit={setSplit}
+          collaborators={collaborators}
+          setCollaborators={setCollaborators}
+          collaboratorsWeight={collaboratorsWeight}
+          setCollaboratorsWeight={setCollaboratorsWeight}
         />
         <div class='flex space-x-4 mx-4'>
           <button
             class='flex-1 py-2 px-4 text-white bg-gray-800 hover:bg-gray-500 w-max rounded-md disabled:opacity-50'
             onClick={buyWithEth}
-            disabled={isSale === 0 || ownerMatch || creatorMatch}
+            // disabled={isSale === 0 || ownerMatch || creatorMatch}
           >
             Buy (Ξ)
           </button>
@@ -233,18 +199,25 @@ const NFT = () => {
               Update Sale
             </button>
           )}
+
+          {isMinter && (
+            <Link
+              to={{
+                pathname: `/community/mint`,
+                state: { creator: creator },
+              }}
+              style={{ textDecoration: 'none' }}
+            >
+              <button class='flex-1 py-2 px-4 text-white bg-indigo-800 hover:bg-yellow-500 w-max rounded-md'>
+                Remix
+              </button>
+            </Link>
+          )}
         </div>
         {buyError && (
           <div class='text-red-400 text-sm text-center'>{buyError}</div>
         )}
-        {form && (
-          <Form
-            setForm={setForm}
-            contract={contractToUpdateSale}
-            tokenId={tokenId}
-            gamma={gamma}
-          ></Form>
-        )}
+        {form && <Form setForm={setForm} tokenId={tokenId}></Form>}
       </div>
     </div>
   )

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ImageGrid from '../comps/ImageGrid';
 import { ethers } from 'ethers'
 import MOLCOMMONS_ABI from '../comps/MOLCOMMONS_ABI'
-import GAMMA_ABI from '../comps/GAMMA_ABI'
+import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 import { CommunityContext } from '../GlobalContext';
 
 const Commons = () => {
@@ -21,17 +21,10 @@ const Commons = () => {
 
   // ----- Get Gamma tokens
   const getGammaUri = async () => {
-    const uris = []
-    const _contract = new ethers.Contract(gamma, GAMMA_ABI, signer)
+    const _contract = new ethers.Contract(gamma, MOLGAMMA_ABI, signer)
     try {
-      _contract.totalSupply().then((num) => {
-        for (var i = 1; i <= num.toNumber(); i++) {
-          _contract.tokenURI(i).then((uri) => {
-            uris.push(uri)
-            console.log(uri)
-            setGammaUris([...uris])
-          })
-        }
+      _contract.getAllTokenURI().then((uris) => {
+        setGammaUris(uris)
       })
     } catch (e) {
       console.log(e)
@@ -44,7 +37,7 @@ const Commons = () => {
     try {
       signer.getAddress().then((address) => {
         _contract
-          .isOrganizer(address)
+          .isController(address)
           .then((data) => {
             setIsAdmin(data)
           })
@@ -61,7 +54,7 @@ const Commons = () => {
 
     try {
       signer.getAddress().then((address) => {
-        _contract.isCreator(address).then((data) => {
+        _contract.isMinter(address).then((data) => {
           setIsCreator(data)
         }).catch((e) => console.log(e))
       }).catch((e) => console.log(e))
@@ -109,6 +102,7 @@ const Commons = () => {
           <Link
             to={{
               pathname: `/community/mint`,
+              state: { owner: null },
             }}
           >
             {isCreator && (

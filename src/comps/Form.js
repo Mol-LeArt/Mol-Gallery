@@ -1,21 +1,22 @@
 import React, { useState, useContext } from 'react'
-import { useHistory } from 'react-router-dom'
 import { ethers } from 'ethers'
 import './Form.css'
 import { CommunityContext } from '../GlobalContext'
+import MOLGAMMA_ABI from '../comps/MOLGAMMA_ABI'
 
-const Form = ({ setForm, contract, tokenId, gamma }) => {
+const Form = ({ setForm, tokenId }) => {
   // ----- useState
   const [sale, setSale] = useState('')
   const [ethPrice, setEthPrice] = useState('')
   const [coinPrice, setCoinPrice] = useState('')
 
-  // ----- useContext 
-  const { commons } = useContext(CommunityContext)
+  // ----- useContext
+  const { gamma } = useContext(CommunityContext)
 
-  // ----- Reaect Router Config
-  const history = useHistory()
-
+  // ----- Smart Contract Interaction Config
+  const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+  const signer = provider.getSigner()
+  
   const clickBackdrop = (e) => {
     // classList is used to identify className
     if (e.target.classList.contains('backdrop')) {
@@ -25,21 +26,15 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
 
   const handleClick = (e) => {
     e.preventDefault()
-    console.log(contract.address, gamma)
-    if (contract.address === gamma) {
-      console.log('update gamma from vault')
-      updateGammaSale()
-    } else {
-      console.log('update commons')
-      updateCommonsGammaSale()
-    }
+    updateSale()
   }
 
   // ----- Update sale for when Gamma leaves MolCommons
-  const updateGammaSale = async () => {
+  const updateSale = async () => {
+    const _contract = new ethers.Contract(gamma, MOLGAMMA_ABI, signer)
     try {
       const p = ethers.utils.parseEther(ethPrice)
-      const tx = await contract.updateSale(p, tokenId, sale)
+      const tx = await _contract.updateSale(p, tokenId, sale)
       console.log('this is tx.hash for updating sale', tx.hash)
 
       const receipt = await tx.wait()
@@ -47,23 +42,6 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
       window.location.reload()
     } catch (e) {
       console.log(e.message)
-    }
-  }
-
-  // ----- Update sale with MolCommons
-  const updateCommonsGammaSale = async () => {
-    try {
-      const p = ethers.utils.parseEther(ethPrice)
-      const c = ethers.utils.parseEther(coinPrice)
-      const tx = await contract.updateGammaSale(tokenId, p, c, sale)
-
-      console.log('this is tx.hash for updating sale', tx.hash)
-
-      const receipt = await tx.wait()
-      console.log('update sale receipt is - ', receipt)
-      window.location.reload()
-    } catch (e) {
-      console.log(e)
     }
   }
 
@@ -94,7 +72,7 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
           />
         </div>
 
-        <div>
+        {/* <div>
           <label htmlFor='coins'>Price in coins</label>
           <br />
           <input
@@ -103,7 +81,7 @@ const Form = ({ setForm, contract, tokenId, gamma }) => {
             onChange={(e) => setCoinPrice(e.target.value)}
             placeholder='Enter number of coins'
           />
-        </div>
+        </div> */}
         <button className='form-button' type='submit' onClick={handleClick}>
           Confirm
         </button>

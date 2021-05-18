@@ -30,7 +30,7 @@ const ManageCommons_Withdraw = ({ signer }) => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
-        .numConfirmationsRequired()
+        .confirmationCounts(0)
         .then((data) => setNumConfirmationsRequired(data))
     } catch (e) {
       console.log(e)
@@ -41,7 +41,7 @@ const ManageCommons_Withdraw = ({ signer }) => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
       _contract
-        .numWithdrawalConfirmations()
+        .confirmationCounts(1)
         .then((data) => setNumWithdrawalConfirmations(data))
     } catch (e) {
       console.log(e)
@@ -50,17 +50,8 @@ const ManageCommons_Withdraw = ({ signer }) => {
 
   const getAvailableFunds = async () => {
     const contractBalance = await provider.getBalance(commons)
-    const cb = ethers.utils.formatEther(contractBalance)
-    try {
-      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      _contract.bid().then((data) => {
-        const b = ethers.utils.formatEther(data)
-        const funds = cb - b
-        setAvailableFunds(funds)
-      })
-    } catch (e) {
-      console.log(e)
-    }
+    const funds = ethers.utils.formatEther(contractBalance)
+    setAvailableFunds(funds)
   }
 
   // ----- Execution functions

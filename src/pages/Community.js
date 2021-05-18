@@ -13,14 +13,13 @@ import ManageCommons from '../pages/ManageCommons'
 import MOLCOMMONS_ABI from '../comps/MOLCOMMONS_ABI'
 
 function Community() {
-  const [coin, setCoin] = useState(null)
+  // const [coin, setCoin] = useState(null)
   const [gamma, setGamma] = useState(null)
 
   // ----- React router config
   const location = useLocation()
   const commons = location.state.commons
   const commonsName = location.state.commonsName
-  // let { commons } = useParams()
 
   // ----- Smart Contract Interaction Config
   const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
@@ -41,25 +40,25 @@ function Community() {
     }
   }
 
-  const getCoin = async () => {
-    const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-    try {
-      _contract
-        .coin()
-        .then((contract) => {
-          setCoin(contract)
-        }).catch((e) => {
-          console.log(e)
-        })
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  // const getCoin = async () => {
+  //   const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
+  //   try {
+  //     _contract
+  //       .coin()
+  //       .then((contract) => {
+  //         setCoin(contract)
+  //       }).catch((e) => {
+  //         console.log(e)
+  //       })
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
 
   useEffect(() => {
     if (commons) {
       getGamma()
-      getCoin()
+      // getCoin()
     }
     console.log(commons)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,7 +67,7 @@ function Community() {
   return (
     <Router>
       <div>
-        <CommunityContext.Provider value={{ commons, commonsName, gamma, coin }}>
+        <CommunityContext.Provider value={{ commons, commonsName, gamma }}>
           <NavBar />
           <Switch>
             <Route path='/community' exact component={() => <Commons />} />

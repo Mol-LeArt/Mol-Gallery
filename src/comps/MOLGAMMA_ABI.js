@@ -17,7 +17,6 @@ const ABI = [
         type: 'string',
       },
     ],
-    payable: false,
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
@@ -72,7 +71,6 @@ const ABI = [
     type: 'event',
   },
   {
-    constant: false,
     inputs: [
       {
         internalType: 'address',
@@ -87,96 +85,65 @@ const ABI = [
     ],
     name: 'approve',
     outputs: [],
-    payable: false,
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    constant: false,
+    anonymous: false,
     inputs: [
       {
-        internalType: 'uint8',
-        name: 'forSale',
-        type: 'uint8',
+        indexed: true,
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
       },
       {
+        indexed: false,
         internalType: 'uint256',
         name: 'ethPrice',
         type: 'uint256',
       },
       {
+        indexed: false,
         internalType: 'string',
-        name: '_tokenURI',
+        name: 'tokenURI',
         type: 'string',
       },
-    ],
-    name: 'mint',
-    outputs: [],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    anonymous: false,
-    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint8',
+        name: 'forSale',
+        type: 'uint8',
+      },
       {
         indexed: true,
         internalType: 'address',
-        name: '_molBank',
+        name: 'minter',
         type: 'address',
       },
-    ],
-    name: 'MolBankUpdated',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: 'uint256',
-        name: '_molFees',
+        name: 'split',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'address[]',
+        name: '_collaborators',
+        type: 'address[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint8[]',
+        name: '_collaboratorsWeight',
+        type: 'uint8[]',
+      },
     ],
-    name: 'MolFeesUpdated',
+    name: 'Mint',
     type: 'event',
   },
   {
-    constant: false,
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'molTransfer',
-    outputs: [],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: '_mol',
-        type: 'address',
-      },
-    ],
-    name: 'MolUpdated',
-    type: 'event',
-  },
-  {
-    constant: false,
     inputs: [
       {
         internalType: 'uint256',
@@ -186,12 +153,29 @@ const ABI = [
     ],
     name: 'purchase',
     outputs: [],
-    payable: true,
     stateMutability: 'payable',
     type: 'function',
   },
   {
-    constant: false,
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'ethPrice',
+        type: 'uint256',
+      },
+    ],
+    name: 'Purchase',
+    type: 'event',
+  },
+  {
     inputs: [
       {
         internalType: 'address',
@@ -206,32 +190,10 @@ const ABI = [
     ],
     name: 'setApprovalForAll',
     outputs: [],
-    payable: false,
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    constant: false,
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'social',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-    ],
-    name: 'setSocialAirdrop',
-    outputs: [],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    constant: false,
     inputs: [
       {
         internalType: 'address',
@@ -246,7 +208,6 @@ const ABI = [
     ],
     name: 'transfer',
     outputs: [],
-    payable: false,
     stateMutability: 'nonpayable',
     type: 'function',
   },
@@ -273,6 +234,32 @@ const ABI = [
       },
     ],
     name: 'Transfer',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'controller',
+        type: 'address',
+      },
+    ],
+    name: 'UpdateController',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'fee',
+        type: 'uint256',
+      },
+    ],
+    name: 'UpdateFee',
     type: 'event',
   },
   {
@@ -314,7 +301,49 @@ const ABI = [
     type: 'event',
   },
   {
-    constant: false,
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_ethPrice',
+        type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: '_tokenURI',
+        type: 'string',
+      },
+      {
+        internalType: 'uint8',
+        name: '_forSale',
+        type: 'uint8',
+      },
+      {
+        internalType: 'address',
+        name: '_minter',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_split',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address[]',
+        name: '_collaborators',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint8[]',
+        name: '_collaboratorsWeight',
+        type: 'uint8[]',
+      },
+    ],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'address',
@@ -334,82 +363,77 @@ const ABI = [
     ],
     name: 'transferFrom',
     outputs: [],
-    payable: false,
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    constant: false,
     inputs: [
       {
-        internalType: 'address payable',
-        name: '_mol',
+        internalType: 'address',
+        name: '_to',
         type: 'address',
       },
-    ],
-    name: 'updateMol',
-    outputs: [],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: 'address payable',
-        name: '_molBank',
-        type: 'address',
-      },
-    ],
-    name: 'updateMolBank',
-    outputs: [],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    constant: false,
-    inputs: [
       {
         internalType: 'uint256',
-        name: '_molFee',
+        name: '_tokenId',
         type: 'uint256',
       },
     ],
-    name: 'updateMolFees',
+    name: 'transferToken',
     outputs: [],
-    payable: false,
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    constant: false,
     inputs: [
       {
         internalType: 'uint256',
-        name: 'ethPrice',
+        name: '_fee',
+        type: 'uint256',
+      },
+    ],
+    name: 'updateFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_royalties',
+        type: 'uint256',
+      },
+    ],
+    name: 'updateRoyalties',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_ethPrice',
         type: 'uint256',
       },
       {
         internalType: 'uint256',
-        name: 'tokenId',
+        name: '_tokenId',
         type: 'uint256',
       },
       {
         internalType: 'uint8',
-        name: 'forSale',
+        name: '_forSale',
         type: 'uint8',
       },
     ],
     name: 'updateSale',
     outputs: [],
-    payable: false,
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'address',
@@ -425,14 +449,12 @@ const ABI = [
         type: 'uint256',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [],
-    name: 'creator',
+    name: 'controller',
     outputs: [
       {
         internalType: 'address payable',
@@ -440,33 +462,23 @@ const ABI = [
         type: 'address',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
-    inputs: [
+    inputs: [],
+    name: 'fee',
+    outputs: [
       {
         internalType: 'uint256',
         name: '',
         type: 'uint256',
       },
     ],
-    name: 'didPrimarySale',
-    outputs: [
-      {
-        internalType: 'uint8',
-        name: '',
-        type: 'uint8',
-      },
-    ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [],
     name: 'GAMMA_MAX',
     outputs: [
@@ -476,12 +488,10 @@ const ABI = [
         type: 'uint256',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [],
     name: 'getAllTokenURI',
     outputs: [
@@ -491,12 +501,10 @@ const ABI = [
         type: 'string[]',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'uint256',
@@ -512,44 +520,60 @@ const ABI = [
         type: 'address',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'uint256',
-        name: '_tokenId',
+        name: 'tokenId',
         type: 'uint256',
       },
     ],
-    name: 'getRoyalties',
+    name: 'getSale',
     outputs: [
       {
-        internalType: 'address payable[]',
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address[]',
         name: '',
         type: 'address[]',
       },
       {
-        internalType: 'uint256[]',
+        internalType: 'uint8[]',
         name: '',
-        type: 'uint256[]',
+        type: 'uint8[]',
       },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [
       {
         internalType: 'uint256',
         name: '',
         type: 'uint256',
       },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
       {
         internalType: 'uint256',
         name: '',
@@ -564,12 +588,10 @@ const ABI = [
         type: 'address',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [],
     name: 'gRoyaltiesURI',
     outputs: [
@@ -579,12 +601,10 @@ const ABI = [
         type: 'string',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'address',
@@ -605,57 +625,10 @@ const ABI = [
         type: 'bool',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
-    inputs: [],
-    name: 'mol',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: 'molBank',
-    outputs: [
-      {
-        internalType: 'address payable',
-        name: '',
-        type: 'address',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: 'molFee',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
     inputs: [],
     name: 'name',
     outputs: [
@@ -665,12 +638,10 @@ const ABI = [
         type: 'string',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'uint256',
@@ -686,25 +657,12 @@ const ABI = [
         type: 'address',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'royaltiesByTokenId',
+    inputs: [],
+    name: 'royalties',
     outputs: [
       {
         internalType: 'uint256',
@@ -712,12 +670,10 @@ const ABI = [
         type: 'uint256',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'uint256',
@@ -728,67 +684,35 @@ const ABI = [
     name: 'sale',
     outputs: [
       {
+        internalType: 'uint256',
+        name: 'ethPrice',
+        type: 'uint256',
+      },
+      {
         internalType: 'uint8',
         name: 'forSale',
         type: 'uint8',
       },
       {
-        internalType: 'uint256',
-        name: 'ethPrice',
-        type: 'uint256',
-      },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: 'socialAddress',
-    outputs: [
-      {
         internalType: 'address',
-        name: '',
+        name: 'minter',
         type: 'address',
       },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: 'socialAirdrop',
-    outputs: [
       {
         internalType: 'uint256',
-        name: '',
+        name: 'split',
         type: 'uint256',
       },
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: 'startingRoyalties',
-    outputs: [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        internalType: 'uint8',
+        name: 'didPrimary',
+        type: 'uint8',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'bytes4',
@@ -804,12 +728,10 @@ const ABI = [
         type: 'bool',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [],
     name: 'symbol',
     outputs: [
@@ -819,12 +741,10 @@ const ABI = [
         type: 'string',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'uint256',
@@ -840,12 +760,10 @@ const ABI = [
         type: 'uint256',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'address',
@@ -866,12 +784,10 @@ const ABI = [
         type: 'uint256',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: 'uint256',
@@ -887,12 +803,10 @@ const ABI = [
         type: 'string',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
   {
-    constant: true,
     inputs: [],
     name: 'totalSupply',
     outputs: [
@@ -902,10 +816,8 @@ const ABI = [
         type: 'uint256',
       },
     ],
-    payable: false,
     stateMutability: 'view',
     type: 'function',
   },
 ]
-
 export default ABI
