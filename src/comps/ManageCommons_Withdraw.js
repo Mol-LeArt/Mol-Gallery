@@ -58,23 +58,28 @@ const ManageCommons_Withdraw = ({ signer }) => {
   const confirmWithdrawal = async () => {
     try {
       const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      const tx = await _contract.confirmWithdrawal()
+      const tx = await _contract.confirmWithdraw()
+      console.log(tx)
       tx.wait().then(() => {
         _contract
-          .numWithdrawalConfirmations()
-          .then((data) => setNumWithdrawalConfirmations(data))
+          .confirmationCounts(1)
+          .then((data) => {
+            setNumWithdrawalConfirmations(data)
+            console.log(data)
+          })
         setErr('')
       })
     } catch (e) {
-      if (e.code === 4001) {
-        setErr('User rejected transaction!')
-      } else if (e.error.code === 4001) {
-        setErr('User rejected transaction!')
-      } else if (Math.abs(e.error.code) === 32603) {
-        setErr('You have already confirmed to withdraw funds from the commons!')
-      } else {
-        setErr('Something went wrong!')
-      }
+      console.log(e)
+      // if (e.code === 4001) {
+      //   setErr('User rejected transaction!')
+      // } else if (e.error.code === 4001) {
+      //   setErr('User rejected transaction!')
+      // } else if (Math.abs(e.error.code) === 32603) {
+      //   setErr('You have already confirmed to withdraw funds from the commons!')
+      // } else {
+      //   setErr('Something went wrong!')
+      // }
     }
   }
 

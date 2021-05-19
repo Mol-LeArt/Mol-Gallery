@@ -10,23 +10,11 @@ const ManageCommons_Coins = ({ signer }) => {
   // ----- useState
   const [airdrop, setAirdrop] = useState(0)
   const [updatedAirdrop, setUpdatedAirdrop] = useState('')
-  const [coins, setCoins] = useState(0)
+  const [coinSupply, setCoinSupply] = useState(0)
   const [form, setForm] = useState(false)
 
   // ----- useContext
   const { commons, coin } = useContext(CommunityContext)
-
-  const getAirdrop = async () => {
-    try {
-      const _contract = new ethers.Contract(commons, MOLCOMMONS_ABI, signer)
-      _contract.airdrop().then((data) => {
-        const a = ethers.utils.formatEther(data)
-        setAirdrop(a)
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
 
   const updateAirdrop = async () => {
     try {
@@ -46,7 +34,7 @@ const ManageCommons_Coins = ({ signer }) => {
       const _contract = new ethers.Contract(coin, COIN_ABI, signer)
       _contract.totalSupply().then((data) => {
         const c = ethers.utils.formatEther(data)
-        setCoins(c)
+        setCoinSupply(c)
       })
     } catch (e) {
       console.log(e)
@@ -58,7 +46,6 @@ const ManageCommons_Coins = ({ signer }) => {
   }
 
   useEffect(() => {
-    getAirdrop()
     // getCoins()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -73,8 +60,7 @@ const ManageCommons_Coins = ({ signer }) => {
         get amount x 2
       </div>
       <div>Commons Coin Contract Address: {coin} </div>
-      <div>Total Coins in Circulation: {Math.trunc(coins)} 💵</div>
-      <div>Current Airdrop Amount: {Math.trunc(airdrop)} 💵</div>
+      <div>Total Coins in Circulation: {Math.trunc(coinSupply)} 💵</div>
       <div class='flex space-x-4'>
         {/* <input
           class='flex-2 border border-gray-400 py-2 px-4 w-full rounded focus:outline-none focus:border-gray-900 max-w-sm tracking-wider'

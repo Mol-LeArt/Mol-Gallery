@@ -22,8 +22,6 @@ const NFT_Detail = ({
   setSplit,
   collaborators,
   setCollaborators,
-  collaboratorsWeight,
-  setCollaboratorsWeight
 }) => {
   // ----- useState
   const [royalties, setRoyalties] = useState(null)
@@ -37,6 +35,7 @@ const NFT_Detail = ({
 
   // ----- MolCommons Functions
   const getNFT = async () => {
+    const _collaborators = []
     const _contract = new ethers.Contract(gamma, MOLGAMMA_ABI, signer)
     _contract
       .getSale(tokenId)
@@ -52,19 +51,23 @@ const NFT_Detail = ({
         // GAMMA function - sale[tokenId].minter
         setCreator(data[2])
         // console.log('minter is -', data[2])
-        
+
         // GAMMA function - sale[tokenId].split
         const s = Math.trunc(ethers.utils.formatUnits(data[3], 'wei'))
         setSplit(s)
         // console.log('split is', data[3])
 
         // GAMMA function - sale[tokenId].collaborators
-        setCollaborators(data[4])
-        // console.log('collab is', data[4])
-
         // GAMMA function - sale[tokenId].collaboratorsWeight
-        setCollaboratorsWeight(data[5])
-        // console.log('collab weight is', data[5])
+        for (var i = 0; i < data[4].length; i++) {
+          const collab = {
+            address: data[4][i],
+            weight: data[5][i],
+          }
+          _collaborators.push(collab)
+          _collaborators.sort((a, b) => b.weight - a.weight)
+          setCollaborators([..._collaborators])
+        }
 
         // GAMMA function - sale[tokenId].didPrimary
         const didPrimary = Math.trunc(ethers.utils.formatUnits(data[6], 'wei'))
@@ -128,24 +131,17 @@ const NFT_Detail = ({
         Collaborators:{' '}
         <span class='text-gray-800'>
           {collaborators &&
-            collaborators.map((address, index) => (
-              <div key={index}>
-                {index + 1}.{address}
+            collaborators.map((collaborator, index) => (
+              <div key={index} class='flex items-center mx-auto'>
+                <div class='flex-1'>
+                  ({index+1}) {collaborator.address}
+                </div>
+                <div class='flex-2'> {collaborator.weight}%</div>
               </div>
             ))}
         </span>
       </div>
-      <div class='text-gray-400'>
-        Weights:{' '}
-        <span class='text-gray-800'>
-          {collaboratorsWeight &&
-            collaboratorsWeight.map((weight, index) => (
-              <div key={index}>
-                {index + 1}.{weight} %
-              </div>
-            ))}
-        </span>
-      </div>
+      <div class='text-center mx-auto'>-------------------------------</div>
       <div class='text-gray-400'>
         Artist: <span class='text-gray-800'>{creator}</span>
       </div>

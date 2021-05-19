@@ -2,19 +2,6 @@ const ABI = [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '_contract',
-        type: 'address',
-      },
-    ],
-    name: 'approveContract',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
         internalType: 'string',
         name: '_tokenName',
         type: 'string',
@@ -100,37 +87,6 @@ const ABI = [
     type: 'event',
   },
   {
-    inputs: [
-      {
-        internalType: 'address[]',
-        name: '_controllers',
-        type: 'address[]',
-      },
-    ],
-    name: 'confirmControllersChange',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'address payable',
-        name: '_address',
-        type: 'address',
-      },
-    ],
-    name: 'confirmWithdraw',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -142,49 +98,6 @@ const ABI = [
     ],
     name: 'Fee',
     type: 'event',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_ethPrice',
-        type: 'uint256',
-      },
-      {
-        internalType: 'string',
-        name: '_tokenURI',
-        type: 'string',
-      },
-      {
-        internalType: 'uint8',
-        name: '_forSale',
-        type: 'uint8',
-      },
-      {
-        internalType: 'address',
-        name: '_minter',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_split',
-        type: 'uint256',
-      },
-      {
-        internalType: 'address[]',
-        name: '_collaborators',
-        type: 'address[]',
-      },
-      {
-        internalType: 'uint8[]',
-        name: '_collaboratorsWeight',
-        type: 'uint8[]',
-      },
-    ],
-    name: 'mint',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
     anonymous: false,
@@ -219,20 +132,6 @@ const ABI = [
     type: 'event',
   },
   {
-    inputs: [],
-    name: 'revokeControllersChange',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'revokeWithdraw',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -265,76 +164,6 @@ const ABI = [
     type: 'event',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'transferToken',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint8',
-        name: '_consensusCount',
-        type: 'uint8',
-      },
-    ],
-    name: 'updateConsensus',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_fee',
-        type: 'uint256',
-      },
-    ],
-    name: 'updateFee',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address[]',
-        name: '_minters',
-        type: 'address[]',
-      },
-    ],
-    name: 'updateMinter',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_royalties',
-        type: 'uint256',
-      },
-    ],
-    name: 'updateRoyalties',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -354,8 +183,71 @@ const ABI = [
     type: 'event',
   },
   {
-    stateMutability: 'payable',
-    type: 'receive',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'coin',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'airdrop',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_contract',
+        type: 'address',
+      },
+    ],
+    name: 'approveContract',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: '_controllers',
+        type: 'address[]',
+      },
+    ],
+    name: 'confirmControllersChange',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address payable',
+        name: '_address',
+        type: 'address',
+      },
+    ],
+    name: 'confirmWithdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
@@ -474,6 +366,49 @@ const ABI = [
     inputs: [
       {
         internalType: 'uint256',
+        name: '_ethPrice',
+        type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: '_tokenURI',
+        type: 'string',
+      },
+      {
+        internalType: 'uint8',
+        name: '_forSale',
+        type: 'uint8',
+      },
+      {
+        internalType: 'address',
+        name: '_minter',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_split',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address[]',
+        name: '_collaborators',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint8[]',
+        name: '_collaboratorsWeight',
+        type: 'uint8[]',
+      },
+    ],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
         name: '',
         type: 'uint256',
       },
@@ -488,6 +423,94 @@ const ABI = [
     ],
     stateMutability: 'view',
     type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'revokeControllersChange',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'revokeWithdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'transferToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint8',
+        name: '_consensusCount',
+        type: 'uint8',
+      },
+    ],
+    name: 'updateConsensus',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_fee',
+        type: 'uint256',
+      },
+    ],
+    name: 'updateFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: '_minters',
+        type: 'address[]',
+      },
+    ],
+    name: 'updateMinter',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_royalties',
+        type: 'uint256',
+      },
+    ],
+    name: 'updateRoyalties',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    stateMutability: 'payable',
+    type: 'receive',
   },
 ]
 export default ABI

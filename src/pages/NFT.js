@@ -12,7 +12,6 @@ const NFT = () => {
   const [creator, setCreator] = useState(null)
   const [split, setSplit] = useState(null)
   const [collaborators, setCollaborators] = useState(null)
-  const [collaboratorsWeight, setCollaboratorsWeight] = useState(null)
   const [ownerMatch, setOwnerMatch] = useState(null)
   const [creatorMatch, setCreatorMatch] = useState(null)
 
@@ -171,8 +170,6 @@ const NFT = () => {
           setSplit={setSplit}
           collaborators={collaborators}
           setCollaborators={setCollaborators}
-          collaboratorsWeight={collaboratorsWeight}
-          setCollaboratorsWeight={setCollaboratorsWeight}
         />
         <div class='flex space-x-4 mx-4'>
           <button
